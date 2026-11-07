@@ -77,7 +77,7 @@
 Milestone: M0
 Status: ready-for-agent
 Blocked by:
-Type: feature | fix | refactor | test
+Type: feature | fix | refactor | test | chore
 
 ## Goal
 
