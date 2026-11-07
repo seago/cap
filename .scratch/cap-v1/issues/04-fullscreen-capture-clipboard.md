@@ -16,6 +16,7 @@ Type: feature
 - [ ] [manual] 单屏与双屏环境各截一次；粘贴到 Preview 尺寸与屏幕像素一致
 - [ ] [manual] 截图中不出现光标
 - [ ] [manual] 截图中不出现 Cap 自己的窗口 / 覆盖层
+- [ ] [manual] 运行中撤销屏幕录制权限后按 ⌘⇧2，有明确错误提示
 
 ## Scope
 
@@ -48,3 +49,4 @@ Out:
 - 目标 macOS 15.2，直接用 `SCScreenshotManager`
 - 自身窗口 `sharingType = .none`；M0 没有覆盖层，先用菜单栏 App 验证
 - 配置的 width / height 用 display 的像素尺寸，避免 Retina 缩水
+- 「运行中撤销权限的错误提示」从 #03 移入本 ticket
