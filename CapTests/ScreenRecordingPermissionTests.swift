@@ -60,3 +60,9 @@ final class FakePermissionProvider: ScreenRecordingPermissionProviding {
     model.restartApp()
     #expect(provider.relaunchCount == 1)
 }
+
+@Test @MainActor func relaunchRequestsNewApplicationInstance() {
+    let configuration = ScreenRecordingRelaunch.makeConfiguration()
+    #expect(configuration.createsNewApplicationInstance)
+    #expect(configuration.activates)
+}

@@ -17,6 +17,16 @@ protocol ScreenRecordingPermissionProviding {
 }
 
 @MainActor
+enum ScreenRecordingRelaunch {
+    static func makeConfiguration() -> NSWorkspace.OpenConfiguration {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        configuration.createsNewApplicationInstance = true
+        return configuration
+    }
+}
+
+@MainActor
 struct SystemScreenRecordingPermission: ScreenRecordingPermissionProviding {
     func preflight() -> Bool {
         CGPreflightScreenCaptureAccess()
@@ -34,8 +44,7 @@ struct SystemScreenRecordingPermission: ScreenRecordingPermissionProviding {
     }
 
     func relaunch() {
-        let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = true
+        let configuration = ScreenRecordingRelaunch.makeConfiguration()
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, error in
             Task { @MainActor in
                 if let error {
