@@ -49,6 +49,8 @@
 
 - `Cap.xcodeproj` 需手工生成（本机无 xcodegen / tuist）
 - #06 需要自签 codesigning 证书；当前 0 个身份，Keychain 交互可能需用户确认
+- TCC 与签名绑定：ad-hoc 每次重建失效（#04 实测）；已创建自签身份 `Cap Local Signing`，TCC 重新授权一次后应稳定
+- 顺序调整：#06 先于 #05，避免每次重建都重新授权 TCC
 
 ## Computer verification
 

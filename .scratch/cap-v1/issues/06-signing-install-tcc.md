@@ -2,7 +2,7 @@
 
 Milestone: M0
 Status: ready-for-agent
-Blocked by: 04, 05
+Blocked by: 04
 Type: chore
 
 ## Goal
