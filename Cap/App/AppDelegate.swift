@@ -10,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let screenCaptureService = ScreenCaptureService()
     private let clipboardWriter = ClipboardWriter()
     private let historyStore = HistoryStore()
+    private var selectionOverlay: SelectionOverlayController?
     private var isCapturing = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -20,7 +21,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let hotKeyCenter = HotKeyCenter()
         hotKeyCenter.onTrigger = { [weak self] in
             guard let self else { return }
-            Task { await self.captureScreenToClipboard() }
+            self.beginSelection()
         }
         if !hotKeyCenter.register() {
             Log.app.error("Failed to register ⌘⇧2")
@@ -33,8 +34,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        selectionOverlay?.dismiss()
         hotKeyCenter?.unregister()
         Log.app.info("Cap terminating")
+    }
+
+    /// ⌘⇧2：打开所有屏幕的选区覆盖层。
+    private func beginSelection() {
+        if let overlay = selectionOverlay, overlay.isPresented {
+            overlay.cancel()
+            return
+        }
+        guard CGPreflightScreenCaptureAccess() else {
+            Log.selection.notice("Hotkey ignored: screen recording permission missing")
+            onboardingController?.showIfNeeded()
+            return
+        }
+
+        let overlay = SelectionOverlayController()
+        overlay.onCancel = { [weak self] in
+            self?.selectionOverlay = nil
+            Log.selection.notice("Selection cancelled")
+        }
+        overlay.present()
+        selectionOverlay = overlay
+        Log.selection.notice("Selection overlay presented on \(overlay.windows.count, privacy: .public) screen(s)")
     }
 
     private func captureScreenToClipboard() async {

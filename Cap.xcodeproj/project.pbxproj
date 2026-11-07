@@ -30,6 +30,10 @@
 		DD0000000000000000000012 /* SelectionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000002 /* SelectionStateTests.swift */; };
 		EE0000000000000000000011 /* WindowIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000001 /* WindowIndex.swift */; };
 		EE0000000000000000000012 /* WindowIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000002 /* WindowIndexTests.swift */; };
+		FF0000000000000000000011 /* SelectionOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000001 /* SelectionOverlayWindow.swift */; };
+		FF0000000000000000000012 /* SelectionCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000002 /* SelectionCanvasView.swift */; };
+		FF0000000000000000000013 /* SelectionOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000003 /* SelectionOverlayController.swift */; };
+		FF0000000000000000000014 /* SelectionOverlayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000004 /* SelectionOverlayTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +73,10 @@
 		DD0000000000000000000002 /* SelectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStateTests.swift; sourceTree = "<group>"; };
 		EE0000000000000000000001 /* WindowIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowIndex.swift; sourceTree = "<group>"; };
 		EE0000000000000000000002 /* WindowIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowIndexTests.swift; sourceTree = "<group>"; };
+		FF0000000000000000000001 /* SelectionOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionOverlayWindow.swift; sourceTree = "<group>"; };
+		FF0000000000000000000002 /* SelectionCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCanvasView.swift; sourceTree = "<group>"; };
+		FF0000000000000000000003 /* SelectionOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionOverlayController.swift; sourceTree = "<group>"; };
+		FF0000000000000000000004 /* SelectionOverlayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionOverlayTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +198,9 @@
 			isa = PBXGroup;
 			children = (
 				DD0000000000000000000001 /* SelectionModel.swift */,
+				FF0000000000000000000001 /* SelectionOverlayWindow.swift */,
+				FF0000000000000000000002 /* SelectionCanvasView.swift */,
+				FF0000000000000000000003 /* SelectionOverlayController.swift */,
 			);
 			path = Selection;
 			sourceTree = "<group>";
@@ -221,6 +232,7 @@
 				CC0000000000000000000003 /* HistoryStoreTests.swift */,
 				DD0000000000000000000002 /* SelectionStateTests.swift */,
 				EE0000000000000000000002 /* WindowIndexTests.swift */,
+				FF0000000000000000000004 /* SelectionOverlayTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -338,6 +350,9 @@
 				CC0000000000000000000012 /* HistoryStore.swift in Sources */,
 				DD0000000000000000000011 /* SelectionModel.swift in Sources */,
 				EE0000000000000000000011 /* WindowIndex.swift in Sources */,
+				FF0000000000000000000011 /* SelectionOverlayWindow.swift in Sources */,
+				FF0000000000000000000012 /* SelectionCanvasView.swift in Sources */,
+				FF0000000000000000000013 /* SelectionOverlayController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +367,7 @@
 				CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */,
 				DD0000000000000000000012 /* SelectionStateTests.swift in Sources */,
 				EE0000000000000000000012 /* WindowIndexTests.swift in Sources */,
+				FF0000000000000000000014 /* SelectionOverlayTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
