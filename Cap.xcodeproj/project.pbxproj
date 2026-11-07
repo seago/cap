@@ -13,6 +13,8 @@
 		AA0000000000000000000033 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000023 /* Logging.swift */; };
 		AA0000000000000000000034 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AppInfo.swift */; };
 		AA0000000000000000000035 /* AppInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* AppInfoTests.swift */; };
+		AA0000000000000000000036 /* HotKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000027 /* HotKeyCenter.swift */; };
+		AA0000000000000000000037 /* HotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000028 /* HotKeyTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +37,8 @@
 		AA0000000000000000000024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA0000000000000000000025 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		AA0000000000000000000026 /* AppInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoTests.swift; sourceTree = "<group>"; };
+		AA0000000000000000000027 /* HotKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyCenter.swift; sourceTree = "<group>"; };
+		AA0000000000000000000028 /* HotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +82,7 @@
 			children = (
 				AA0000000000000000000005 /* App */,
 				AA0000000000000000000006 /* MenuBar */,
+				AA000000000000000000000A /* HotKey */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
 			);
@@ -101,6 +106,14 @@
 			path = MenuBar;
 			sourceTree = "<group>";
 		};
+		AA000000000000000000000A /* HotKey */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000027 /* HotKeyCenter.swift */,
+			);
+			path = HotKey;
+			sourceTree = "<group>";
+		};
 		AA0000000000000000000007 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000026 /* AppInfoTests.swift */,
+				AA0000000000000000000028 /* HotKeyTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -228,6 +242,7 @@
 				AA0000000000000000000032 /* MenuBarController.swift in Sources */,
 				AA0000000000000000000033 /* Logging.swift in Sources */,
 				AA0000000000000000000034 /* AppInfo.swift in Sources */,
+				AA0000000000000000000036 /* HotKeyCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0000000000000000000035 /* AppInfoTests.swift in Sources */,
+				AA0000000000000000000037 /* HotKeyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

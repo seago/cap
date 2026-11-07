@@ -1,7 +1,7 @@
 # 02 · 全局快捷键 ⌘⇧2
 
 Milestone: M0
-Status: ready-for-agent
+Status: done
 Blocked by: 01
 Type: feature
 
@@ -11,9 +11,9 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `HotKeyMapping` 单测：⌘⇧2 → keyCode / modifiers 映射正确；重复 register / unregister 不崩溃
-- [ ] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过，原有用例不回归
-- [ ] [manual] 在 Finder / Safari 前台按 ⌘⇧2，菜单栏图标有反馈或日志出现；连续按 20 次稳定
+- [x] [auto] `HotKeyMapping` 单测：⌘⇧2 → keyCode / modifiers 映射正确；重复 register / unregister 不崩溃
+- [x] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过，原有用例不回归
+- [x] [manual] 在 Finder / Safari 前台按 ⌘⇧2，菜单栏图标有反馈或日志出现；连续按 20 次稳定
 
 ## Scope
 
@@ -39,3 +39,11 @@ Out:
 
 - Carbon 的 `RegisterEventHotKey` 在 Swift 6 下注意 `@MainActor` / C 回调边界
 - 注册失败（被占用 / 参数错）要 log，不崩溃
+
+## Runs
+
+### 2026-11-08 02:48 · run 1
+
+- Auto: build ✅ / test 3 passed ✅ / HotKeyMapping ✅ / register + unregister 幂等 ✅
+- Manual: Finder 前台合成 ⌘⇧2 → `Global hotkey triggered` + `⌘⇧2 action fired`；连续 20 次 20/20，进程存活
+- Evidence: `log show --predicate 'subsystem == "dev.bruce.cap"'`（02:47:36、02:48）
