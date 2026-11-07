@@ -67,9 +67,29 @@
 ## 验证规则
 
 - `[auto]` 必须由 agent 在本机实际执行，结果记录为「命令 + 通过数」。
-- `[manual]` 不得由 agent 声称通过，只能列给用户。
+- `[manual]` 由 agent 先用 computer use 验证：截图、`CGWindowList`、`lsappinfo`、Apple Event、Accessibility API 等。取得可核对证据后在 Acceptance 勾选，证据写进 `## Runs`。
+- 只有两种情况留给用户：权限阻止操作（Accessibility / TCC），或需要主观判断（视觉设计、手感）。留给用户的项必须写明原因。
+- 当前环境：屏幕截图可用；Accessibility 未授权，合成点击 / 按键会被系统忽略；TCC 授权面板不能由 agent 自行勾选。
+- 不伪造验证结果。agent 无法验证的项一律写「待用户验收」。
 - auto 失败 → 修复后重跑；同一阻塞点 3 次无进展 → 停止。
 - 环境问题（Xcode、SSH、TCC 弹窗）不计入 3 次，直接停止并报告。
+
+## Computer verification
+
+可用：
+
+- `screencapture -x -R x,y,w,h` + 读图：菜单栏、窗口、对话框
+- `lsappinfo`：进程类型（UIElement / Foreground）、bundle id、pid
+- `CGWindowListCopyWindowInfo`：窗口 / 状态栏 item 的 layer 与 bounds
+- Apple Event：`osascript -e 'tell application id "..." to quit'` 验证退出路径
+- `plutil` / `defaults read`：Info.plist 与偏好
+- 单测 + 脚本断言：逻辑与数据
+
+受限：
+
+- Accessibility 关闭时，`CGEvent` 合成点击、`System Events` keystroke 不生效；需要在「系统设置 → 隐私与安全性 → 辅助功能」为 DeepSeek Harness 授权一次。
+- Cap 自己的屏幕录制权限只能由用户在系统设置里授予；agent 可以打开面板并截图确认状态，但不能替用户点「允许」。
+- 视觉判断（图标好看、手感）仍以用户为准。
 
 ## 卡住 / 失败
 
@@ -138,8 +158,10 @@ ready-for-agent → in-progress → done
                               ↘ blocked
 ```
 
+- agent 能验证的 `[manual]` 项：勾选并在 `## Runs` 记录证据；全部通过 → `done`
+- agent 无法验证的项：保留未勾选，`Status: awaiting-manual`，brief 写明原因
 - `awaiting-manual` 不阻塞 commit，但会阻止 milestone 验收与 planning 继续
-- 用户报告 manual 通过：把 ticket 改为 `done`，`## Runs` 追加「manual 通过」；单独提交 `docs(ticket): mark #NN manual accepted` 并 push。该提交是验收记录，不是一次 run。
+- 用户确认通过：把 ticket 改为 `done`，`## Runs` 追加「manual 通过」；单独提交 `docs(ticket): mark #NN manual accepted` 并 push。该提交是验收记录，不是一次 run。
 - 用户报告 manual 失败：原 ticket 改为 `blocked`，新建 fix ticket；同样单独提交并 push。
 - 所有 docs 提交同样按 `AGENTS.md` 的 commit 模板写 body（`验证` 字段写用户确认结果）。
 
@@ -169,13 +191,14 @@ Commit: 1a2b3c4 (pushed)
 ```
 
 - 只写 decision-ready 信息；不贴 diff、不贴完整日志
-- 必须包含：ticket、功能点、auto 结果、commit/push、manual 待验收、风险/偏差
+- 必须包含：ticket、功能点、auto 结果、commit/push、manual 状态（已验证 + 证据 / 待你验收 + 原因）、风险/偏差
 - 结尾给「下一步」：下一个 ready ticket 编号，或「队列空，已转入 planning」
 
 ## Done
 
 - ticket 已实现
 - build + 单测 + 所有 `[auto]` 通过
+- 所有可验证的 `[manual]` 已勾选并记录证据；否则 ticket 为 `awaiting-manual`
 - 一个 commit 已创建；push 成功，或已记录待推
 - ticket 状态与 `## Runs` 已更新
 - brief 已输出
@@ -183,7 +206,8 @@ Commit: 1a2b3c4 (pushed)
 ## 不做
 
 - 一次 run 处理多个 ticket
-- 代替用户做 manual 验收
+- 把无法验证的 manual 项写成通过
+- 在未授权 Accessibility / TCC 时假装完成了点击或授权
 - 顺手修范围外问题
 - 改写已提交历史
 - 绕过 planning 直接拆新 milestone
