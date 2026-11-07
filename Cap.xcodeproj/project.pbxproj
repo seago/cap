@@ -18,6 +18,11 @@
 		AA0000000000000000000038 /* ScreenRecordingPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000029 /* ScreenRecordingPermission.swift */; };
 		AA0000000000000000000039 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002A /* OnboardingWindowController.swift */; };
 		AA000000000000000000003A /* ScreenRecordingPermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000002B /* ScreenRecordingPermissionTests.swift */; };
+		BB0000000000000000000011 /* CaptureRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* CaptureRequest.swift */; };
+		BB0000000000000000000012 /* ScreenCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000002 /* ScreenCaptureService.swift */; };
+		BB0000000000000000000013 /* ClipboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000003 /* ClipboardWriter.swift */; };
+		BB0000000000000000000014 /* ImageEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000004 /* ImageEncoder.swift */; };
+		BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000005 /* ClipboardWriterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +50,11 @@
 		AA0000000000000000000029 /* ScreenRecordingPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingPermission.swift; sourceTree = "<group>"; };
 		AA000000000000000000002A /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		AA000000000000000000002B /* ScreenRecordingPermissionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingPermissionTests.swift; sourceTree = "<group>"; };
+		BB0000000000000000000001 /* CaptureRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureRequest.swift; sourceTree = "<group>"; };
+		BB0000000000000000000002 /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
+		BB0000000000000000000003 /* ClipboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardWriter.swift; sourceTree = "<group>"; };
+		BB0000000000000000000004 /* ImageEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEncoder.swift; sourceTree = "<group>"; };
+		BB0000000000000000000005 /* ClipboardWriterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardWriterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +100,8 @@
 				AA0000000000000000000006 /* MenuBar */,
 				AA000000000000000000000A /* HotKey */,
 				AA000000000000000000000B /* Permissions */,
+				BB0000000000000000000021 /* Capture */,
+				BB0000000000000000000022 /* Output */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
 			);
@@ -130,6 +142,24 @@
 			path = Permissions;
 			sourceTree = "<group>";
 		};
+		BB0000000000000000000021 /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000000000000000000001 /* CaptureRequest.swift */,
+				BB0000000000000000000002 /* ScreenCaptureService.swift */,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		BB0000000000000000000022 /* Output */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000000000000000000003 /* ClipboardWriter.swift */,
+				BB0000000000000000000004 /* ImageEncoder.swift */,
+			);
+			path = Output;
+			sourceTree = "<group>";
+		};
 		AA0000000000000000000007 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,6 +183,7 @@
 				AA0000000000000000000026 /* AppInfoTests.swift */,
 				AA0000000000000000000028 /* HotKeyTests.swift */,
 				AA000000000000000000002B /* ScreenRecordingPermissionTests.swift */,
+				BB0000000000000000000005 /* ClipboardWriterTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -262,6 +293,10 @@
 				AA0000000000000000000036 /* HotKeyCenter.swift in Sources */,
 				AA0000000000000000000038 /* ScreenRecordingPermission.swift in Sources */,
 				AA0000000000000000000039 /* OnboardingWindowController.swift in Sources */,
+				BB0000000000000000000011 /* CaptureRequest.swift in Sources */,
+				BB0000000000000000000012 /* ScreenCaptureService.swift in Sources */,
+				BB0000000000000000000013 /* ClipboardWriter.swift in Sources */,
+				BB0000000000000000000014 /* ImageEncoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +307,7 @@
 				AA0000000000000000000035 /* AppInfoTests.swift in Sources */,
 				AA0000000000000000000037 /* HotKeyTests.swift in Sources */,
 				AA000000000000000000003A /* ScreenRecordingPermissionTests.swift in Sources */,
+				BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
