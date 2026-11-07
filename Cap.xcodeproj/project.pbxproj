@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA0000000000000000000030 /* CapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000020 /* CapApp.swift */; };
+		AA0000000000000000000031 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000021 /* AppDelegate.swift */; };
+		AA0000000000000000000032 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000022 /* MenuBarController.swift */; };
+		AA0000000000000000000033 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000023 /* Logging.swift */; };
+		AA0000000000000000000034 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AppInfo.swift */; };
+		AA0000000000000000000035 /* AppInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* AppInfoTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AA0000000000000000000081 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000090 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA0000000000000000000050;
+			remoteInfo = Cap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AA0000000000000000000010 /* Cap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000011 /* CapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000020 /* CapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapApp.swift; sourceTree = "<group>"; };
+		AA0000000000000000000021 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AA0000000000000000000022 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
+		AA0000000000000000000023 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		AA0000000000000000000024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA0000000000000000000025 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		AA0000000000000000000026 /* AppInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA0000000000000000000041 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0000000000000000000044 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA0000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000004 /* Cap */,
+				AA0000000000000000000009 /* CapTests */,
+				AA0000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000010 /* Cap.app */,
+				AA0000000000000000000011 /* CapTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000004 /* Cap */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000005 /* App */,
+				AA0000000000000000000006 /* MenuBar */,
+				AA0000000000000000000007 /* Support */,
+				AA0000000000000000000008 /* Resources */,
+			);
+			path = Cap;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000005 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000020 /* CapApp.swift */,
+				AA0000000000000000000021 /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000006 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000022 /* MenuBarController.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000007 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000023 /* Logging.swift */,
+				AA0000000000000000000025 /* AppInfo.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000008 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000024 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000009 /* CapTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000026 /* AppInfoTests.swift */,
+			);
+			path = CapTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA0000000000000000000050 /* Cap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Cap" */;
+			buildPhases = (
+				AA0000000000000000000040 /* Sources */,
+				AA0000000000000000000041 /* Frameworks */,
+				AA0000000000000000000042 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Cap;
+			productName = Cap;
+			productReference = AA0000000000000000000010 /* Cap.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA0000000000000000000051 /* CapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0000000000000000000062 /* Build configuration list for PBXNativeTarget "CapTests" */;
+			buildPhases = (
+				AA0000000000000000000043 /* Sources */,
+				AA0000000000000000000044 /* Frameworks */,
+				AA0000000000000000000045 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA0000000000000000000080 /* PBXTargetDependency */,
+			);
+			name = CapTests;
+			productName = CapTests;
+			productReference = AA0000000000000000000011 /* CapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0000000000000000000090 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					AA0000000000000000000050 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					AA0000000000000000000051 = {
+						TestTargetID = AA0000000000000000000050;
+					};
+				};
+			};
+			buildConfigurationList = AA0000000000000000000060 /* Build configuration list for PBXProject "Cap" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0000000000000000000002;
+			productRefGroup = AA0000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0000000000000000000050 /* Cap */,
+				AA0000000000000000000051 /* CapTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000042 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0000000000000000000045 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000040 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000030 /* CapApp.swift in Sources */,
+				AA0000000000000000000031 /* AppDelegate.swift in Sources */,
+				AA0000000000000000000032 /* MenuBarController.swift in Sources */,
+				AA0000000000000000000033 /* Logging.swift in Sources */,
+				AA0000000000000000000034 /* AppInfo.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0000000000000000000043 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000035 /* AppInfoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA0000000000000000000080 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA0000000000000000000050 /* Cap */;
+			targetProxy = AA0000000000000000000081 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AA0000000000000000000070 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		AA0000000000000000000072 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Cap/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bruce.cap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000073 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Cap/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bruce.cap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		AA0000000000000000000074 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bruce.cap.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cap.app/Contents/MacOS/Cap";
+			};
+			name = Debug;
+		};
+		AA0000000000000000000075 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bruce.cap.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cap.app/Contents/MacOS/Cap";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA0000000000000000000060 /* Build configuration list for PBXProject "Cap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000070 /* Debug */,
+				AA0000000000000000000071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0000000000000000000061 /* Build configuration list for PBXNativeTarget "Cap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000072 /* Debug */,
+				AA0000000000000000000073 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0000000000000000000062 /* Build configuration list for PBXNativeTarget "CapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000074 /* Debug */,
+				AA0000000000000000000075 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA0000000000000000000090 /* Project object */;
+}

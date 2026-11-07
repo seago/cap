@@ -1,7 +1,7 @@
 # 01 · 工程骨架与菜单栏 App
 
 Milestone: M0
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by:
 Type: feature
 
@@ -11,9 +11,9 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `xcodebuild -project Cap.xcodeproj -scheme Cap -configuration Debug build` 退出码 0
-- [ ] [auto] 构建产物 Info.plist 中 `LSUIElement = YES`、`CFBundleIdentifier = dev.bruce.cap`、`CFBundleShortVersionString = 0.1.0`、`LSMinimumSystemVersion = 15.2`
-- [ ] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过，至少 1 个 Swift Testing 用例
+- [x] [auto] `xcodebuild -project Cap.xcodeproj -scheme Cap -configuration Debug build` 退出码 0
+- [x] [auto] 构建产物 Info.plist 中 `LSUIElement = YES`、`CFBundleIdentifier = dev.bruce.cap`、`CFBundleShortVersionString = 0.1.0`、`LSMinimumSystemVersion = 15.2`
+- [x] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过，至少 1 个 Swift Testing 用例
 - [ ] [manual] 启动 `.app` 后菜单栏出现 Cap 图标；Dock 无图标；菜单里的「退出 Cap」可退出
 
 ## Scope
@@ -23,6 +23,7 @@ In:
 - `Cap.xcodeproj`（手写 pbxproj，本机无 xcodegen / tuist）
 - `Cap/App/CapApp.swift`、`Cap/App/AppDelegate.swift`、`Cap/MenuBar/MenuBarController.swift`
 - `Cap/Support/Logging.swift`（OSLog，subsystem `dev.bruce.cap`，分类 capture / selection / editor / history）
+- `Cap/Support/AppInfo.swift`（bundle id / 版本常量，供单测与日志复用）
 - `Cap/Resources/Info.plist`
 - `CapTests/AppInfoTests.swift`
 - shared scheme `Cap`
@@ -40,6 +41,7 @@ Out:
 - `Cap/App/AppDelegate.swift`
 - `Cap/MenuBar/MenuBarController.swift`
 - `Cap/Support/Logging.swift`
+- `Cap/Support/AppInfo.swift`
 - `Cap/Resources/Info.plist`
 - `CapTests/AppInfoTests.swift`
 
@@ -49,3 +51,11 @@ Out:
 - App Sandbox 关闭；`LSUIElement = YES`
 - Debug 用 ad-hoc 签名即可；稳定签名在 #06
 - 菜单栏图标先用 SF Symbol（如 `camera.viewfinder`），图标设计不在本 ticket
+
+## Runs
+
+### 2026-11-08 02:34 · run 1
+
+- Auto: build ✅ / test 1 passed ✅ / Info.plist 4 keys ✅ / ad-hoc signature ✅
+- Manual pending: 启动 `Cap.app` 看菜单栏图标、Dock 隐藏、退出菜单
+- Environment: `xcodebuild` 首次运行缺 CoreSimulator，已执行 `xcodebuild -runFirstLaunch` 修复
