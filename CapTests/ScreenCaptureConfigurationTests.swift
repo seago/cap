@@ -37,3 +37,27 @@ import Testing
         try await service.capture(region: CGRect(x: 10, y: 10, width: 0, height: 0))
     }
 }
+
+@Test @MainActor func everyCapturePathFailsFastWithoutPermission() async {
+    let service = ScreenCaptureService(permissionCheck: { false })
+
+    await #expect(throws: CaptureError.permissionDenied) {
+        try await service.capture(region: CGRect(x: 0, y: 0, width: 100, height: 100))
+    }
+    await #expect(throws: CaptureError.permissionDenied) {
+        try await service.capture(CaptureRequest(displayID: 1))
+    }
+    await #expect(throws: CaptureError.permissionDenied) {
+        try await service.capture(windowID: 1)
+    }
+}
+
+@Test @MainActor func captureErrorsHaveUserFacingDescriptions() {
+    let errors: [CaptureError] = [
+        .permissionDenied, .displayNotFound, .windowNotFound,
+        .invalidRegion, .captureFailed, .encodingFailed, .clipboardWriteFailed,
+    ]
+    for error in errors {
+        #expect(error.errorDescription?.isEmpty == false)
+    }
+}

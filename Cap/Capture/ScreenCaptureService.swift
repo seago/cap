@@ -15,6 +15,12 @@ struct CaptureOptions: Equatable, Sendable {
 
 @MainActor
 final class ScreenCaptureService {
+    private let permissionCheck: () -> Bool
+
+    init(permissionCheck: @escaping () -> Bool = { CGPreflightScreenCaptureAccess() }) {
+        self.permissionCheck = permissionCheck
+    }
+
     // MARK: - 全屏
 
     func capture(_ request: CaptureRequest) async throws -> CGImage {
@@ -32,7 +38,7 @@ final class ScreenCaptureService {
 
     /// 区域截取：`rect` 使用 CoreGraphics 全局屏幕坐标（点，原点主屏左上，跨显示器）。
     func capture(region: CGRect) async throws -> CGImage {
-        guard CGPreflightScreenCaptureAccess() else {
+        guard permissionCheck() else {
             throw CaptureError.permissionDenied
         }
         guard region.width >= 1, region.height >= 1 else {
@@ -86,7 +92,7 @@ final class ScreenCaptureService {
     // MARK: - 辅助
 
     private func shareableContent() async throws -> SCShareableContent {
-        guard CGPreflightScreenCaptureAccess() else {
+        guard permissionCheck() else {
             throw CaptureError.permissionDenied
         }
         do {
