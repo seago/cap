@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let screenCaptureService = ScreenCaptureService()
     private let clipboardWriter = ClipboardWriter()
+    private let historyStore = HistoryStore()
     private var isCapturing = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -52,10 +53,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             let image = try await screenCaptureService.capture(CaptureRequest(displayID: displayID))
             try clipboardWriter.write(image)
+            recordHistory(for: image, displayID: displayID)
             Log.capture.notice("Captured display \(displayID, privacy: .public), \(image.width)x\(image.height) px")
         } catch {
             Log.capture.error("Capture failed: \(error.localizedDescription, privacy: .public)")
             presentCaptureError(error)
+        }
+    }
+
+    /// 截图进剪贴板后写入历史；历史失败不应让已成功的截图变成失败。
+    private func recordHistory(for image: CGImage, displayID: CGDirectDisplayID) {
+        do {
+            let item = try historyStore.append(image, source: .display(displayID))
+            Log.history.notice("Inserted history item \(item.id.uuidString, privacy: .public) (\(image.width, privacy: .public)x\(image.height, privacy: .public) px)")
+        } catch {
+            Log.history.error("Failed to insert history item: \(error.localizedDescription, privacy: .public)")
         }
     }
 

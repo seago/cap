@@ -1,7 +1,7 @@
 # 05 · 最小历史存储
 
 Milestone: M0
-Status: ready-for-agent
+Status: done
 Blocked by: 04
 Type: feature
 
@@ -11,11 +11,11 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `HistoryStore` 单测：append → load 回同一条；索引原子写（临时文件 + rename）；索引损坏时从 `images/` 重建
-- [ ] [auto] 图片文件写入 `images/{uuid}.png`，PNG 可解码
-- [ ] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过
-- [ ] [manual] 截图后 History 目录出现 `index.json` 与一张 PNG
-- [ ] [manual] 退出并重启 App，历史仍能读到（日志或调试输出即可）
+- [x] [auto] `HistoryStore` 单测：append → load 回同一条；索引原子写（临时文件 + rename）；索引损坏时从 `images/` 重建
+- [x] [auto] 图片文件写入 `images/{uuid}.png`，PNG 可解码
+- [x] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过
+- [x] [manual] 截图后 History 目录出现 `index.json` 与一张 PNG
+- [x] [manual] 退出并重启 App，历史仍能读到（日志或调试输出即可）
 
 ## Scope
 
@@ -41,3 +41,12 @@ Out:
 
 - 目录与字段按 `DESIGN.md` §6.1
 - 本 milestone 只保证「先存一张」可用；剪枝和缩略图留给 M3
+
+## Runs
+
+### 2026-11-08 03:21 · run 1
+
+- Auto: build ✅ / test 19 passed ✅（新增 7 个 HistoryStore 用例；全部临时目录）
+- Manual: 截图后 `~/Library/Application Support/Cap/History/` 出现 `index.json`（2 条，新到旧）+ `images/{uuid}.png`（sips 确认 1920x1200）✅
+- Manual: 退出重启后日志 `Loaded 2 history item(s)` ✅
+- Deviations: `createdAt` 用 Foundation 默认 Date 编码以保精度；索引重建无法恢复 source/isAnnotated（`.unknown`/false）；`HistorySource` 为持久化枚举，M1 `CaptureSource` 落地时需收敛

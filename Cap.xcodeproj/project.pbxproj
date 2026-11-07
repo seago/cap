@@ -23,6 +23,9 @@
 		BB0000000000000000000013 /* ClipboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000003 /* ClipboardWriter.swift */; };
 		BB0000000000000000000014 /* ImageEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000004 /* ImageEncoder.swift */; };
 		BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000005 /* ClipboardWriterTests.swift */; };
+		CC0000000000000000000011 /* HistoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000001 /* HistoryItem.swift */; };
+		CC0000000000000000000012 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000002 /* HistoryStore.swift */; };
+		CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000003 /* HistoryStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +58,9 @@
 		BB0000000000000000000003 /* ClipboardWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardWriter.swift; sourceTree = "<group>"; };
 		BB0000000000000000000004 /* ImageEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEncoder.swift; sourceTree = "<group>"; };
 		BB0000000000000000000005 /* ClipboardWriterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardWriterTests.swift; sourceTree = "<group>"; };
+		CC0000000000000000000001 /* HistoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItem.swift; sourceTree = "<group>"; };
+		CC0000000000000000000002 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
+		CC0000000000000000000003 /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +108,7 @@
 				AA000000000000000000000B /* Permissions */,
 				BB0000000000000000000021 /* Capture */,
 				BB0000000000000000000022 /* Output */,
+				CC0000000000000000000021 /* History */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
 			);
@@ -160,6 +167,15 @@
 			path = Output;
 			sourceTree = "<group>";
 		};
+		CC0000000000000000000021 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				CC0000000000000000000001 /* HistoryItem.swift */,
+				CC0000000000000000000002 /* HistoryStore.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
 		AA0000000000000000000007 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +200,7 @@
 				AA0000000000000000000028 /* HotKeyTests.swift */,
 				AA000000000000000000002B /* ScreenRecordingPermissionTests.swift */,
 				BB0000000000000000000005 /* ClipboardWriterTests.swift */,
+				CC0000000000000000000003 /* HistoryStoreTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -297,6 +314,8 @@
 				BB0000000000000000000012 /* ScreenCaptureService.swift in Sources */,
 				BB0000000000000000000013 /* ClipboardWriter.swift in Sources */,
 				BB0000000000000000000014 /* ImageEncoder.swift in Sources */,
+				CC0000000000000000000011 /* HistoryItem.swift in Sources */,
+				CC0000000000000000000012 /* HistoryStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +327,7 @@
 				AA0000000000000000000037 /* HotKeyTests.swift in Sources */,
 				AA000000000000000000003A /* ScreenRecordingPermissionTests.swift in Sources */,
 				BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */,
+				CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
