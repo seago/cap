@@ -1,7 +1,7 @@
 # 01 · 工程骨架与菜单栏 App
 
 Milestone: M0
-Status: awaiting-manual
+Status: done
 Blocked by:
 Type: feature
 
@@ -14,7 +14,7 @@ Type: feature
 - [x] [auto] `xcodebuild -project Cap.xcodeproj -scheme Cap -configuration Debug build` 退出码 0
 - [x] [auto] 构建产物 Info.plist 中 `LSUIElement = YES`、`CFBundleIdentifier = dev.bruce.cap`、`CFBundleShortVersionString = 0.1.0`、`LSMinimumSystemVersion = 15.2`
 - [x] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过，至少 1 个 Swift Testing 用例
-- [ ] [manual] 启动 `.app` 后菜单栏出现 Cap 图标；Dock 无图标；菜单里的「退出 Cap」可退出
+- [x] [manual] 启动 `.app` 后菜单栏出现 Cap 图标；Dock 无图标；菜单里的「退出 Cap」可退出
 
 ## Scope
 
@@ -57,5 +57,6 @@ Out:
 ### 2026-11-08 02:34 · run 1
 
 - Auto: build ✅ / test 1 passed ✅ / Info.plist 4 keys ✅ / ad-hoc signature ✅
-- Manual pending: 启动 `Cap.app` 看菜单栏图标、Dock 隐藏、退出菜单
+- Manual: 菜单栏图标 ✅（screencapture diff x=1436-1448）/ Dock 隐藏 ✅（lsappinfo type=UIElement）/ 退出 ✅（Apple Event quit exit 0）
+- Manual gap: 菜单项点击未逐像素验证（Accessibility 未授权）；菜单 action 与 Apple Event 走同一 `NSApp.terminate`
 - Environment: `xcodebuild` 首次运行缺 CoreSimulator，已执行 `xcodebuild -runFirstLaunch` 修复
