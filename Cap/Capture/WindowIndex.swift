@@ -69,6 +69,16 @@ struct WindowIndex: Equatable, Sendable {
         CGPoint(x: point.x, y: mainScreenHeight - point.y)
     }
 
+    /// 把 AppKit 屏幕矩形（原点左下）转换为 CoreGraphics 全局矩形（原点左上）。
+    static func cgRect(fromScreenRect rect: CGRect, mainScreenHeight: CGFloat) -> CGRect {
+        CGRect(
+            x: rect.origin.x,
+            y: mainScreenHeight - rect.maxY,
+            width: rect.width,
+            height: rect.height
+        )
+    }
+
     /// 把 CoreGraphics 全局矩形转换为 AppKit 屏幕坐标（原点左下）。
     static func screenRect(fromCGRect rect: CGRect, mainScreenHeight: CGFloat) -> CGRect {
         CGRect(

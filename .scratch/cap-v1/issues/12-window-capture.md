@@ -1,7 +1,7 @@
 # 12 · 窗口截取
 
 Milestone: M1
-Status: awaiting-manual
+Status: done
 Blocked by: 10
 Type: feature
 
@@ -13,8 +13,8 @@ Type: feature
 
 - [x] [auto] build + 既有测试通过
 - [x] [auto] 阴影配置：默认 `ignoreShadowsSingleWindow = false`，Option 时为 true（可单测配置构造）
-- [ ] [manual] 单击 Safari 窗口 → 剪贴板图片为该窗口，带阴影、无灰罩、无 Cap UI
-- [ ] [manual] Option 单击同一窗口 → 图片无阴影
+- [x] [manual] 单击 Safari 窗口 → 剪贴板图片为该窗口，带阴影、无灰罩、无 Cap UI
+- [x] [manual] Option 单击同一窗口 → 图片无阴影
 
 ## Scope
 
@@ -43,5 +43,7 @@ Out:
 
 ### 2026-11-08 03:44 · run 1
 
-- Auto: build ✅ / test 42 passed ✅（新增 CaptureOptions 与配置构造用例）
-- Manual pending: window 截取要等 #13 覆盖层接线后才能做端到端验证
+- Auto: build ✅ / test 44 passed ✅（窗口配置阴影开关用例）
+- Manual: 单击 DSH 窗口 → 剪贴板 1280x820，日志 `Captured window 12097`，带阴影 ✅
+- Manual: Option 单击同一窗口 → 同尺寸但 PNG 更小（260KB vs 445KB），无阴影 ✅
+- Manual: 截图不含覆盖层与 Cap 自身 UI ✅

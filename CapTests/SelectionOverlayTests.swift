@@ -61,3 +61,29 @@ import Testing
     controller.setCursorPointForTesting(CGPoint(x: 10, y: 10))
     #expect(controller.canvasViews[0].cursorPoint == CGPoint(x: 10, y: 10))
 }
+
+@MainActor
+@Test func simulateSelectDismissesAndDeliversTargetAndOptions() {
+    let controller = SelectionOverlayController()
+    var received: (SelectionTarget, CaptureOptions)?
+    controller.onSelect = { target, options in received = (target, options) }
+
+    controller.present()
+    controller.simulateSelect(.region(CGRect(x: 0, y: 0, width: 10, height: 10)), options: .windowDefault)
+
+    #expect(controller.isPresented == false)
+    #expect(received?.0 == .region(CGRect(x: 0, y: 0, width: 10, height: 10)))
+    #expect(received?.1 == .windowDefault)
+}
+
+@MainActor
+@Test func simulateSelectPassesShadowOption() {
+    let controller = SelectionOverlayController()
+    var receivedOptions: CaptureOptions?
+    controller.onSelect = { _, options in receivedOptions = options }
+
+    controller.present()
+    controller.simulateSelect(.window(7), options: .windowWithoutShadow)
+
+    #expect(receivedOptions == .windowWithoutShadow)
+}

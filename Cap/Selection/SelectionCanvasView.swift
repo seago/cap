@@ -2,18 +2,28 @@ import AppKit
 
 /// 选区覆盖层的绘制与鼠标处理。
 ///
-/// M1 阶段：压暗 + 挖孔 + 十字准星 + 尺寸标签。
-/// 拖动 / 单击 / 空格 / Enter 的完整接线在 #13。
+/// 负责：压暗 + 挖孔 + 十字准星 + 尺寸标签 + 窗口高亮。
+/// 交互状态由 `SelectionOverlayController` 驱动的 `SelectionModel` 决定，本视图只负责显示。
 final class SelectionCanvasView: NSView {
     /// 当前鼠标位置（视图坐标，原点左下）。nil 表示尚未移动。
     private(set) var cursorPoint: CGPoint?
 
-    /// 当前拖动矩形（视图坐标）；由控制器注入，供绘制。
+    /// 当前拖动矩形（视图坐标）。
     var selectionRect: CGRect? {
         didSet { needsDisplay = true }
     }
 
-    /// 拖动未开始时显示的挖孔半径。
+    /// 当前悬停窗口的矩形（视图坐标）。
+    var highlightRect: CGRect? {
+        didSet { needsDisplay = true }
+    }
+
+    /// 是否处于窗口模式（影响挖孔显示）。
+    var isWindowMode = false {
+        didSet { needsDisplay = true }
+    }
+
+    /// 未拖动时挖孔半径。
     private let holeRadius: CGFloat = 60
 
     override var acceptsFirstResponder: Bool { true }
@@ -26,10 +36,10 @@ final class SelectionCanvasView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
 
+        let holeRect: CGRect? = selectionRect ?? highlightRect ?? holeRectAroundCursor()
+
         let maskPath = CGMutablePath()
         maskPath.addRect(bounds)
-
-        let holeRect: CGRect? = selectionRect ?? holeRectAroundCursor()
         if let holeRect {
             maskPath.addRect(holeRect)
         }
@@ -42,7 +52,7 @@ final class SelectionCanvasView: NSView {
 
         drawSelectionBorder(holeRect)
         drawCrosshair(in: context)
-        drawSizeLabel(for: holeRect)
+        drawSizeLabel(for: selectionRect)
     }
 
     private func holeRectAroundCursor() -> CGRect? {
@@ -113,23 +123,18 @@ final class SelectionCanvasView: NSView {
     // MARK: - 鼠标
 
     override func mouseMoved(with event: NSEvent) {
-        updateCursor(to: convert(event.locationInWindow, from: nil))
-    }
-
-    override func mouseDragged(with event: NSEvent) {
-        updateCursor(to: convert(event.locationInWindow, from: nil))
+        updateCursorPoint(convert(event.locationInWindow, from: nil))
     }
 
     override func mouseDown(with event: NSEvent) {
-        updateCursor(to: convert(event.locationInWindow, from: nil))
+        updateCursorPoint(convert(event.locationInWindow, from: nil))
     }
 
-    private func updateCursor(to point: CGPoint) {
-        cursorPoint = point
-        needsDisplay = true
+    override func mouseDragged(with event: NSEvent) {
+        updateCursorPoint(convert(event.locationInWindow, from: nil))
     }
 
-    /// 由控制器调用：跟随全局鼠标位置更新挖孔。
+    /// 更新光标位置并重绘。
     func updateCursorPoint(_ point: CGPoint) {
         cursorPoint = point
         needsDisplay = true
