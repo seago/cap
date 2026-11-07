@@ -1,0 +1,52 @@
+{
+  "round": 1,
+  "source": "screenshot-app-design-interview",
+  "answers": {
+    "q1": {
+      "value": "self",
+      "label": "先做自用工具",
+      "extra": ""
+    },
+    "q2": {
+      "value": "fast-annotate",
+      "label": "快 + 就地标注",
+      "extra": ""
+    },
+    "q3": {
+      "value": "native14",
+      "label": "原生 Swift 6，最低 macOS 14",
+      "extra": ""
+    },
+    "q4": {
+      "value": "menubar-overlay",
+      "label": "菜单栏常驻 + 自绘全屏选区层",
+      "extra": ""
+    },
+    "q5": {
+      "value": "clipboard-editor",
+      "label": "立即复制到剪贴板 + 浮出轻量编辑面板",
+      "extra": ""
+    },
+    "q6": {
+      "value": "standard",
+      "label": "标准 v1",
+      "extra": "",
+      "addons": [
+        "scroll",
+        "ocr",
+        "pin",
+        "upload"
+      ],
+      "addonLabels": [
+        "滚动长截图",
+        "OCR 文字识别",
+        "贴图钉屏",
+        "上传 / 分享"
+      ]
+    }
+  },
+  "note": "",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "submittedAt": "2026-11-07T17:18:37.940Z",
+  "receivedAt": "2026-11-08T01:18:37+08:00"
+}

@@ -1,0 +1,40 @@
+{
+  "round": 2,
+  "source": "screenshot-app-design-interview",
+  "answers": {
+    "q1": {
+      "value": "smart",
+      "label": "单快捷键 + 智能悬停",
+      "extra": ""
+    },
+    "q2": {
+      "value": "inline-bar",
+      "label": "选区旁的浮动工具条（就地编辑）",
+      "extra": ""
+    },
+    "q3": {
+      "value": "standard",
+      "label": "标准组",
+      "extra": ""
+    },
+    "q4": {
+      "value": "manual",
+      "label": "复制 + 手动保存",
+      "extra": ""
+    },
+    "q5": {
+      "value": "auto-library",
+      "label": "应用内自动历史库",
+      "extra": ""
+    },
+    "q6": {
+      "value": "xcode",
+      "label": "Xcode 项目 + 本机运行",
+      "extra": ""
+    }
+  },
+  "note": "",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "submittedAt": "2026-11-07T17:23:58.878Z",
+  "receivedAt": "2026-11-08T01:23:58+08:00"
+}

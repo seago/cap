@@ -1,0 +1,40 @@
+{
+  "round": 4,
+  "source": "screenshot-app-design-interview",
+  "answers": {
+    "q1": {
+      "value": "cap",
+      "label": "Cap",
+      "extra": ""
+    },
+    "q2": {
+      "value": "system",
+      "label": "系统质感",
+      "extra": ""
+    },
+    "q3": {
+      "value": "100-auto",
+      "label": "最近 100 张，自动清理",
+      "extra": ""
+    },
+    "q4": {
+      "value": "popover",
+      "label": "菜单栏下拉面板",
+      "extra": ""
+    },
+    "q5": {
+      "value": "install",
+      "label": "打包 .app 放 /Applications + 开机自启",
+      "extra": ""
+    },
+    "q6": {
+      "value": "week",
+      "label": "连续一周日常使用",
+      "extra": ""
+    }
+  },
+  "note": "",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "submittedAt": "2026-11-07T17:29:54.885Z",
+  "receivedAt": "2026-11-08T01:29:54+08:00"
+}

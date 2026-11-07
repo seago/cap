@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>截图 App · 设计访谈 第 1 轮</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230071e3'/%3E%3Cpath d='M6 9h2.2l1-1.6h5.6l1 1.6H18v8H6z' fill='none' stroke='white' stroke-width='1.4' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='13' r='2.2' fill='none' stroke='white' stroke-width='1.4'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --panel: #ffffff;
+    --panel-2: #fafafc;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #e5e5ea;
+    --line-strong: #d2d2d9;
+    --accent: #0071e3;
+    --accent-ink: #0062c4;
+    --accent-soft: rgba(0, 113, 227, .08);
+    --accent-line: rgba(0, 113, 227, .5);
+    --rec: #0b8a5b;
+    --rec-soft: rgba(11, 138, 91, .1);
+    --control-border: #b9b9c1;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 10px 30px rgba(0, 0, 0, .05);
+    --bar-shadow: 0 10px 40px rgba(0, 0, 0, .16);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0e;
+      --panel: #17171a;
+      --panel-2: #1c1c20;
+      --text: #f5f5f7;
+      --muted: #a1a1a8;
+      --line: #2b2b31;
+      --line-strong: #3b3b43;
+      --accent: #0a84ff;
+      --accent-ink: #5aa9ff;
+      --accent-soft: rgba(10, 132, 255, .12);
+      --accent-line: rgba(10, 132, 255, .6);
+      --rec: #34c98a;
+      --rec-soft: rgba(52, 201, 138, .13);
+      --control-border: #5a5a63;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 18px 50px rgba(0, 0, 0, .35);
+      --bar-shadow: 0 12px 50px rgba(0, 0, 0, .55);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: light dark; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    padding: 0 24px 150px;
+    background:
+      radial-gradient(1100px 460px at 50% -220px, var(--accent-soft), transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent-ink); }
+
+  .topbar, main { max-width: 860px; margin-inline: auto; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 30px 4px 22px;
+  }
+  .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+  .brand-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 13px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+  }
+  .brand-icon svg { width: 22px; height: 22px; }
+  .brand h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+  .brand p { margin: 1px 0 0; font-size: 12.5px; color: var(--muted); }
+  .ghost-link {
+    flex: none;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .ghost-link:hover { color: var(--accent-ink); border-color: var(--line); background: var(--panel); }
+
+  .intro {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .intro ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 11px;
+    counter-reset: step;
+  }
+  .intro li {
+    display: flex;
+    gap: 11px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    counter-increment: step;
+  }
+  .intro li::before {
+    content: counter(step);
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+  }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .intro code {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    word-break: break-all;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 24px 20px;
+    margin-bottom: 16px;
+  }
+  .card-head { display: flex; align-items: center; gap: 8px; }
+  .num {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: var(--accent);
+  }
+  .tag {
+    font-size: 11px;
+    letter-spacing: .03em;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .card h2 {
+    margin: 9px 0 6px;
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -.015em;
+    line-height: 1.35;
+  }
+  .card .desc { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--muted); max-width: 68ch; }
+
+  .options { display: grid; gap: 9px; margin-top: 17px; }
+  .opt {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: var(--panel-2);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, box-shadow .15s, transform .15s;
+  }
+  .opt:hover { border-color: var(--line-strong); }
+  .opt:active { transform: scale(.995); }
+  .opt.is-selected {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px var(--accent-line);
+  }
+  .opt input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .control {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border-radius: 50%;
+    border: 1.5px solid var(--control-border);
+    display: grid;
+    place-items: center;
+    transition: border-color .15s;
+  }
+  .opt.is-selected .control { border-color: var(--accent); }
+  .control::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform .14s cubic-bezier(.2, .8, .3, 1.2);
+  }
+  .opt.is-selected .control::after { transform: scale(1); }
+  .opt-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .opt-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .opt.is-selected .opt-title { color: var(--text); }
+  .badge {
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: .02em;
+    color: var(--rec);
+    background: var(--rec-soft);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+  .opt-desc { font-size: 13px; line-height: 1.55; color: var(--muted); }
+  .opt:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft), inset 0 0 0 1px var(--accent-line); }
+
+  .addons { margin-top: 17px; }
+  .addons-title { margin: 0 0 9px; font-size: 12.5px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .chip:hover { border-color: var(--line-strong); color: var(--text); }
+  .chip input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .chip.is-selected {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 550;
+  }
+  .chip:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .extra-wrap { margin-top: 15px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .extra-wrap summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--muted);
+    width: fit-content;
+    transition: color .15s;
+  }
+  .extra-wrap summary::-webkit-details-marker { display: none; }
+  .extra-wrap summary::before { content: "＋ "; color: var(--accent); font-weight: 600; }
+  .extra-wrap[open] summary::before { content: "－ "; }
+  .extra-wrap summary:hover { color: var(--text); }
+  .extra-wrap textarea,
+  .note-card textarea {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    resize: vertical;
+    min-height: 56px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .extra-wrap textarea:focus,
+  .note-card textarea:focus {
+    outline: none;
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .extra-wrap textarea::placeholder,
+  .note-card textarea::placeholder { color: var(--muted); opacity: .8; }
+
+  .note-card h2 { margin-top: 6px; }
+  .note-card .desc { margin-bottom: 2px; }
+
+  .foot {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--muted);
+    opacity: .8;
+  }
+
+  .submitbar {
+    position: fixed;
+    z-index: 20;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    width: min(820px, calc(100vw - 32px));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 14px 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--panel) 82%, transparent);
+    -webkit-backdrop-filter: blur(26px) saturate(1.7);
+    backdrop-filter: blur(26px) saturate(1.7);
+    box-shadow: var(--bar-shadow);
+  }
+  .bar-copy { min-width: 0; }
+  .bar-copy strong { display: block; font-size: 13px; font-weight: 600; }
+  .bar-copy span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .bar-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+  .bar-error { color: #d22b2b; font-size: 12px; margin-top: 3px; }
+  @media (prefers-color-scheme: dark) { .bar-error { color: #ff6961; } }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 10px 17px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .15s, border-color .15s, color .15s, filter .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { filter: brightness(1.07); }
+  .btn.ghost-btn { background: transparent; border-color: var(--line); color: var(--text); }
+  .btn.ghost-btn:hover { background: var(--panel-2); border-color: var(--line-strong); }
+  .btn:disabled { opacity: .55; cursor: default; transform: none; filter: none; }
+  .btn:focus-visible, .ghost-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .success {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 40px 30px 30px;
+    text-align: center;
+    max-width: 680px;
+    margin: 12px auto 0;
+  }
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--rec);
+    background: var(--rec-soft);
+  }
+  .success-icon svg { width: 30px; height: 30px; }
+  .success h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -.02em; }
+  .success-sub { margin: 0 auto 22px; font-size: 13.5px; color: var(--muted); line-height: 1.65; max-width: 46ch; }
+  .success-sub code {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    word-break: break-all;
+  }
+  .summary {
+    list-style: none;
+    margin: 0 auto 24px;
+    padding: 0;
+    text-align: left;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+  }
+  .summary li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--panel);
+    font-size: 13px;
+  }
+  .summary .sq { flex: none; width: 118px; color: var(--muted); font-size: 11.5px; }
+  .summary .sa { font-weight: 550; }
+  .summary .sa em { display: block; font-style: normal; font-weight: 400; font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .success-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+
+  .toast {
+    position: fixed;
+    z-index: 40;
+    left: 50%;
+    bottom: 92px;
+    transform: translate(-50%, 8px);
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 12.5px;
+    font-weight: 550;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 640px) {
+    body { padding: 0 14px 180px; }
+    .topbar { padding: 20px 2px 16px; }
+    .brand h1 { font-size: 15.5px; }
+    .brand p { font-size: 11.5px; }
+    .ghost-link { display: none; }
+    .card { padding: 18px 16px 16px; }
+    .intro { padding: 17px 16px; }
+    .opt { padding: 12px 13px; }
+    .submitbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 13px 14px;
+      bottom: 12px;
+    }
+    .bar-actions { justify-content: stretch; }
+    .bar-actions .btn { flex: 1; }
+    .summary li { flex-direction: column; gap: 2px; }
+    .summary .sq { width: auto; }
+    .success { padding: 30px 18px 24px; }
+    .success-actions .btn { flex: 1 1 auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8.5h3l1.4-2.2h9.2L18 8.5h3v10H3z"/>
+        <circle cx="12" cy="13" r="3.4"/>
+      </svg>
+    </span>
+    <div>
+      <h1>截图 App · 设计访谈</h1>
+      <p>第 1 轮 · 6 个根决策</p>
+    </div>
+  </div>
+  <a class="ghost-link" href="http://127.0.0.1:55456" target="_blank" rel="noreferrer">回到对话 ↗</a>
+</header>
+
+<main>
+  <section class="intro" id="intro">
+    <ol>
+      <li><span>先查了环境：仓库还是空的，机器是 <strong>macOS 27.2 · Xcode 27.2 · Swift 6.4.2</strong>，原生路线零环境成本。</span></li>
+      <li><span>这是设计树的第 1 层。<strong>推荐答案已经预选</strong> —— 直接提交等于全部采纳，不同意就点别的，或展开“补充”写理由。</span></li>
+      <li><span>提交后答案写到本机 <code>.grill/round1/answers-round1.json</code>，我会据此把树推到下一层：权限、分发、存储、架构与里程碑。</span></li>
+    </ol>
+  </section>
+
+  <form id="quiz" novalidate></form>
+
+  <section class="card note-card" id="noteCard">
+    <div class="card-head"><span class="num">＋</span><span class="tag">开放补充</span></div>
+    <h2>你现在怎么截图？最烦的一步是什么？</h2>
+    <p class="desc">选填。这段背景往往比选项本身更有用，会直接影响下一轮的问题。</p>
+    <textarea id="note" rows="3" placeholder="比如：现在用 ⌘⇧4，然后去预览里裁剪、加箭头，最后手动存到桌面…"></textarea>
+  </section>
+
+  <p class="foot" id="foot">答案只保存在本机工作区 · 不上传、不联网</p>
+</main>
+
+<div class="submitbar" id="submitbar">
+  <div class="bar-copy">
+    <strong>已按推荐预选 6 / 6</strong>
+    <span>可直接提交，也可以逐项修改</span>
+    <div class="bar-error" id="submitError" hidden></div>
+  </div>
+  <div class="bar-actions">
+    <button type="button" class="btn ghost-btn" id="resetBtn">重置</button>
+    <button type="button" class="btn primary" id="submitBtn">提交答案</button>
+  </div>
+</div>
+
+<section class="success" id="success" hidden>
+  <div class="success-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 12.6l5 5 10-11"/>
+    </svg>
+  </div>
+  <h2>答案已提交</h2>
+  <p class="success-sub">已写入 <code id="savedPath">…</code>。回到对话即可 —— 我会读取答案，继续第 2 轮。</p>
+  <ul class="summary" id="summary"></ul>
+  <div class="success-actions">
+    <button type="button" class="btn ghost-btn" id="copyBtn">复制结果 JSON</button>
+    <button type="button" class="btn ghost-btn" id="backBtn">再改一次</button>
+    <a class="btn primary" href="http://127.0.0.1:55456" target="_blank" rel="noreferrer">回到对话 ↗</a>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "q1",
+    num: "01",
+    tag: "产品定位",
+    title: "这个 App 先做给谁用？",
+    desc: "这决定了打磨程度、崩溃容忍度和分发方式。它不改变技术选型，但决定「什么时候算做完」。",
+    placeholder: "比如：只在这台机器上用 / 想先验证手感…",
+    options: [
+      { value: "self", title: "先做自用工具", desc: "自己每天用，顺手优先；代码仍按可产品化的标准写，不堵后路。", rec: true },
+      { value: "friends", title: "小范围给朋友 / 团队用", desc: "需要基本的 onboarding、错误提示和签名分发，节奏会比自用慢一档。" },
+      { value: "public", title: "准备公开产品", desc: "要考虑 App Store / 公证分发、更新器、隐私说明和竞品定位，工作量翻倍。" }
+    ]
+  },
+  {
+    id: "q2",
+    num: "02",
+    tag: "产品价值",
+    title: "差异化主轴选哪个？",
+    desc: "系统截图、CleanShot X、Shottr、Snipaste 已经覆盖了大半；挑一个你愿意长期打磨的主轴，其余当辅助。",
+    placeholder: "比如：我想要 ①+③ 的组合，但先把 ① 做顺…",
+    options: [
+      { value: "fast-annotate", title: "快 + 就地标注", desc: "一键截取 → 就地标注 → 回车即用，把最高频路径做到最顺。", rec: true },
+      { value: "pure-speed", title: "纯极速", desc: "界面越少越好，截完直接复制走人；标注交给别的工具。" },
+      { value: "beautify", title: "标注美化 / 出图好看", desc: "背景、圆角、阴影、样机边框，适合写文档和发社交平台。" },
+      { value: "scrolling", title: "滚动长截图为主", desc: "网页、聊天记录、文档长图是核心痛点，技术上也最麻烦。" },
+      { value: "ocr", title: "OCR / AI 提取为主", desc: "截完直接拿文字、表格、翻译，采集只是入口。" },
+      { value: "workflow", title: "工作流自动化为主", desc: "自动命名、归档、上传、贴图钉屏，面向重度截图用户。" }
+    ]
+  },
+  {
+    id: "q3",
+    num: "03",
+    tag: "技术基线",
+    title: "技术栈与最低系统版本？",
+    desc: "采集核心基本都会落到 ScreenCaptureKit，真正的区别在系统版本下限和 UI 层。",
+    placeholder: "比如：以后想上 iPad / 想借这个项目练 Swift…",
+    options: [
+      { value: "native14", title: "原生 Swift 6，最低 macOS 14", desc: "SCScreenshotManager 做单帧截取最省事；机器上的 Xcode 27.2 可以直接开工。", rec: true },
+      { value: "native-old", title: "原生 Swift，兼容更老系统", desc: "最低到 13 或更低，需要 SCStream 或旧 API 兼容层，多花一轮时间。" },
+      { value: "electron", title: "Electron", desc: "Web 技术栈熟悉、跨平台顺；但包体、内存、权限和采集链路都更绕。" },
+      { value: "tauri", title: "Tauri", desc: "包体小、性能好；macOS 采集仍要 Rust / Swift 桥接，并不省事。" }
+    ]
+  },
+  {
+    id: "q4",
+    num: "04",
+    tag: "交互形态",
+    title: "怎么触发截图？",
+    desc: "常驻形态和第一秒的交互，决定了它是「工具」还是「软件」。快捷键后续可配置，这里只定形态。",
+    placeholder: "比如：想用某个已有习惯的快捷键 / 希望支持外接键盘…",
+    options: [
+      { value: "menubar-overlay", title: "菜单栏常驻 + 自绘全屏选区层", desc: "无 Dock 图标，按快捷键进入选区；窗口吸附、尺寸提示、放大镜都能做。", rec: true },
+      { value: "menubar-simple", title: "菜单栏常驻 + 简单选区", desc: "先十字准星 + 拖动，不做吸附和放大镜，省一周左右。" },
+      { value: "dockapp", title: "普通 Dock App + 快捷键", desc: "像正常软件一样有窗口，实现最简单；日常使用会多一步切窗口。" },
+      { value: "hotkey-only", title: "纯快捷键，不常驻", desc: "最轻，但没有菜单栏入口，配置和状态都没地方放。" }
+    ]
+  },
+  {
+    id: "q5",
+    num: "05",
+    tag: "输出体验",
+    title: "截完之后默认做什么？",
+    desc: "截完那一秒的体验，比编辑器里有多少工具更重要。",
+    placeholder: "比如：希望默认存桌面 / 想要保存和复制同时发生…",
+    options: [
+      { value: "clipboard-editor", title: "立即复制到剪贴板 + 浮出轻量编辑面板", desc: "想直接用就 ⌘V，想标注就顺手画两笔，不打断当前工作。", rec: true },
+      { value: "save-notify", title: "直接保存到固定文件夹 + 通知", desc: "零打断，适合批量归档；想标注时还得再打开一次。" },
+      { value: "preview-editor", title: "全屏预览编辑器，确认后才复制 / 保存", desc: "最可控；但每次多一次确认，长期使用会累。" },
+      { value: "history-first", title: "先进历史图库，稍后再处理", desc: "把截图当素材库管理，适合事后整理，不适合快速取用。" }
+    ]
+  },
+  {
+    id: "q6",
+    num: "06",
+    tag: "范围与里程碑",
+    title: "v1 的功能边界划在哪？",
+    desc: "v1 越小越快落地；没选的能力不会消失，只是排到 v1.1+。下面勾选的项只影响优先级，不进 v1。",
+    placeholder: "比如：某项必须在 v1 / 有明确的上线时间…",
+    options: [
+      { value: "lean", title: "极简 MVP", desc: "区域 / 窗口 / 全屏 + 剪贴板 + 浮动编辑（裁剪、箭头、文字、保存），最快跑通闭环。" },
+      { value: "standard", title: "标准 v1", desc: "极简 MVP + 多显示器完整支持 + 最近 N 张历史 + PNG/JPEG 导出设置 + 快捷键可配置。", rec: true },
+      { value: "full", title: "全量 v1", desc: "标准 v1 + 贴图钉屏 + OCR + 上传 / 分享；周期明显拉长，容易半途。" }
+    ],
+    addons: [
+      { value: "scroll", label: "滚动长截图" },
+      { value: "record", label: "录屏 / GIF" },
+      { value: "ocr", label: "OCR 文字识别" },
+      { value: "pin", label: "贴图钉屏" },
+      { value: "upload", label: "上传 / 分享" },
+      { value: "delay", label: "延时截图" },
+      { value: "shadow", label: "窗口圆角与阴影美化" }
+    ]
+  }
+];
+
+const quiz = document.getElementById("quiz");
+const submitBtn = document.getElementById("submitBtn");
+const submitError = document.getElementById("submitError");
+const toastEl = document.getElementById("toast");
+let lastPayload = null;
+let toastTimer = null;
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function make(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function render() {
+  for (const q of QUESTIONS) {
+    const card = make("section", "card");
+    card.id = q.id + "-card";
+
+    const head = make("div", "card-head");
+    head.append(make("span", "num", q.num), make("span", "tag", q.tag));
+
+    card.append(head, make("h2", "", q.title), make("p", "desc", q.desc));
+
+    const options = make("div", "options");
+    options.setAttribute("role", "radiogroup");
+    options.setAttribute("aria-label", q.title);
+
+    for (const opt of q.options) {
+      const label = make("label", "opt");
+      label.dataset.value = opt.value;
+      label.dataset.label = opt.title;
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = q.id;
+      input.value = opt.value;
+      input.checked = Boolean(opt.rec);
+
+      const control = make("span", "control");
+      control.setAttribute("aria-hidden", "true");
+
+      const body = make("span", "opt-body");
+      const title = make("span", "opt-title", opt.title);
+      if (opt.rec) {
+        title.append(make("span", "badge", "推荐"));
+        label.classList.add("is-selected");
+      }
+      body.append(title, make("span", "opt-desc", opt.desc));
+      label.append(input, control, body);
+
+      input.addEventListener("change", () => {
+        for (const sibling of options.querySelectorAll(".opt")) {
+          sibling.classList.toggle("is-selected", sibling.dataset.value === opt.value);
+        }
+      });
+
+      options.append(label);
+    }
+    card.append(options);
+
+    if (q.addons) {
+      const wrap = make("div", "addons");
+      wrap.append(make("p", "addons-title", "希望尽快看到的能力（可多选，只影响优先级，不进 v1）"));
+      const chips = make("div", "chips");
+      for (const addon of q.addons) {
+        const chip = make("label", "chip");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = q.id + "-addon";
+        input.value = addon.value;
+        chip.append(input, document.createTextNode(addon.label));
+        input.addEventListener("change", () => chip.classList.toggle("is-selected", input.checked));
+        chips.append(chip);
+      }
+      wrap.append(chips);
+      card.append(wrap);
+    }
+
+    const details = make("details", "extra-wrap");
+    details.append(make("summary", "", "补充 / 反对意见（选填）"));
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.dataset.extra = q.id;
+    textarea.placeholder = q.placeholder || "不同意见、附加约束…";
+    details.append(textarea);
+    card.append(details);
+
+    quiz.append(card);
+  }
+}
+
+function collectAnswers() {
+  const answers = {};
+  for (const q of QUESTIONS) {
+    const checked = quiz.querySelector('input[name="' + q.id + '"]:checked');
+    const extraEl = quiz.querySelector('textarea[data-extra="' + q.id + '"]');
+    const entry = {
+      value: checked ? checked.value : null,
+      label: checked ? checked.closest(".opt").dataset.label : null,
+      extra: extraEl ? extraEl.value.trim() : ""
+    };
+    if (q.addons) {
+      const chosen = Array.from(quiz.querySelectorAll('input[name="' + q.id + '-addon"]:checked'));
+      entry.addons = chosen.map((node) => node.value);
+      entry.addonLabels = chosen.map((node) => node.closest(".chip").textContent.trim());
+    }
+    answers[q.id] = entry;
+  }
+  return answers;
+}
+
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+}
+
+function setError(message) {
+  submitError.textContent = message || "";
+  submitError.hidden = !message;
+}
+
+async function submit() {
+  setError("");
+  const answers = collectAnswers();
+  const missing = QUESTIONS.filter((q) => !answers[q.id].value).map((q) => q.tag);
+  if (missing.length) {
+    setError("还有未选择的问题：" + missing.join("、"));
+    return;
+  }
+
+  const payload = {
+    round: 1,
+    source: "screenshot-app-design-interview",
+    answers,
+    note: document.getElementById("note").value.trim(),
+    userAgent: navigator.userAgent,
+    submittedAt: new Date().toISOString()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "提交中…";
+  try {
+    const response = await fetch("/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || "服务器拒绝了这次提交");
+    lastPayload = payload;
+    showSuccess(payload, data.file);
+  } catch (error) {
+    setError("提交失败：" + error.message + "（页面和服务器是否还在运行？）");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "提交答案";
+  }
+}
+
+function showSuccess(payload, file) {
+  const pathEl = document.getElementById("savedPath");
+  pathEl.textContent = file || "answers-round1.json";
+
+  const summary = document.getElementById("summary");
+  summary.textContent = "";
+  for (const q of QUESTIONS) {
+    const answer = payload.answers[q.id];
+    if (!answer || !answer.label) continue;
+    const item = document.createElement("li");
+    const key = make("span", "sq", q.num + " · " + q.tag);
+    const value = make("span", "sa", answer.label);
+    if (answer.addonLabels && answer.addonLabels.length) {
+      const extra = document.createElement("em");
+      extra.textContent = "另希望尽快看到：" + answer.addonLabels.join("、");
+      value.append(extra);
+    }
+    item.append(key, value);
+    summary.append(item);
+  }
+
+  document.getElementById("intro").hidden = true;
+  quiz.hidden = true;
+  document.getElementById("noteCard").hidden = true;
+  document.getElementById("submitbar").hidden = true;
+  document.getElementById("foot").hidden = true;
+  document.getElementById("success").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("submitBtn").addEventListener("click", submit);
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  window.location.reload();
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!lastPayload) return;
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(lastPayload, null, 2));
+    showToast("已复制 JSON");
+  } catch {
+    showToast("复制失败，请手动选中 JSON");
+  }
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  document.getElementById("success").hidden = true;
+  document.getElementById("intro").hidden = false;
+  quiz.hidden = false;
+  document.getElementById("noteCard").hidden = false;
+  document.getElementById("submitbar").hidden = false;
+  document.getElementById("foot").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+render();
+</script>
+</body>
+</html>

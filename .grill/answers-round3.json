@@ -1,0 +1,40 @@
+{
+  "round": 3,
+  "source": "screenshot-app-design-interview",
+  "answers": {
+    "q1": {
+      "value": "all-screens",
+      "label": "覆盖所有屏幕 + 跨屏拖选",
+      "extra": ""
+    },
+    "q2": {
+      "value": "live",
+      "label": "选区冻结、其余屏幕实时",
+      "extra": ""
+    },
+    "q3": {
+      "value": "vector",
+      "label": "矢量操作栈",
+      "extra": ""
+    },
+    "q4": {
+      "value": "cmd-shift-2",
+      "label": "⌘⇧2",
+      "extra": ""
+    },
+    "q5": {
+      "value": "onboarding",
+      "label": "首次启动引导授权",
+      "extra": ""
+    },
+    "q6": {
+      "value": "vertical",
+      "label": "纵切：先能截全屏 → 选区 → 编辑",
+      "extra": ""
+    }
+  },
+  "note": "",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "submittedAt": "2026-11-07T17:27:02.965Z",
+  "receivedAt": "2026-11-08T01:27:02+08:00"
+}

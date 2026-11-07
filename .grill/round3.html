@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>截图 App · 设计访谈 第 3 轮</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230071e3'/%3E%3Cpath d='M6 9h2.2l1-1.6h5.6l1 1.6H18v8H6z' fill='none' stroke='white' stroke-width='1.4' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='13' r='2.2' fill='none' stroke='white' stroke-width='1.4'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --panel: #ffffff;
+    --panel-2: #fafafc;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #e5e5ea;
+    --line-strong: #d2d2d9;
+    --accent: #0071e3;
+    --accent-ink: #0062c4;
+    --accent-soft: rgba(0, 113, 227, .08);
+    --accent-line: rgba(0, 113, 227, .5);
+    --rec: #0b8a5b;
+    --rec-soft: rgba(11, 138, 91, .1);
+    --control-border: #b9b9c1;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 10px 30px rgba(0, 0, 0, .05);
+    --bar-shadow: 0 10px 40px rgba(0, 0, 0, .16);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0e;
+      --panel: #17171a;
+      --panel-2: #1c1c20;
+      --text: #f5f5f7;
+      --muted: #a1a1a8;
+      --line: #2b2b31;
+      --line-strong: #3b3b43;
+      --accent: #0a84ff;
+      --accent-ink: #5aa9ff;
+      --accent-soft: rgba(10, 132, 255, .12);
+      --accent-line: rgba(10, 132, 255, .6);
+      --rec: #34c98a;
+      --rec-soft: rgba(52, 201, 138, .13);
+      --control-border: #5a5a63;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 18px 50px rgba(0, 0, 0, .35);
+      --bar-shadow: 0 12px 50px rgba(0, 0, 0, .55);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { color-scheme: light dark; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    padding: 0 24px 150px;
+    background:
+      radial-gradient(1100px 460px at 50% -220px, var(--accent-soft), transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--accent-ink); }
+
+  .topbar, main { max-width: 860px; margin-inline: auto; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 30px 4px 22px;
+  }
+  .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+  .brand-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 13px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+  }
+  .brand-icon svg { width: 22px; height: 22px; }
+  .brand h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+  .brand p { margin: 1px 0 0; font-size: 12.5px; color: var(--muted); }
+  .ghost-link {
+    flex: none;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .ghost-link:hover { color: var(--accent-ink); border-color: var(--line); background: var(--panel); }
+
+  .intro {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .intro ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 11px;
+    counter-reset: step;
+  }
+  .intro li {
+    display: flex;
+    gap: 11px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    counter-increment: step;
+  }
+  .intro li::before {
+    content: counter(step);
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+  }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .intro code {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    word-break: break-all;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 24px 20px;
+    margin-bottom: 16px;
+  }
+  .card-head { display: flex; align-items: center; gap: 8px; }
+  .num {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: var(--accent);
+  }
+  .tag {
+    font-size: 11px;
+    letter-spacing: .03em;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .card h2 {
+    margin: 9px 0 6px;
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -.015em;
+    line-height: 1.35;
+  }
+  .card .desc { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--muted); max-width: 68ch; }
+
+  .options { display: grid; gap: 9px; margin-top: 17px; }
+  .opt {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: var(--panel-2);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, box-shadow .15s, transform .15s;
+  }
+  .opt:hover { border-color: var(--line-strong); }
+  .opt:active { transform: scale(.995); }
+  .opt.is-selected {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px var(--accent-line);
+  }
+  .opt input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .control {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border-radius: 50%;
+    border: 1.5px solid var(--control-border);
+    display: grid;
+    place-items: center;
+    transition: border-color .15s;
+  }
+  .opt.is-selected .control { border-color: var(--accent); }
+  .control::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform .14s cubic-bezier(.2, .8, .3, 1.2);
+  }
+  .opt.is-selected .control::after { transform: scale(1); }
+  .opt-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .opt-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .opt.is-selected .opt-title { color: var(--text); }
+  .badge {
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: .02em;
+    color: var(--rec);
+    background: var(--rec-soft);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+  .opt-desc { font-size: 13px; line-height: 1.55; color: var(--muted); }
+  .opt:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft), inset 0 0 0 1px var(--accent-line); }
+
+  .addons { margin-top: 17px; }
+  .addons-title { margin: 0 0 9px; font-size: 12.5px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .chip:hover { border-color: var(--line-strong); color: var(--text); }
+  .chip input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .chip.is-selected {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-weight: 550;
+  }
+  .chip:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .extra-wrap { margin-top: 15px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .extra-wrap summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--muted);
+    width: fit-content;
+    transition: color .15s;
+  }
+  .extra-wrap summary::-webkit-details-marker { display: none; }
+  .extra-wrap summary::before { content: "＋ "; color: var(--accent); font-weight: 600; }
+  .extra-wrap[open] summary::before { content: "－ "; }
+  .extra-wrap summary:hover { color: var(--text); }
+  .extra-wrap textarea,
+  .note-card textarea {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    resize: vertical;
+    min-height: 56px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .extra-wrap textarea:focus,
+  .note-card textarea:focus {
+    outline: none;
+    border-color: var(--accent-line);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .extra-wrap textarea::placeholder,
+  .note-card textarea::placeholder { color: var(--muted); opacity: .8; }
+
+  .note-card h2 { margin-top: 6px; }
+  .note-card .desc { margin-bottom: 2px; }
+
+  .foot {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--muted);
+    opacity: .8;
+  }
+
+  .submitbar {
+    position: fixed;
+    z-index: 20;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    width: min(820px, calc(100vw - 32px));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 14px 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--panel) 82%, transparent);
+    -webkit-backdrop-filter: blur(26px) saturate(1.7);
+    backdrop-filter: blur(26px) saturate(1.7);
+    box-shadow: var(--bar-shadow);
+  }
+  .bar-copy { min-width: 0; }
+  .bar-copy strong { display: block; font-size: 13px; font-weight: 600; }
+  .bar-copy span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .bar-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+  .bar-error { color: #d22b2b; font-size: 12px; margin-top: 3px; }
+  @media (prefers-color-scheme: dark) { .bar-error { color: #ff6961; } }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 10px 17px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .15s, border-color .15s, color .15s, filter .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { filter: brightness(1.07); }
+  .btn.ghost-btn { background: transparent; border-color: var(--line); color: var(--text); }
+  .btn.ghost-btn:hover { background: var(--panel-2); border-color: var(--line-strong); }
+  .btn:disabled { opacity: .55; cursor: default; transform: none; filter: none; }
+  .btn:focus-visible, .ghost-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .success {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 40px 30px 30px;
+    text-align: center;
+    max-width: 680px;
+    margin: 12px auto 0;
+  }
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--rec);
+    background: var(--rec-soft);
+  }
+  .success-icon svg { width: 30px; height: 30px; }
+  .success h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -.02em; }
+  .success-sub { margin: 0 auto 22px; font-size: 13.5px; color: var(--muted); line-height: 1.65; max-width: 46ch; }
+  .success-sub code {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11.5px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    word-break: break-all;
+  }
+  .summary {
+    list-style: none;
+    margin: 0 auto 24px;
+    padding: 0;
+    text-align: left;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+  }
+  .summary li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--panel);
+    font-size: 13px;
+  }
+  .summary .sq { flex: none; width: 118px; color: var(--muted); font-size: 11.5px; }
+  .summary .sa { font-weight: 550; }
+  .summary .sa em { display: block; font-style: normal; font-weight: 400; font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .success-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+
+  .toast {
+    position: fixed;
+    z-index: 40;
+    left: 50%;
+    bottom: 92px;
+    transform: translate(-50%, 8px);
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 12.5px;
+    font-weight: 550;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 640px) {
+    body { padding: 0 14px 180px; }
+    .topbar { padding: 20px 2px 16px; }
+    .brand h1 { font-size: 15.5px; }
+    .brand p { font-size: 11.5px; }
+    .ghost-link { display: none; }
+    .card { padding: 18px 16px 16px; }
+    .intro { padding: 17px 16px; }
+    .opt { padding: 12px 13px; }
+    .submitbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 13px 14px;
+      bottom: 12px;
+    }
+    .bar-actions { justify-content: stretch; }
+    .bar-actions .btn { flex: 1; }
+    .summary li { flex-direction: column; gap: 2px; }
+    .summary .sq { width: auto; }
+    .success { padding: 30px 18px 24px; }
+    .success-actions .btn { flex: 1 1 auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8.5h3l1.4-2.2h9.2L18 8.5h3v10H3z"/>
+        <circle cx="12" cy="13" r="3.4"/>
+      </svg>
+    </span>
+    <div>
+      <h1>截图 App · 设计访谈</h1>
+      <p>第 3 轮 · 体验细节与落地顺序</p>
+    </div>
+  </div>
+  <a class="ghost-link" href="http://127.0.0.1:55456" target="_blank" rel="noreferrer">回到对话 ↗</a>
+</header>
+
+<main>
+  <section class="intro" id="intro">
+    <ol>
+      <li><span>第 2 轮已确认：<strong>单快捷键智能悬停、选区旁浮动工具条、标准工具集、复制 + 手动保存、应用内自动历史、Xcode 项目本机运行</strong>。</span></li>
+      <li><span>这一轮把日常体验钉死：多屏怎么铺、编辑时屏幕是否冻结、撤销模型、默认快捷键、首次授权、开发顺序。</span></li>
+      <li><span>推荐答案已预选。提交后进入第 4 轮（最后一层）：模块分层、窗口与采集实现、标注细节、历史存储、测试与打包。</span></li>
+    </ol>
+  </section>
+
+  <form id="quiz" novalidate></form>
+
+  <section class="card note-card" id="noteCard">
+    <div class="card-head"><span class="num">＋</span><span class="tag">开放补充</span></div>
+    <h2>第 1–2 轮有没有哪条现在想改？</h2>
+    <p class="desc">选填。提前反悔比做完再改便宜；也可以写这一轮没覆盖到的体验要求。</p>
+    <textarea id="note" rows="3" placeholder="比如：还是想要窗口阴影 / 快捷键想换成别的 / 保存想自动…"></textarea>
+  </section>
+
+  <p class="foot" id="foot">答案只保存在本机工作区 · 不上传、不联网</p>
+</main>
+
+<div class="submitbar" id="submitbar">
+  <div class="bar-copy">
+    <strong>已按推荐预选 6 / 6</strong>
+    <span>可直接提交，也可以逐项修改</span>
+    <div class="bar-error" id="submitError" hidden></div>
+  </div>
+  <div class="bar-actions">
+    <button type="button" class="btn ghost-btn" id="resetBtn">重置</button>
+    <button type="button" class="btn primary" id="submitBtn">提交答案</button>
+  </div>
+</div>
+
+<section class="success" id="success" hidden>
+  <div class="success-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 12.6l5 5 10-11"/>
+    </svg>
+  </div>
+  <h2>答案已提交</h2>
+  <p class="success-sub">已写入 <code id="savedPath">…</code>。回到对话即可 —— 我会读取答案，继续第 4 轮。</p>
+  <ul class="summary" id="summary"></ul>
+  <div class="success-actions">
+    <button type="button" class="btn ghost-btn" id="copyBtn">复制结果 JSON</button>
+    <button type="button" class="btn ghost-btn" id="backBtn">再改一次</button>
+    <a class="btn primary" href="http://127.0.0.1:55456" target="_blank" rel="noreferrer">回到对话 ↗</a>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "q1",
+    num: "01",
+    tag: "多显示器",
+    title: "多显示器下，选区层怎么铺？",
+    desc: "标准 v1 包含多显示器完整支持。区别在覆盖范围、初始焦点和跨屏选择。",
+    placeholder: "比如：常用两块屏 / 希望跨屏截一张长图…",
+    options: [
+      { value: "all-screens", title: "覆盖所有屏幕 + 跨屏拖选", desc: "选区层铺满所有显示器；鼠标所在屏为初始焦点；可以从一块屏拖到另一块。", rec: true },
+      { value: "cursor-screen", title: "只覆盖鼠标所在屏", desc: "实现简单、干扰小；无法跨屏截图，多屏用户偶尔受限。" },
+      { value: "per-screen", title: "每屏独立选区再合成", desc: "灵活但状态复杂；跨屏拼接的对齐和顺序容易出错。" }
+    ]
+  },
+  {
+    id: "q2",
+    num: "02",
+    tag: "编辑时机",
+    title: "编辑的时候，屏幕其余部分冻结吗？",
+    desc: "截完选区会浮在屏幕上供标注。这时其他窗口能不能操作，决定了它是「顺手改一下」还是「停下来处理」。",
+    placeholder: "比如：希望切到别的 App 后编辑面板还在…",
+    options: [
+      { value: "live", title: "选区冻结、其余屏幕实时", desc: "截图区域保持定格，其他窗口照常可用；编辑面板置顶，Esc 关闭。像顺手改一下。", rec: true },
+      { value: "frozen", title: "整屏冻结直到完成", desc: "防止背景变化干扰判断，但每次编辑都会打断当前工作。" },
+      { value: "instant", title: "不进入编辑，直接复制", desc: "工具条只在菜单栏里，需要时再打开最近一张编辑；最快，但违背就地标注的主轴。" }
+    ]
+  },
+  {
+    id: "q3",
+    num: "03",
+    tag: "编辑模型",
+    title: "标注的撤销和编辑怎么组织？",
+    desc: "决定了撤销的手感、内存占用，以及以后能不能「回头改某个箭头」。",
+    placeholder: "比如：希望以后能移动已画的箭头…",
+    options: [
+      { value: "vector", title: "矢量操作栈", desc: "每个标注是独立对象，⌘Z / ⇧⌘Z 逐步撤销重做；v1 不支持选中后修改，但以后能自然扩展。", rec: true },
+      { value: "bitmap", title: "位图快照", desc: "每次操作保存一张快照，撤销就是回退；实现快，但大图内存翻倍。" },
+      { value: "none", title: "不做撤销", desc: "只有「重新截图」；最省，但误画一笔就得重来。" }
+    ]
+  },
+  {
+    id: "q4",
+    num: "04",
+    tag: "快捷键",
+    title: "默认全局快捷键用哪个？",
+    desc: "机器上没装第三方截图工具，系统只占用了 ⌘⇧3 / 4 / 5。默认值之后可以在偏好里改。",
+    placeholder: "比如：想用某个已有习惯的键…",
+    options: [
+      { value: "cmd-shift-2", title: "⌘⇧2", desc: "紧挨系统截图键，肌肉记忆迁移最顺；这台机器上目前空闲。", rec: true },
+      { value: "opt-shift-s", title: "⌥⇧S", desc: "与系统截图键区分明显，不容易误触；但组合键更「偏」，部分键盘布局会输出特殊字符。" },
+      { value: "ctrl-shift-4", title: "⌃⇧4", desc: "保留数字 4 的直觉，和系统 ⌘⇧4 不冲突；三键组合，手指跨度稍大。" },
+      { value: "no-default", title: "不设默认，首次启动录制", desc: "最尊重用户习惯，但第一次使用前必须先花一步设置。" }
+    ]
+  },
+  {
+    id: "q5",
+    num: "05",
+    tag: "权限引导",
+    title: "第一次启动时，怎么处理屏幕录制权限？",
+    desc: "macOS 必须授权才能截屏。这里只定体验策略，具体 API 和重启细节会按本机 SDK 的核查结果实现。",
+    placeholder: "比如：不想看到引导页 / 希望菜单栏常驻提醒…",
+    options: [
+      { value: "onboarding", title: "首次启动引导授权", desc: "欢迎页说明用途 → 一键请求 → 检测状态 → 授权后继续；未授权时菜单栏给出明确入口。", rec: true },
+      { value: "on-demand", title: "第一次截图时再请求", desc: "平时不打扰；但第一次截图可能被系统弹窗打断，失败还要重来。" },
+      { value: "manual", title: "不主动请求", desc: "只在你点截图时失败并给系统设置链接；最少代码，体验最差。" }
+    ]
+  },
+  {
+    id: "q6",
+    num: "06",
+    tag: "里程碑",
+    title: "先做哪条纵切？",
+    desc: "自用工具的价值是「多快能每天用上」。顺序不同，早期能验证的东西也不同。",
+    placeholder: "比如：希望先能自己用起来 / 想先验证 API…",
+    options: [
+      { value: "vertical", title: "纵切：先能截全屏 → 选区 → 编辑", desc: "M0 全屏截取 + 复制；M1 自绘选区层；M2 编辑面板 + 标准工具集；M3 历史 + 偏好 + 打包。到 M2 就能日常使用。", rec: true },
+      { value: "selection-first", title: "先做选区层，再补采集", desc: "更早打磨最高频的拖选体验；但前几天只看到选区框，看不到成品。" },
+      { value: "editor-first", title: "先做编辑器（导入图片），再做采集", desc: "能用样张快速打磨标注手感；但离「能截图」最远。" },
+      { value: "polish-first", title: "先把全屏截取打磨到无懈可击", desc: "权限、多屏、Retina、剪贴板全打通；但选区 / 编辑被推迟，短期看不到主价值。" }
+    ]
+  }
+];
+
+const ROUND = 3;
+
+const quiz = document.getElementById("quiz");
+const submitBtn = document.getElementById("submitBtn");
+const submitError = document.getElementById("submitError");
+const toastEl = document.getElementById("toast");
+let lastPayload = null;
+let toastTimer = null;
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function make(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function render() {
+  for (const q of QUESTIONS) {
+    const card = make("section", "card");
+    card.id = q.id + "-card";
+
+    const head = make("div", "card-head");
+    head.append(make("span", "num", q.num), make("span", "tag", q.tag));
+
+    card.append(head, make("h2", "", q.title), make("p", "desc", q.desc));
+
+    const options = make("div", "options");
+    options.setAttribute("role", "radiogroup");
+    options.setAttribute("aria-label", q.title);
+
+    for (const opt of q.options) {
+      const label = make("label", "opt");
+      label.dataset.value = opt.value;
+      label.dataset.label = opt.title;
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = q.id;
+      input.value = opt.value;
+      input.checked = Boolean(opt.rec);
+
+      const control = make("span", "control");
+      control.setAttribute("aria-hidden", "true");
+
+      const body = make("span", "opt-body");
+      const title = make("span", "opt-title", opt.title);
+      if (opt.rec) {
+        title.append(make("span", "badge", "推荐"));
+        label.classList.add("is-selected");
+      }
+      body.append(title, make("span", "opt-desc", opt.desc));
+      label.append(input, control, body);
+
+      input.addEventListener("change", () => {
+        for (const sibling of options.querySelectorAll(".opt")) {
+          sibling.classList.toggle("is-selected", sibling.dataset.value === opt.value);
+        }
+      });
+
+      options.append(label);
+    }
+    card.append(options);
+
+    if (q.addons) {
+      const wrap = make("div", "addons");
+      wrap.append(make("p", "addons-title", "希望尽快看到的能力（可多选，只影响优先级，不进 v1）"));
+      const chips = make("div", "chips");
+      for (const addon of q.addons) {
+        const chip = make("label", "chip");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = q.id + "-addon";
+        input.value = addon.value;
+        chip.append(input, document.createTextNode(addon.label));
+        input.addEventListener("change", () => chip.classList.toggle("is-selected", input.checked));
+        chips.append(chip);
+      }
+      wrap.append(chips);
+      card.append(wrap);
+    }
+
+    const details = make("details", "extra-wrap");
+    details.append(make("summary", "", "补充 / 反对意见（选填）"));
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.dataset.extra = q.id;
+    textarea.placeholder = q.placeholder || "不同意见、附加约束…";
+    details.append(textarea);
+    card.append(details);
+
+    quiz.append(card);
+  }
+}
+
+function collectAnswers() {
+  const answers = {};
+  for (const q of QUESTIONS) {
+    const checked = quiz.querySelector('input[name="' + q.id + '"]:checked');
+    const extraEl = quiz.querySelector('textarea[data-extra="' + q.id + '"]');
+    const entry = {
+      value: checked ? checked.value : null,
+      label: checked ? checked.closest(".opt").dataset.label : null,
+      extra: extraEl ? extraEl.value.trim() : ""
+    };
+    if (q.addons) {
+      const chosen = Array.from(quiz.querySelectorAll('input[name="' + q.id + '-addon"]:checked'));
+      entry.addons = chosen.map((node) => node.value);
+      entry.addonLabels = chosen.map((node) => node.closest(".chip").textContent.trim());
+    }
+    answers[q.id] = entry;
+  }
+  return answers;
+}
+
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+}
+
+function setError(message) {
+  submitError.textContent = message || "";
+  submitError.hidden = !message;
+}
+
+async function submit() {
+  setError("");
+  const answers = collectAnswers();
+  const missing = QUESTIONS.filter((q) => !answers[q.id].value).map((q) => q.tag);
+  if (missing.length) {
+    setError("还有未选择的问题：" + missing.join("、"));
+    return;
+  }
+
+  const payload = {
+    round: ROUND,
+    source: "screenshot-app-design-interview",
+    answers,
+    note: document.getElementById("note").value.trim(),
+    userAgent: navigator.userAgent,
+    submittedAt: new Date().toISOString()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "提交中…";
+  try {
+    const response = await fetch("/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || "服务器拒绝了这次提交");
+    lastPayload = payload;
+    showSuccess(payload, data.file);
+  } catch (error) {
+    setError("提交失败：" + error.message + "（页面和服务器是否还在运行？）");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "提交答案";
+  }
+}
+
+function showSuccess(payload, file) {
+  const pathEl = document.getElementById("savedPath");
+  pathEl.textContent = file || "answers-round3.json";
+
+  const summary = document.getElementById("summary");
+  summary.textContent = "";
+  for (const q of QUESTIONS) {
+    const answer = payload.answers[q.id];
+    if (!answer || !answer.label) continue;
+    const item = document.createElement("li");
+    const key = make("span", "sq", q.num + " · " + q.tag);
+    const value = make("span", "sa", answer.label);
+    if (answer.addonLabels && answer.addonLabels.length) {
+      const extra = document.createElement("em");
+      extra.textContent = "另希望尽快看到：" + answer.addonLabels.join("、");
+      value.append(extra);
+    }
+    item.append(key, value);
+    summary.append(item);
+  }
+
+  document.getElementById("intro").hidden = true;
+  quiz.hidden = true;
+  document.getElementById("noteCard").hidden = true;
+  document.getElementById("submitbar").hidden = true;
+  document.getElementById("foot").hidden = true;
+  document.getElementById("success").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("submitBtn").addEventListener("click", submit);
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  window.location.reload();
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!lastPayload) return;
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(lastPayload, null, 2));
+    showToast("已复制 JSON");
+  } catch {
+    showToast("复制失败，请手动选中 JSON");
+  }
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  document.getElementById("success").hidden = true;
+  document.getElementById("intro").hidden = false;
+  quiz.hidden = false;
+  document.getElementById("noteCard").hidden = false;
+  document.getElementById("submitbar").hidden = false;
+  document.getElementById("foot").hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+render();
+</script>
+</body>
+</html>
