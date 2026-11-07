@@ -4,6 +4,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private var hotKeyCenter: HotKeyCenter?
+    private var onboardingController: OnboardingWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Log.app.info("Cap launched, version \(AppInfo.version, privacy: .public)")
@@ -17,6 +18,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Log.app.error("Failed to register ⌘⇧2")
         }
         self.hotKeyCenter = hotKeyCenter
+
+        let onboardingController = OnboardingWindowController()
+        onboardingController.showIfNeeded()
+        self.onboardingController = onboardingController
     }
 
     func applicationWillTerminate(_ notification: Notification) {

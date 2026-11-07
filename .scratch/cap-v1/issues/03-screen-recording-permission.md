@@ -1,7 +1,7 @@
 # 03 · 屏幕录制权限引导
 
 Milestone: M0
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by: 01
 Type: feature
 
@@ -11,8 +11,8 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] 权限状态机单测：未决定 / 已授权 / 已拒绝 / 需重启 → 对应动作（fake preflight / request）
-- [ ] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过
+- [x] [auto] 权限状态机单测：未决定 / 已授权 / 已拒绝 / 需重启 → 对应动作（fake preflight / request）
+- [x] [auto] `xcodebuild test -project Cap.xcodeproj -scheme Cap -destination 'platform=macOS'` 通过
 - [ ] [manual] 全新安装首次启动出现引导；点「打开系统设置」深链到屏幕录制面板
 - [ ] [manual] 拒绝后再次启动仍提示；在系统设置授权后「重新检测」变绿
 - [ ] [manual] 运行中撤销权限，下一次触发有明确错误提示
@@ -44,3 +44,12 @@ Out:
 - 深链：`x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture`
 - App Sandbox 关闭，不需要 entitlements
 - 已被拒绝的进程不会被再次询问，必须引导去系统设置
+
+## Runs
+
+### 2026-11-08 02:51 · run 1
+
+- Auto: build ✅ / test 9 passed ✅（状态机 4 状态 + 重启委托）
+- Manual: 首次启动引导窗口 ✅（截图）；「打开系统设置」深链到「录屏与系统录音」✅
+- Manual pending: 输入管理员密码把 Cap 加入屏幕录制 → 重新检测变绿 → 重启后状态正确
+- Blocked: TCC 修改需要用户密码，agent 无法代输
