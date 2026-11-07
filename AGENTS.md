@@ -33,3 +33,8 @@ Refs: <ticket 路径或 issue 编号，没有则省略>
 ```
 
 `type` 取 `feat`、`fix`、`refactor`、`test`、`docs`、`chore`、`perf`。
+
+## Workflows
+
+- `workflows/cap-planning.md` — 队列空时拆 ticket，批准后写入 `.scratch/cap-v1/issues/`
+- `workflows/cap-implementation.md` — 每个 ready ticket 一次 run，产出 commit + brief
