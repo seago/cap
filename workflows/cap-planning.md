@@ -32,7 +32,11 @@
   - 停，等用户验收或决定
 - 若全部 `done`，检查 `.scratch/cap-v1/milestones.md` 中该 milestone 的验收清单：
   - 全部勾选 → 写 `Accepted: YYYY-MM-DD`，进入下一个 milestone
-  - 未全部勾选 → 输出清单并停，等用户逐项确认
+  - 存在 `Deferred:` 项（环境或用户操作限制无法由 agent 完成）→ 允许带 deferred 项继续，但必须：
+    1. 在 `Accepted:` 行写明 `Accepted: YYYY-MM-DD（deferred: <项>）`
+    2. 在 brief 里再次显式列出 deferred 项与补验方式
+    3. 补验条件出现时（例如用户重启后），优先补验并更新
+  - 未全部勾选且无 `Deferred:` 说明 → 输出清单并停，等用户逐项确认
 - `.scratch/cap-v1/milestones.md` 不存在 → 从 `DESIGN.md` §7 的「验收」段落创建，提交 `docs(milestone): add M0 checklist` 并 push
 
 ### 3. 阻塞项

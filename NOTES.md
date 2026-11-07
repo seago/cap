@@ -52,11 +52,17 @@
 - TCC 与签名绑定：ad-hoc 每次重建失效（#04 实测）；已创建自签身份 `Cap Local Signing`，TCC 重新授权一次后应稳定
 - 顺序调整：#06 先于 #05，避免每次重建都重新授权 TCC
 
+## 环境注意
+
+- 本 shell 的 `DEVELOPER_DIR` 指向过期的 CommandLineTools，所有 `xcodebuild` 需前缀
+  `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`
+- 单显示器环境：M1 的跨屏/多屏验收项需记 `Deferred`
+
 ## Computer verification
 
-- `screencapture` 可用；屏幕 1920x1200 @1x
-- Accessibility **未授权**（`UI elements enabled = false`）：CGEvent 合成点击、System Events 按键不生效
+- `screencapture` 可用；屏幕 1920x1200 @1x（单屏，无双显示器）
+- Accessibility **已授权**（macOS 27 面板名为「设备控制和数据访问」）：CGEvent 合成点击、System Events 按键可用
 - `cliclick` 未安装；`lsappinfo` 可用；Apple Event quit 可用
 - 菜单栏 Cap 图标位置约 x=1436-1448、y=8-22（截图 diff 证据）
 - Cap 自己的屏幕录制权限（TCC）只能由用户在系统设置里授予
-- 若要让 agent 自动点击 / 输入，需要一次性给 DeepSeek Harness 开「辅助功能」权限
+- 屏幕录制 TCC 已对 `dev.bruce.cap` 授权，且随固定签名保持（重建不失效）
