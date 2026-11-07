@@ -1,7 +1,7 @@
 # 12 · 窗口截取
 
 Milestone: M1
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by: 10
 Type: feature
 
@@ -11,8 +11,8 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] build + 既有测试通过
-- [ ] [auto] 阴影配置：默认 `ignoreShadowsSingleWindow = false`，Option 时为 true（可单测配置构造）
+- [x] [auto] build + 既有测试通过
+- [x] [auto] 阴影配置：默认 `ignoreShadowsSingleWindow = false`，Option 时为 true（可单测配置构造）
 - [ ] [manual] 单击 Safari 窗口 → 剪贴板图片为该窗口，带阴影、无灰罩、无 Cap UI
 - [ ] [manual] Option 单击同一窗口 → 图片无阴影
 
@@ -38,3 +38,10 @@ Out:
 ## Notes
 
 - 最小化窗口可能截不到，需错误处理
+
+## Runs
+
+### 2026-11-08 03:44 · run 1
+
+- Auto: build ✅ / test 42 passed ✅（新增 CaptureOptions 与配置构造用例）
+- Manual pending: window 截取要等 #13 覆盖层接线后才能做端到端验证

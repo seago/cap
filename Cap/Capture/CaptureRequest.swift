@@ -8,6 +8,9 @@ struct CaptureRequest: Equatable, Sendable {
 enum CaptureError: LocalizedError, Equatable {
     case permissionDenied
     case displayNotFound
+    case windowNotFound
+    case invalidRegion
+    case captureFailed
     case encodingFailed
     case clipboardWriteFailed
 
@@ -17,6 +20,12 @@ enum CaptureError: LocalizedError, Equatable {
             return "Cap 没有屏幕录制权限。请在系统设置中授权后重试。"
         case .displayNotFound:
             return "找不到鼠标所在的显示器。"
+        case .windowNotFound:
+            return "找不到要截取的窗口。"
+        case .invalidRegion:
+            return "选区太小，无法截取。"
+        case .captureFailed:
+            return "截图失败，请重试。"
         case .encodingFailed:
             return "无法把截图编码为 PNG / TIFF。"
         case .clipboardWriteFailed:
