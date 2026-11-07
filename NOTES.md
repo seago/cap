@@ -31,15 +31,20 @@
 
 ## 当前状态
 
-- `DESIGN.md` 已定稿；§11 还有 5 个默认值待确认
-- 尚未创建 Xcode 工程
-- git 基线 `99f09cf` 已推送到 `origin/main`
-- `workflows/cap-planning.md` 与 `workflows/cap-implementation.md` 已写入
+- `DESIGN.md` §11 已确认（2026-11-08）
+- 尚未创建 Xcode 工程；本机 `security find-identity` 显示 0 个 codesigning 身份
+- `origin/main` 与本地同步，工作区干净
+- `workflows/cap-planning.md` 与 `workflows/cap-implementation.md` 已落地
 
-## Open questions
+## 已确认的默认值
 
-- §11.1 最低系统版本是否用 macOS 15.2
-- §11.2 窗口截图默认是否带阴影
-- §11.3 历史是否只留最终版
-- §11.4 保存目录 / 命名是否用 `~/Pictures/Screenshots/`
-- §11.5 v1 之后顺序是否滚动 → OCR → 贴图 → 上传
+- §11.1 最低系统 **macOS 15.2**
+- §11.2 窗口默认带阴影；Option 点击不带
+- §11.3 历史只留最终版
+- §11.4 `~/Pictures/Screenshots/` + `Cap YYYY-MM-DD at HH.mm.ss.png`；PNG 默认
+- §11.5 v1 之后：滚动 → OCR → 贴图 → 上传
+
+## 实施前置
+
+- `Cap.xcodeproj` 需手工生成（本机无 xcodegen / tuist）
+- #06 需要自签 codesigning 证书；当前 0 个身份，Keychain 交互可能需用户确认
