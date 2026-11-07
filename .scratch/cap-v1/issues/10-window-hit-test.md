@@ -1,7 +1,7 @@
 # 10 · 窗口命中与高亮
 
 Milestone: M1
-Status: ready-for-agent
+Status: done
 Blocked by: 08
 Type: feature
 
@@ -11,8 +11,8 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `WindowIndexTests`：从构造的窗口列表里排除自身进程、非 0 层窗口，按 z-order 取最上层命中
-- [ ] [auto] build + 既有测试通过
+- [x] [auto] `WindowIndexTests`：从构造的窗口列表里排除自身进程、非 0 层窗口，按 z-order 取最上层命中
+- [x] [auto] build + 既有测试通过
 - [ ] [manual] 悬停 Safari / Finder / 菜单栏 App 分别高亮对应窗口，矩形贴合窗口边界
 - [ ] [manual] 点击高亮的窗口后，选中目标为该窗口（日志或后续截图验证）
 
@@ -39,3 +39,11 @@ Out:
 
 - 排除规则：ownerPID == 自己、layer != 0、alpha == 0、尺寸过小
 - 命中顺序用列表顺序（顶层在前）
+
+## Runs
+
+### 2026-11-08 03:38 · run 1
+
+- Auto: build ✅ / test 33 passed ✅（新增 5 个 WindowIndexTests，含真实环境排除自身进程）
+- 实现：`WindowIndex` 读取 `CGWindowListCopyWindowInfo`，过滤自身进程 / 非 0 层 / 透明 / 过小；z-order 命中；提供 CG ↔ AppKit 坐标转换
+- Manual pending: 悬停高亮与点击选中要等 #09/#13 覆盖层接线后才能验证

@@ -28,6 +28,8 @@
 		CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000003 /* HistoryStoreTests.swift */; };
 		DD0000000000000000000011 /* SelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000001 /* SelectionModel.swift */; };
 		DD0000000000000000000012 /* SelectionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000002 /* SelectionStateTests.swift */; };
+		EE0000000000000000000011 /* WindowIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000001 /* WindowIndex.swift */; };
+		EE0000000000000000000012 /* WindowIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000002 /* WindowIndexTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		CC0000000000000000000003 /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
 		DD0000000000000000000001 /* SelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionModel.swift; sourceTree = "<group>"; };
 		DD0000000000000000000002 /* SelectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStateTests.swift; sourceTree = "<group>"; };
+		EE0000000000000000000001 /* WindowIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowIndex.swift; sourceTree = "<group>"; };
+		EE0000000000000000000002 /* WindowIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowIndexTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +163,7 @@
 			children = (
 				BB0000000000000000000001 /* CaptureRequest.swift */,
 				BB0000000000000000000002 /* ScreenCaptureService.swift */,
+				EE0000000000000000000001 /* WindowIndex.swift */,
 			);
 			path = Capture;
 			sourceTree = "<group>";
@@ -215,6 +220,7 @@
 				BB0000000000000000000005 /* ClipboardWriterTests.swift */,
 				CC0000000000000000000003 /* HistoryStoreTests.swift */,
 				DD0000000000000000000002 /* SelectionStateTests.swift */,
+				EE0000000000000000000002 /* WindowIndexTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -331,6 +337,7 @@
 				CC0000000000000000000011 /* HistoryItem.swift in Sources */,
 				CC0000000000000000000012 /* HistoryStore.swift in Sources */,
 				DD0000000000000000000011 /* SelectionModel.swift in Sources */,
+				EE0000000000000000000011 /* WindowIndex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +351,7 @@
 				BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */,
 				CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */,
 				DD0000000000000000000012 /* SelectionStateTests.swift in Sources */,
+				EE0000000000000000000012 /* WindowIndexTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
