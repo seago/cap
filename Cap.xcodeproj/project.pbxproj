@@ -26,6 +26,8 @@
 		CC0000000000000000000011 /* HistoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000001 /* HistoryItem.swift */; };
 		CC0000000000000000000012 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000002 /* HistoryStore.swift */; };
 		CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0000000000000000000003 /* HistoryStoreTests.swift */; };
+		DD0000000000000000000011 /* SelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000001 /* SelectionModel.swift */; };
+		DD0000000000000000000012 /* SelectionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000002 /* SelectionStateTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		CC0000000000000000000001 /* HistoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItem.swift; sourceTree = "<group>"; };
 		CC0000000000000000000002 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		CC0000000000000000000003 /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
+		DD0000000000000000000001 /* SelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionModel.swift; sourceTree = "<group>"; };
+		DD0000000000000000000002 /* SelectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStateTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,7 @@
 				BB0000000000000000000021 /* Capture */,
 				BB0000000000000000000022 /* Output */,
 				CC0000000000000000000021 /* History */,
+				DD0000000000000000000021 /* Selection */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
 			);
@@ -176,6 +181,14 @@
 			path = History;
 			sourceTree = "<group>";
 		};
+		DD0000000000000000000021 /* Selection */ = {
+			isa = PBXGroup;
+			children = (
+				DD0000000000000000000001 /* SelectionModel.swift */,
+			);
+			path = Selection;
+			sourceTree = "<group>";
+		};
 		AA0000000000000000000007 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -201,6 +214,7 @@
 				AA000000000000000000002B /* ScreenRecordingPermissionTests.swift */,
 				BB0000000000000000000005 /* ClipboardWriterTests.swift */,
 				CC0000000000000000000003 /* HistoryStoreTests.swift */,
+				DD0000000000000000000002 /* SelectionStateTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -316,6 +330,7 @@
 				BB0000000000000000000014 /* ImageEncoder.swift in Sources */,
 				CC0000000000000000000011 /* HistoryItem.swift in Sources */,
 				CC0000000000000000000012 /* HistoryStore.swift in Sources */,
+				DD0000000000000000000011 /* SelectionModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +343,7 @@
 				AA000000000000000000003A /* ScreenRecordingPermissionTests.swift in Sources */,
 				BB0000000000000000000015 /* ClipboardWriterTests.swift in Sources */,
 				CC0000000000000000000013 /* HistoryStoreTests.swift in Sources */,
+				DD0000000000000000000012 /* SelectionStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
