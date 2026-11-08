@@ -72,9 +72,11 @@ Accepted: 2026-11-08（deferred: 只读目录失败提示；输入法组词人�
 - [x] App 图标（由 `Scripts/make-app-icon.py` 生成）已进 bundle
 - [x] 菜单栏权限警示态、保存成功 1s 对勾
 - [x] 构建 + 129 项测试全绿；`/Applications/Cap.app` 已更新
-- [ ] [manual] popover 外观与点击复制、外点收起
-- [ ] [manual] 历史窗口网格/预览/复制/Finder/删除/清空
-- [ ] [manual] 设置生效：改目录、切 JPEG、登录自启（需重启验证）
-- [ ] [manual] Finder/Dock 图标与首次启动引导
+- [x] [manual] popover 外观与点击复制、右键菜单、外点收起
+- [x] [manual] 历史窗口网格/预览/复制/Finder/删除/空态/清空确认
+- [x] [manual] 设置生效：改目录后 ⌘S 落盘、切 JPEG 保存 .jpg、登录自启开启且登录项存在
+- [x] [manual] Finder 中 App 图标正确
+- [ ] [manual] 重启后登录自启仍在（Deferred: 未重启）
+- [ ] [manual] 首次启动引导重新触发（Deferred: 权限已授权）
 
-Accepted: 未验收（deferred: 全部 GUI 人工项——屏幕处于登录锁屏，合成键鼠无法到达 App）
+Accepted: 2026-11-08（deferred: 重启后自启验证、首次启动引导重触发、真正清空全部历史）

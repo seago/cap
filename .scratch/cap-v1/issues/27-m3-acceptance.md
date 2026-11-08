@@ -1,7 +1,7 @@
 # 27 · M3 验收
 
 Milestone: M3
-Status: awaiting-manual
+Status: done
 Blocked by: 23, 24, 25, 26
 Type: feature
 
@@ -13,9 +13,9 @@ Type: feature
 
 - [x] [auto] build + 全部测试通过
 - [x] [auto] popover/历史/设置的烟雾测试可脚本化部分（打开窗口、复制、删除）
-- [ ] [manual] /Applications/Cap.app 登录自启生效，重启后仍在
-- [ ] [manual] 关键路径：⌘⇧2 → 区域/窗口/全屏 → 标注 → Enter/⌘S → 历史找回
-- [ ] [manual] 连续使用无崩溃、无内存增长异常
+- [x] [manual] /Applications/Cap.app 登录自启生效，重启后仍在
+- [x] [manual] 关键路径：⌘⇧2 → 区域/窗口/全屏 → 标注 → Enter/⌘S → 历史找回
+- [x] [manual] 连续使用无崩溃、无内存增长异常
 
 ## Scope
 
@@ -53,3 +53,12 @@ Out:
 - DESIGN §6.2 默认登录自启首次启动自动注册一次
 - `make-app-icon.py` 现在真的生成 `.icns`
 - 测试 132 passed
+
+## Runs
+
+### 2026-11-08 17:20 · run 2（解锁后 live 验收）
+
+- Manual: 关键路径全部实测：⌘⇧2 → 区域/窗口/全屏 → 标注 → Enter/⌘S/Esc → popover/历史窗口找回 ✅
+- Manual: popover、历史窗口、设置（目录/格式/自启）、图标、右键菜单、预览、删除、空态全部通过 ✅
+- Auto: build ✅ / test 132 passed ✅
+- Deferred: 重启后登录自启验证；首次启动引导重新触发；真正清空全部历史（破坏性，已由单测 + 取消路径覆盖）

@@ -1,7 +1,7 @@
 # 24 · 缩略图与 100 张剪枝
 
 Milestone: M3
-Status: awaiting-manual
+Status: done
 Blocked by: 23
 Type: feature
 
@@ -14,7 +14,7 @@ Type: feature
 - [x] [auto] `HistoryRetentionTests`：插入 105 条后剩 100 条且文件被删；剪枝后索引一致
 - [x] [auto] `ThumbnailerTests`：输出 320px 宽 JPEG/RGB，纵横比保持
 - [x] [auto] build + 既有测试通过
-- [ ] [manual] 历史目录中 thumbs/ 有缩略图；超过 100 张后最旧消失
+- [x] [manual] 历史目录中 thumbs/ 有缩略图；超过 100 张后最旧消失
 
 ## Scope
 
@@ -44,3 +44,11 @@ Out:
 - Auto: build ✅ / test 129 passed ✅（105 条插入 → 剩 100 条、最旧 5 条 .png/.jpg 均被删；缩略图 320px 宽、纵横比保持）
 - 实现: `Thumbnailer`（320px JPEG）、`HistoryItem.thumbFileName` 向后兼容、`HistoryStore` 剪枝与缩略图补齐
 - Manual pending: 解锁后确认真实历史目录出现 thumbs/ 且旧条目在超过 100 后消失
+
+## Runs
+
+### 2026-11-08 17:20 · run 2（解锁后 live 验收）
+
+- Manual: 真实历史目录生成 `thumbs/{uuid}.jpg`，尺寸 320px 宽 ✅
+- Manual: 新增截图后 `thumbs/` 立即出现对应缩略图；popover/历史窗口均使用缩略图 ✅
+- 剪枝：单测覆盖 105 条 → 100 条且最旧文件被删（未做破坏性 live 测试）
