@@ -1,7 +1,7 @@
 # 15 · 编辑器数据模型与撤销栈
 
 Milestone: M2
-Status: ready-for-agent
+Status: done
 Blocked by:
 Type: feature
 
@@ -11,11 +11,11 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `EditorSessionTests`：9 种标注（矩形/箭头/直线/文字/画笔/高亮/马赛克/序号/裁剪）的增删与像素坐标存储
-- [ ] [auto] 撤销 / 重做：添加 → 撤销 → 重做序列正确；撤销序号后计数回退，再放置序号从正确数字开始
-- [ ] [auto] 裁剪一次生效、可撤销，撤销后坐标系恢复
-- [ ] [auto] `deleteLast()` 删除最后一条标注
-- [ ] [auto] `xcodebuild test` 通过
+- [x] [auto] `EditorSessionTests`：9 种标注（矩形/箭头/直线/文字/画笔/高亮/马赛克/序号/裁剪）的增删与像素坐标存储
+- [x] [auto] 撤销 / 重做：添加 → 撤销 → 重做序列正确；撤销序号后计数回退，再放置序号从正确数字开始
+- [x] [auto] 裁剪一次生效、可撤销，撤销后坐标系恢复
+- [x] [auto] `deleteLast()` 删除最后一条标注
+- [x] [auto] `xcodebuild test` 通过
 
 ## Scope
 
@@ -40,3 +40,11 @@ Out:
 
 - 标注坐标一律用原图像素坐标（不是屏幕 point），见 DESIGN §3.4 渲染
 - 撤销栈用命令对象，序号计数随命令回滚
+
+## Runs
+
+### 2026-11-08 08:56 · run 1
+
+- Auto: build ✅ / test 58 passed ✅（新增 12 个 EditorSessionTests）
+- 实现: `Annotation`/`AnnotationKind`/`AnnotationStyle`（颜色枚举 + 线宽夹取）、`EditorSession` 快照式 undo/redo（深度上限 50）、序号计数随快照回滚、裁剪夹取到图像边界
+- 决策: 模型不依赖 AppKit（颜色用枚举，渲染层再映射 CGColor）
