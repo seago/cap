@@ -38,6 +38,8 @@
 		2B0000000000000000000011 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000001 /* Annotation.swift */; };
 		2B0000000000000000000012 /* EditorSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000002 /* EditorSession.swift */; };
 		2B0000000000000000000013 /* EditorSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000003 /* EditorSessionTests.swift */; };
+		2B0000000000000000000014 /* AnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000004 /* AnnotationRenderer.swift */; };
+		2B0000000000000000000015 /* AnnotationRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000005 /* AnnotationRendererTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +87,8 @@
 		2B0000000000000000000001 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
 		2B0000000000000000000002 /* EditorSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorSession.swift; sourceTree = "<group>"; };
 		2B0000000000000000000003 /* EditorSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorSessionTests.swift; sourceTree = "<group>"; };
+		2B0000000000000000000004 /* AnnotationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderer.swift; sourceTree = "<group>"; };
+		2B0000000000000000000005 /* AnnotationRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRendererTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +212,7 @@
 			children = (
 				2B0000000000000000000001 /* Annotation.swift */,
 				2B0000000000000000000002 /* EditorSession.swift */,
+				2B0000000000000000000004 /* AnnotationRenderer.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -253,6 +258,7 @@
 				FF0000000000000000000004 /* SelectionOverlayTests.swift */,
 				1A0000000000000000000001 /* ScreenCaptureConfigurationTests.swift */,
 				2B0000000000000000000003 /* EditorSessionTests.swift */,
+				2B0000000000000000000005 /* AnnotationRendererTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -371,6 +377,7 @@
 				DD0000000000000000000011 /* SelectionModel.swift in Sources */,
 				2B0000000000000000000011 /* Annotation.swift in Sources */,
 				2B0000000000000000000012 /* EditorSession.swift in Sources */,
+				2B0000000000000000000014 /* AnnotationRenderer.swift in Sources */,
 				EE0000000000000000000011 /* WindowIndex.swift in Sources */,
 				FF0000000000000000000011 /* SelectionOverlayWindow.swift in Sources */,
 				FF0000000000000000000012 /* SelectionCanvasView.swift in Sources */,
@@ -392,6 +399,7 @@
 				FF0000000000000000000014 /* SelectionOverlayTests.swift in Sources */,
 				1A0000000000000000000011 /* ScreenCaptureConfigurationTests.swift in Sources */,
 				2B0000000000000000000013 /* EditorSessionTests.swift in Sources */,
+				2B0000000000000000000015 /* AnnotationRendererTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
