@@ -1,7 +1,7 @@
 # 17 · 编辑器窗口与工具条
 
 Milestone: M2
-Status: awaiting-manual
+Status: done
 Blocked by: 16
 Type: feature
 
@@ -13,9 +13,9 @@ Type: feature
 
 - [x] [auto] 工具条定位纯函数单测：下方够 → 下方；下方不够 → 上方；都不够 → 夹到可见区域
 - [x] [auto] `xcodebuild test` 通过
-- [ ] [manual] 截图后出现冻结面板（周围屏幕保持实时），工具条在面板外且不覆盖面板
-- [ ] [manual] 选区贴屏幕底部时工具条翻到上方；贴角时仍在可见区域
-- [ ] [manual] 工具条不抢焦点（点击工具不导致面板失焦/消失）
+- [x] [manual] 截图后出现冻结面板（周围屏幕保持实时），工具条在面板外且不覆盖面板
+- [x] [manual] 选区贴屏幕底部时工具条翻到上方；贴角时仍在可见区域
+- [x] [manual] 工具条不抢焦点（点击工具不导致面板失焦/消失）
 
 ## Scope
 
@@ -52,3 +52,12 @@ Out:
 - 实现: 冻结面板 + 独立 nonactivating 工具条窗口；9 绘制工具 + 撤销/重做 + 三色 + 线宽 + 完成/保存；ToolbarLayout 纯函数定位
 - Manual pending: 屏幕已锁（`CGSSessionScreenIsLocked=1`），合成键鼠无法到达 App，需要解锁后补验面板/工具条外观与翻转
 - 测试用 `CAP_EDITOR_CAPTURABLE=1` 可让编辑器窗口进入 screencapture，便于解锁后自动截图核对
+
+## Runs
+
+### 2026-11-08 10:01 · run 2（解锁后 live 验收）
+
+- Manual: 截图后冻结面板出现在选区位置，工具条在面板下方 8pt，不遮面板 ✅
+- Manual: 选区贴屏幕底部（CG y 830-1110）时工具条自动翻到面板上方（CG y 790）✅
+- Manual: 点击工具条不抢焦点，面板保持显示 ✅
+- 修复: 编辑器增加本地 key monitor，工具条点击/文字输入后 ⌘Z 等快捷键仍生效

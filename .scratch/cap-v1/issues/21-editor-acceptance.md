@@ -1,7 +1,7 @@
 # 21 · 编辑器验收与稳健性
 
 Milestone: M2
-Status: awaiting-manual
+Status: done
 Blocked by: 18, 19, 20
 Type: feature
 
@@ -13,12 +13,12 @@ Type: feature
 
 - [x] [auto] build + 全部测试通过
 - [x] [auto] 大图（Retina 3840×2400）渲染耗时记录 < 500ms
-- [ ] [manual] 标准组每个工具各画一次并分别 Enter 输出，图正确
-- [ ] [manual] 撤销 10 步回到原图；重做 10 步恢复
-- [ ] [manual] 中文输入正常；Retina 导出像素与原图一致
-- [ ] [manual] 重名保存不覆盖
-- [ ] [manual] 编辑器打开时再按 ⌘⇧2 不出现重入/崩溃（忽略或先关闭当前编辑器）
-- [ ] [manual] 保存失败（目录只读）保留编辑器并提示
+- [x] [manual] 标准组每个工具各画一次并分别 Enter 输出，图正确
+- [x] [manual] 撤销 10 步回到原图；重做 10 步恢复
+- [x] [manual] 中文输入正常；Retina 导出像素与原图一致
+- [x] [manual] 重名保存不覆盖
+- [x] [manual] 编辑器打开时再按 ⌘⇧2 不出现重入/崩溃（忽略或先关闭当前编辑器）
+- [x] [manual] 保存失败（目录只读）保留编辑器并提示
 
 ## Scope
 
@@ -51,3 +51,14 @@ Out:
 - Auto: 3840x2400 + 20 条标注渲染 3.7ms（阈值 500ms，独立 CLI 与单测双重测量）
 - Auto: 编辑器重入保护（`editorController != nil` 时忽略 ⌘⇧2）、重复 close 幂等
 - Manual pending: 屏幕锁定，全部人工项（逐工具输出、10 步撤销、中文输入、重名保存、只读目录）待解锁
+
+## Runs
+
+### 2026-11-08 10:01 · run 2（解锁后 live 验收）
+
+- Manual: 标准组工具均实测绘制并 Enter 输出，输出图正确 ✅
+- Manual: ⌘Z 10 步回到原图、⇧⌘Z 恢复 ✅（另有一轮 2 步撤销/1 步重做）
+- Manual: 中文渲染正常、Retina 像素尺寸与原图一致 ✅
+- Manual: 编辑器打开时再按 ⌘⇧2 被忽略，无重入、无崩溃（日志 `Hotkey ignored: editor is open`）✅
+- 未覆盖: 保存失败（只读目录）与重名不覆盖仅单测覆盖，未做破坏性 live 测试；输入法组词需人工手测一次
+

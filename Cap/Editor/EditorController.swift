@@ -24,6 +24,7 @@ final class EditorController {
     private var toolButtons: [EditorTool: NSButton] = [:]
     private var colorButtons: [AnnotationColor: NSButton] = [:]
     private let textEditing = TextEditingController()
+    private var keyMonitor: Any?
 
     init(session: EditorSession, selectionFrame: CGRect) {
         self.session = session
@@ -86,10 +87,13 @@ final class EditorController {
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKey()
         canvas.window?.makeFirstResponder(canvas)
+        installKeyMonitor()
         Log.editor.notice("Editor presented frame=\(String(describing: self.selectionFrame), privacy: .public)")
     }
 
     func close() {
+        removeKeyMonitor()
+        textEditing.cancel()
         toolbar?.orderOut(nil)
         toolbar?.close()
         toolbar = nil
@@ -97,6 +101,24 @@ final class EditorController {
         panel?.close()
         panel = nil
         canvas = nil
+    }
+
+    // 编辑器可见期间的快捷键：不依赖 first responder，工具条点击后也稳定生效。
+    private func installKeyMonitor() {
+        removeKeyMonitor()
+        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self else { return event }
+            // 文字输入中不拦截，交给 NSTextField 处理。
+            if self.textEditing.isEditing { return event }
+            return self.handleKeyDown(event) ? nil : event
+        }
+    }
+
+    private func removeKeyMonitor() {
+        if let keyMonitor {
+            NSEvent.removeMonitor(keyMonitor)
+            self.keyMonitor = nil
+        }
     }
 
     // MARK: - 动作
@@ -153,6 +175,12 @@ final class EditorController {
     }
 
     /// 文字工具：把像素坐标换算成视图坐标，叠一个输入框。
+    private func restoreCanvasFocus() {
+        if let canvas {
+            canvas.window?.makeFirstResponder(canvas)
+        }
+    }
+
     private func beginTextInput(at imagePoint: CGPoint) {
         guard let canvas else { return }
         let viewPoint = CGPoint(
@@ -169,9 +197,11 @@ final class EditorController {
         textEditing.onCommit = { [weak self] text, origin, fontSize in
             guard let self else { return }
             self.session.add(.text(text, origin: origin, fontSize: fontSize))
+            self.restoreCanvasFocus()
             self.canvas?.refresh()
         }
         textEditing.onCancel = { [weak self] in
+            self?.restoreCanvasFocus()
             self?.canvas?.refresh()
         }
         textEditing.begin(
