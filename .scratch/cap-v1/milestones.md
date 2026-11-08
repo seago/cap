@@ -62,3 +62,19 @@ Accepted: 未验收（deferred: 多屏两项、TCC 撤销两项）
 - [ ] 重名保存不覆盖、只读目录失败提示（仅单测覆盖，未做破坏性实机测试）
 
 Accepted: 2026-11-08（deferred: 只读目录失败提示；输入法组词人工确认一次）
+
+## M3 · 产品表面
+
+- [x] 菜单栏 popover：权限状态、最近 8 张缩略图、全部截图、设置、退出
+- [x] 历史窗口：网格、预览（Esc 关闭）、复制、Finder 显示、删除、清空、空状态
+- [x] 缩略图（320px JPEG）与 100 张剪枝（105 → 100，最旧文件删除）
+- [x] 设置：保存目录、PNG/JPEG、登录自启（SMAppService），持久化到 UserDefaults
+- [x] App 图标（由 `Scripts/make-app-icon.py` 生成）已进 bundle
+- [x] 菜单栏权限警示态、保存成功 1s 对勾
+- [x] 构建 + 129 项测试全绿；`/Applications/Cap.app` 已更新
+- [ ] [manual] popover 外观与点击复制、外点收起
+- [ ] [manual] 历史窗口网格/预览/复制/Finder/删除/清空
+- [ ] [manual] 设置生效：改目录、切 JPEG、登录自启（需重启验证）
+- [ ] [manual] Finder/Dock 图标与首次启动引导
+
+Accepted: 未验收（deferred: 全部 GUI 人工项——屏幕处于登录锁屏，合成键鼠无法到达 App）
