@@ -54,6 +54,9 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     private func wireActions() {
         model.onRefresh = { [weak self] in self?.refreshModel() }
         model.onCopy = { [weak self] id in self?.copyItem(id: id) }
+        model.onRevealInFinder = { [weak self] id in self?.revealInFinder(id: id) }
+        model.onDelete = { [weak self] id in self?.deleteItem(id: id) }
+        model.onClearAll = { [weak self] in self?.clearAllWithConfirmation() }
         model.onOpenHistory = { [weak self] in
             self?.close()
             self?.onOpenHistory?()
@@ -84,13 +87,14 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         }
     }
 
-    private func refreshModel() {
+    func refreshModel() {
         model.permissionGranted = CGPreflightScreenCaptureAccess()
         model.imageFormat = settings.imageFormat
         model.saveDirectoryPath = settings.saveDirectory.path
-        model.launchAtLogin = launchAtLogin.isEnabled
+        let launchStatus = launchAtLogin.status
+        model.launchAtLogin = launchStatus.isEnabled
+        model.launchAtLoginNeedsApproval = launchStatus == .requiresApproval
         model.thumbnails = recentThumbnails()
-        model.errorMessage = nil
     }
 
     private func recentThumbnails() -> [PopoverThumbnail] {
@@ -134,10 +138,47 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     }
 
     private func toggleLaunchAtLogin(_ enabled: Bool) {
+        var failure: String?
         do {
-            try launchAtLogin.setEnabled(enabled)
+            try enabled ? launchAtLogin.enable() : launchAtLogin.disable()
         } catch {
-            model.errorMessage = "登录自启设置失败：\(error.localizedDescription)"
+            failure = "登录自启设置失败：\(error.localizedDescription)"
+        }
+        refreshModel()
+        if launchAtLogin.status == .requiresApproval {
+            failure = "请在系统设置 → 通用 → 登录项中允许 Cap"
+            launchAtLogin.openSystemSettings()
+        }
+        model.errorMessage = failure
+    }
+
+    private func revealInFinder(id: UUID) {
+        guard let item = historyStore.items.first(where: { $0.id == id }) else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([historyStore.imageURL(for: item)])
+        close()
+    }
+
+    private func deleteItem(id: UUID) {
+        do {
+            try historyStore.delete(id: id)
+        } catch {
+            model.errorMessage = "删除失败：\(error.localizedDescription)"
+        }
+        refreshModel()
+    }
+
+    private func clearAllWithConfirmation() {
+        let alert = NSAlert()
+        alert.messageText = "清空全部历史截图？"
+        alert.informativeText = "图片会从本机删除，操作不可撤销。"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "清空")
+        alert.addButton(withTitle: "取消")
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        do {
+            try historyStore.clearAll()
+        } catch {
+            model.errorMessage = "清空失败：\(error.localizedDescription)"
         }
         refreshModel()
     }

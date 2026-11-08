@@ -20,17 +20,22 @@ private func makeDefaults() -> UserDefaults {
 }
 
 @MainActor
-@Test func valuesRoundTrip() {
+@Test func valuesRoundTrip() throws {
     let defaults = makeDefaults()
     let store = SettingsStore(defaults: defaults)
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("cap-roundtrip-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
     store.imageFormat = .jpeg
     store.jpegQuality = 0.7
-    store.saveDirectory = URL(fileURLWithPath: "/tmp/cap-shots", isDirectory: true)
+    store.saveDirectory = directory
 
     let reloaded = SettingsStore(defaults: defaults)
     #expect(reloaded.imageFormat == .jpeg)
     #expect(reloaded.jpegQuality == 0.7)
-    #expect(reloaded.saveDirectory.path == "/tmp/cap-shots")
+    #expect(reloaded.saveDirectory.standardizedFileURL == directory.standardizedFileURL)
 }
 
 @MainActor
@@ -56,19 +61,65 @@ private func makeDefaults() -> UserDefaults {
 
 @MainActor
 final class FakeLaunchAtLogin: LaunchAtLoginControlling {
-    var isEnabled = false
-    private(set) var setCalls: [Bool] = []
-    func setEnabled(_ enabled: Bool) throws {
-        setCalls.append(enabled)
-        isEnabled = enabled
+    var status: LaunchAtLoginStatus = .disabled
+    private(set) var enableCalls = 0
+    private(set) var disableCalls = 0
+    private(set) var openSettingsCalls = 0
+
+    func enable() throws {
+        enableCalls += 1
+        status = .enabled
+    }
+
+    func disable() throws {
+        disableCalls += 1
+        status = .disabled
+    }
+
+    func openSystemSettings() {
+        openSettingsCalls += 1
     }
 }
 
 @MainActor
 @Test func fakeLaunchAtLoginToggles() throws {
     let controller = FakeLaunchAtLogin()
-    #expect(controller.isEnabled == false)
-    try controller.setEnabled(true)
-    #expect(controller.isEnabled)
-    #expect(controller.setCalls == [true])
+    #expect(controller.status == .disabled)
+    try controller.enable()
+    #expect(controller.status == .enabled)
+    try controller.disable()
+    #expect(controller.status == .disabled)
+    #expect(controller.enableCalls == 1)
+    #expect(controller.disableCalls == 1)
+}
+
+@MainActor
+@Test func nonexistentSaveDirectoryFallsBackToDefault() {
+    let defaults = makeDefaults()
+    let store = SettingsStore(defaults: defaults)
+    defaults.set("/Volumes/cap-missing-volume/screenshots", forKey: SettingsStore.Key.saveDirectory)
+    #expect(store.saveDirectory == SettingsStore.defaultDirectory)
+}
+
+@MainActor
+@Test func existingSaveDirectoryIsKept() throws {
+    let defaults = makeDefaults()
+    let store = SettingsStore(defaults: defaults)
+    let temporary = FileManager.default.temporaryDirectory
+        .appendingPathComponent("cap-tests-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: temporary) }
+
+    store.saveDirectory = temporary
+    #expect(store.saveDirectory.standardizedFileURL == temporary.standardizedFileURL)
+}
+
+@MainActor
+@Test func firstLaunchDefaultLaunchAtLoginIsAppliedOnce() {
+    let sessionStore = makeDefaults()
+    let store = SettingsStore(defaults: sessionStore)
+    #expect(store.shouldApplyDefaultLaunchAtLogin)
+
+    store.markDefaultLaunchAtLoginApplied()
+    #expect(store.shouldApplyDefaultLaunchAtLogin == false)
 }

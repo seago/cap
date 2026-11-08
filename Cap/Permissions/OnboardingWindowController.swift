@@ -39,7 +39,7 @@ final class OnboardingWindowController: NSWindowController {
         let title = NSTextField(labelWithString: "Cap 需要「屏幕录制」权限")
         title.font = .systemFont(ofSize: 16, weight: .semibold)
 
-        let body = NSTextField(wrappingLabelWithString: "没有这项权限，Cap 无法截取屏幕。请在系统设置 → 隐私与安全性 → 录屏与系统录音中勾选 Cap，然后回到这里点「重新检测」。")
+        let body = NSTextField(wrappingLabelWithString: "没有这项权限，Cap 无法截取屏幕。请在系统设置 → 隐私与安全性 → 录屏与系统录音中勾选 Cap，然后回到这里点「重新检测」。\n\n截图只在本机处理，不联网、不上传。")
         body.font = .systemFont(ofSize: 12)
         body.textColor = .secondaryLabelColor
         body.preferredMaxLayoutWidth = 416

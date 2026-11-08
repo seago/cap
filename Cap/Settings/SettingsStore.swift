@@ -7,6 +7,7 @@ final class SettingsStore {
         static let saveDirectory = "saveFolderPath"
         static let imageFormat = "imageFormat"
         static let jpegQuality = "jpegQuality"
+        static let launchAtLoginDefaultApplied = "launchAtLoginDefaultApplied"
     }
 
     static let defaultDirectory: URL = FileManager.default
@@ -19,10 +20,15 @@ final class SettingsStore {
         self.defaults = defaults
     }
 
-    /// 保存目录；目录为空或不存在时回退默认目录。
+    /// 保存目录；目录为空、路径不存在或不是目录时回退默认目录。
     var saveDirectory: URL {
         get {
             guard let path = defaults.string(forKey: Key.saveDirectory), !path.isEmpty else {
+                return Self.defaultDirectory
+            }
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+                  isDirectory.boolValue else {
                 return Self.defaultDirectory
             }
             return URL(fileURLWithPath: path, isDirectory: true)
@@ -30,6 +36,15 @@ final class SettingsStore {
         set {
             defaults.set(newValue.path, forKey: Key.saveDirectory)
         }
+    }
+
+    /// DESIGN §6.2 默认登录自启：首次启动时自动注册一次，之后尊重用户选择。
+    var shouldApplyDefaultLaunchAtLogin: Bool {
+        !defaults.bool(forKey: Key.launchAtLoginDefaultApplied)
+    }
+
+    func markDefaultLaunchAtLoginApplied() {
+        defaults.set(true, forKey: Key.launchAtLoginDefaultApplied)
     }
 
     var imageFormat: ImageFormat {

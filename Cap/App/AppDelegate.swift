@@ -30,6 +30,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         self.menuBarController = menuBarController
 
+        // DESIGN §6.2：首次启动默认开启登录自启；用户之后的选择优先。
+        if settings.shouldApplyDefaultLaunchAtLogin {
+            if launchAtLogin.status == .disabled {
+                do {
+                    try launchAtLogin.enable()
+                } catch {
+                    Log.app.error("Default launch-at-login registration failed: \(error.localizedDescription, privacy: .public)")
+                }
+            }
+            settings.markDefaultLaunchAtLoginApplied()
+        }
+
         let hotKeyCenter = HotKeyCenter()
         hotKeyCenter.onTrigger = { [weak self] in
             guard let self else { return }
@@ -176,8 +188,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        menuBarController?.flashSaved()
-
         if saveToFile {
             do {
                 let exporter = FileExporter(
@@ -187,10 +197,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 )
                 let url = try exporter.save(image)
                 Log.editor.notice("Saved annotated image to \(url.path, privacy: .public)")
+                menuBarController?.flashSaved()
             } catch {
                 Log.editor.error("Save failed: \(error.localizedDescription, privacy: .public)")
                 presentCaptureError(error)
             }
+        } else {
+            menuBarController?.flashSaved()
         }
     }
 

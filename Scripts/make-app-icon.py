@@ -111,8 +111,44 @@ def main():
             else:
                 row += [0, 0, 0, 0]
         rows.append(row)
-    write_png(OUT / "AppIcon-1024.png", W, H, rows)
-    print("wrote", OUT / "AppIcon-1024.png")
+    master = OUT / "AppIcon-1024.png"
+    write_png(master, W, H, rows)
+    print("wrote", master)
+    write_icns(master)
+
+
+ICONSET_ENTRIES = [
+    ("16", "icon_16x16"),
+    ("32", "icon_16x16@2x"),
+    ("32", "icon_32x32"),
+    ("64", "icon_32x32@2x"),
+    ("128", "icon_128x128"),
+    ("256", "icon_128x128@2x"),
+    ("256", "icon_256x256"),
+    ("512", "icon_256x256@2x"),
+    ("512", "icon_512x512"),
+    ("1024", "icon_512x512@2x"),
+]
+
+
+def write_icns(master):
+    """用 sips + iconutil 生成 AppIcon.icns（与提交产物一致）。"""
+    import shutil
+    import subprocess
+    import tempfile
+
+    iconset = Path(tempfile.mkdtemp(prefix="cappicon")) / "CapAppIcon.iconset"
+    iconset.mkdir(parents=True)
+    for size, name in ICONSET_ENTRIES:
+        subprocess.run(
+            ["sips", "-z", size, size, str(master), "--out", str(iconset / f"{name}.png")],
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
+    icns = OUT / "AppIcon.icns"
+    subprocess.run(["iconutil", "-c", "icns", str(iconset), "-o", str(icns)], check=True)
+    shutil.rmtree(iconset.parent, ignore_errors=True)
+    print("wrote", icns)
 
 
 if __name__ == "__main__":

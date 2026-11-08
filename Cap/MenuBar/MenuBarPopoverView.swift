@@ -16,10 +16,14 @@ final class MenuBarPopoverModel: ObservableObject {
     @Published var imageFormat: ImageFormat = .png
     @Published var saveDirectoryPath: String = ""
     @Published var launchAtLogin = false
+    @Published var launchAtLoginNeedsApproval = false
     @Published var showsSettings = false
     @Published var errorMessage: String?
 
     var onCopy: ((UUID) -> Void)?
+    var onRevealInFinder: ((UUID) -> Void)?
+    var onDelete: ((UUID) -> Void)?
+    var onClearAll: (() -> Void)?
     var onOpenHistory: (() -> Void)?
     var onOpenPermissionSettings: (() -> Void)?
     var onChooseDirectory: (() -> Void)?
@@ -105,6 +109,12 @@ struct MenuBarPopoverView: View {
                         }
                         .buttonStyle(.plain)
                         .help("点击复制")
+                        .contextMenu {
+                            Button("复制") { model.onCopy?(thumb.id) }
+                            Button("在 Finder 显示") { model.onRevealInFinder?(thumb.id) }
+                            Divider()
+                            Button("删除", role: .destructive) { model.onDelete?(thumb.id) }
+                        }
                     }
                 }
             }
@@ -157,6 +167,16 @@ struct MenuBarPopoverView: View {
                 set: { model.onToggleLaunchAtLogin?($0) }
             ))
             .font(.system(size: 11))
+            if model.launchAtLoginNeedsApproval {
+                Text("系统设置中已关闭 Cap 登录项，请在「登录项」中重新允许")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.orange)
+            }
+            HStack {
+                Spacer()
+                Button("清空历史…") { model.onClearAll?() }
+                    .font(.system(size: 11))
+            }
             if let errorMessage = model.errorMessage {
                 Text(errorMessage)
                     .font(.system(size: 11))

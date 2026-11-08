@@ -175,6 +175,9 @@ final class HistoryStore {
         }
 
         // 缩略图跟随标注版重新生成；失败时保留旧缩略图，不让复制/保存标注版失败。
+        let originalThumbData: Data? = originalItem.thumbFileName.flatMap { fileName in
+            try? Data(contentsOf: thumbsURL.appendingPathComponent(fileName))
+        }
         let thumbFileName = writeThumbnail(for: image, id: originalItem.id) ?? originalItem.thumbFileName
         let annotatedItem = HistoryItem(
             id: originalItem.id,
@@ -190,12 +193,20 @@ final class HistoryStore {
         do {
             try writeIndex()
         } catch {
-            // 索引写失败时回滚内存与图片，保持与磁盘一致。
+            // 索引写失败时回滚内存、图片与缩略图，保持与磁盘一致。
             items[index] = originalItem
             if let originalData {
                 try? originalData.write(to: imageURL, options: .atomic)
             } else {
                 try? fileManager.removeItem(at: imageURL)
+            }
+            if let originalThumbFileName = originalItem.thumbFileName {
+                if let originalThumbData {
+                    try? originalThumbData.write(to: thumbsURL.appendingPathComponent(originalThumbFileName), options: .atomic)
+                }
+            } else if let newThumb = thumbFileName {
+                // 原来没有缩略图：删掉这次生成的，避免孤儿文件。
+                try? fileManager.removeItem(at: thumbsURL.appendingPathComponent(newThumb))
             }
             throw error
         }
@@ -446,12 +457,16 @@ final class HistoryStore {
     /// 加载历史后按当前 `historyLimit` 剪枝（例如上限被调小），保持约束一致。
     private func pruneOverflow() {
         guard items.count > historyLimit else { return }
+        let original = items
         let overflow = Array(items.dropFirst(historyLimit))
         items = Array(items.prefix(historyLimit))
         do {
             try writeIndex()
         } catch {
+            // 索引没写成功就不能删文件，否则磁盘索引会指向已删除的图片。
             Log.history.error("Failed to persist pruned history index: \(error.localizedDescription, privacy: .public)")
+            items = original
+            return
         }
         removeFiles(for: overflow)
         Log.history.notice("Pruned \(overflow.count, privacy: .public) history item(s) over limit")
@@ -507,6 +522,10 @@ final class HistoryStore {
             try writeIndex()
         } catch {
             Log.history.error("Failed to persist rebuilt history index: \(error.localizedDescription, privacy: .public)")
+            items = rebuilt
+            removeFiles(for: [])
+            postDidChange()
+            return
         }
         removeFiles(for: overflow)
         Log.history.notice("Rebuilt history index with \(self.items.count, privacy: .public) item(s)")
