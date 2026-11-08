@@ -2,10 +2,11 @@ import CoreGraphics
 import Foundation
 import ImageIO
 
-enum HistoryError: LocalizedError {
+enum HistoryError: LocalizedError, Equatable {
     case encodingFailed
     case imageWriteFailed
     case indexWriteFailed
+    case itemNotFound
 
     var errorDescription: String? {
         switch self {
@@ -15,6 +16,8 @@ enum HistoryError: LocalizedError {
             return "无法写入历史图片文件。"
         case .indexWriteFailed:
             return "无法写入历史索引。"
+        case .itemNotFound:
+            return "找不到要更新的历史记录。"
         }
     }
 }
@@ -28,7 +31,7 @@ enum HistoryError: LocalizedError {
 /// ```
 ///
 /// 索引原子写（临时文件 + rename）；启动时加载，索引损坏或缺失则扫描 `images/` 重建。
-/// 缩略图、剪枝、标注版替换不在 M0 范围内。
+/// 缩略图、剪枝不在当前范围内；标注版替换见 `replaceWithAnnotated(id:image:)`。
 @MainActor
 final class HistoryStore {
     private enum Constants {
@@ -105,6 +108,54 @@ final class HistoryStore {
             throw error
         }
         return item
+    }
+
+    /// 用标注版替换 `id` 对应的原图：覆盖 `images/{uuid}.png`，把索引中的该条置 `isAnnotated = true`。
+    ///
+    /// 索引原子重写；图片或索引写入失败时回滚内存与磁盘，保持两者一致。
+    @discardableResult
+    func replaceWithAnnotated(id: UUID, image: CGImage) throws -> HistoryItem {
+        guard let index = items.firstIndex(where: { $0.id == id }) else {
+            throw HistoryError.itemNotFound
+        }
+        guard let pngData = ImageEncoder.pngData(from: image) else {
+            throw HistoryError.encodingFailed
+        }
+
+        let originalItem = items[index]
+        let imageURL = imagesURL.appendingPathComponent(originalItem.fileName)
+        let originalData = try? Data(contentsOf: imageURL)
+
+        do {
+            try pngData.write(to: imageURL, options: .atomic)
+        } catch {
+            Log.history.error("Failed to overwrite history image \(originalItem.fileName, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            throw HistoryError.imageWriteFailed
+        }
+
+        let annotatedItem = HistoryItem(
+            id: originalItem.id,
+            createdAt: originalItem.createdAt,
+            source: originalItem.source,
+            pixelWidth: image.width,
+            pixelHeight: image.height,
+            fileName: originalItem.fileName,
+            isAnnotated: true
+        )
+        items[index] = annotatedItem
+        do {
+            try writeIndex()
+        } catch {
+            // 索引写失败时回滚内存与图片，保持与磁盘一致。
+            items[index] = originalItem
+            if let originalData {
+                try? originalData.write(to: imageURL, options: .atomic)
+            } else {
+                try? fileManager.removeItem(at: imageURL)
+            }
+            throw error
+        }
+        return annotatedItem
     }
 
     private func writeIndex() throws {

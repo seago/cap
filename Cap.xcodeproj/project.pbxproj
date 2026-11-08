@@ -40,6 +40,16 @@
 		2B0000000000000000000013 /* EditorSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000003 /* EditorSessionTests.swift */; };
 		2B0000000000000000000014 /* AnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000004 /* AnnotationRenderer.swift */; };
 		2B0000000000000000000015 /* AnnotationRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0000000000000000000005 /* AnnotationRendererTests.swift */; };
+		3D0000000000000000000011 /* EditorPanelWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000001 /* EditorPanelWindow.swift */; };
+		3D0000000000000000000012 /* EditorToolbarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000002 /* EditorToolbarWindow.swift */; };
+		3D0000000000000000000013 /* ToolbarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000003 /* ToolbarLayout.swift */; };
+		3D0000000000000000000014 /* EditorCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000004 /* EditorCanvasView.swift */; };
+		3D0000000000000000000015 /* EditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000005 /* EditorController.swift */; };
+		3D0000000000000000000016 /* ToolbarLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0000000000000000000006 /* ToolbarLayoutTests.swift */; };
+		3C0000000000000000000011 /* FileNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000001 /* FileNaming.swift */; };
+		3C0000000000000000000012 /* FileExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000002 /* FileExporter.swift */; };
+		3C0000000000000000000013 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000003 /* FileNamingTests.swift */; };
+		3C0000000000000000000014 /* FileExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000004 /* FileExporterTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +99,16 @@
 		2B0000000000000000000003 /* EditorSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorSessionTests.swift; sourceTree = "<group>"; };
 		2B0000000000000000000004 /* AnnotationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderer.swift; sourceTree = "<group>"; };
 		2B0000000000000000000005 /* AnnotationRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRendererTests.swift; sourceTree = "<group>"; };
+		3D0000000000000000000001 /* EditorPanelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPanelWindow.swift; sourceTree = "<group>"; };
+		3D0000000000000000000002 /* EditorToolbarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbarWindow.swift; sourceTree = "<group>"; };
+		3D0000000000000000000003 /* ToolbarLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarLayout.swift; sourceTree = "<group>"; };
+		3D0000000000000000000004 /* EditorCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorCanvasView.swift; sourceTree = "<group>"; };
+		3D0000000000000000000005 /* EditorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorController.swift; sourceTree = "<group>"; };
+		3D0000000000000000000006 /* ToolbarLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarLayoutTests.swift; sourceTree = "<group>"; };
+		3C0000000000000000000001 /* FileNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNaming.swift; sourceTree = "<group>"; };
+		3C0000000000000000000002 /* FileExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExporter.swift; sourceTree = "<group>"; };
+		3C0000000000000000000003 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
+		3C0000000000000000000004 /* FileExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExporterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +214,7 @@
 			children = (
 				BB0000000000000000000003 /* ClipboardWriter.swift */,
 				BB0000000000000000000004 /* ImageEncoder.swift */,
+				3C0000000000000000000002 /* FileExporter.swift */,
 			);
 			path = Output;
 			sourceTree = "<group>";
@@ -213,6 +234,11 @@
 				2B0000000000000000000001 /* Annotation.swift */,
 				2B0000000000000000000002 /* EditorSession.swift */,
 				2B0000000000000000000004 /* AnnotationRenderer.swift */,
+				3D0000000000000000000001 /* EditorPanelWindow.swift */,
+				3D0000000000000000000002 /* EditorToolbarWindow.swift */,
+				3D0000000000000000000003 /* ToolbarLayout.swift */,
+				3D0000000000000000000004 /* EditorCanvasView.swift */,
+				3D0000000000000000000005 /* EditorController.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -233,6 +259,7 @@
 			children = (
 				AA0000000000000000000023 /* Logging.swift */,
 				AA0000000000000000000025 /* AppInfo.swift */,
+				3C0000000000000000000001 /* FileNaming.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -259,6 +286,9 @@
 				1A0000000000000000000001 /* ScreenCaptureConfigurationTests.swift */,
 				2B0000000000000000000003 /* EditorSessionTests.swift */,
 				2B0000000000000000000005 /* AnnotationRendererTests.swift */,
+				3D0000000000000000000006 /* ToolbarLayoutTests.swift */,
+				3C0000000000000000000003 /* FileNamingTests.swift */,
+				3C0000000000000000000004 /* FileExporterTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -378,6 +408,13 @@
 				2B0000000000000000000011 /* Annotation.swift in Sources */,
 				2B0000000000000000000012 /* EditorSession.swift in Sources */,
 				2B0000000000000000000014 /* AnnotationRenderer.swift in Sources */,
+				3D0000000000000000000011 /* EditorPanelWindow.swift in Sources */,
+				3D0000000000000000000012 /* EditorToolbarWindow.swift in Sources */,
+				3D0000000000000000000013 /* ToolbarLayout.swift in Sources */,
+				3D0000000000000000000014 /* EditorCanvasView.swift in Sources */,
+				3D0000000000000000000015 /* EditorController.swift in Sources */,
+				3C0000000000000000000011 /* FileNaming.swift in Sources */,
+				3C0000000000000000000012 /* FileExporter.swift in Sources */,
 				EE0000000000000000000011 /* WindowIndex.swift in Sources */,
 				FF0000000000000000000011 /* SelectionOverlayWindow.swift in Sources */,
 				FF0000000000000000000012 /* SelectionCanvasView.swift in Sources */,
@@ -400,6 +437,9 @@
 				1A0000000000000000000011 /* ScreenCaptureConfigurationTests.swift in Sources */,
 				2B0000000000000000000013 /* EditorSessionTests.swift in Sources */,
 				2B0000000000000000000015 /* AnnotationRendererTests.swift in Sources */,
+				3D0000000000000000000016 /* ToolbarLayoutTests.swift in Sources */,
+				3C0000000000000000000013 /* FileNamingTests.swift in Sources */,
+				3C0000000000000000000014 /* FileExporterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

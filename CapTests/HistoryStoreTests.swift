@@ -165,3 +165,112 @@ private func fileSystemNumber(of url: URL) -> Int? {
     #expect(FileManager.default.fileExists(atPath: store.imagesURL.path, isDirectory: &isDirectory))
     #expect(isDirectory.boolValue)
 }
+
+@Test @MainActor func replaceWithAnnotatedOverwritesImageAndMarksAnnotated() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let original = try store.append(
+        makeImage(width: 8, height: 6),
+        source: .display(3),
+        capturedAt: Date(timeIntervalSince1970: 1_000)
+    )
+    let imageURL = store.imagesURL.appendingPathComponent(original.fileName)
+    let originalFileNumber = try #require(fileSystemNumber(of: imageURL))
+
+    let annotated = try store.replaceWithAnnotated(id: original.id, image: makeImage(width: 5, height: 4))
+
+    // 同一条记录、同一个文件名，尺寸与标注状态更新。
+    #expect(annotated.id == original.id)
+    #expect(annotated.fileName == original.fileName)
+    #expect(annotated.createdAt == original.createdAt)
+    #expect(annotated.source == .display(3))
+    #expect(annotated.isAnnotated)
+    #expect(annotated.pixelWidth == 5)
+    #expect(annotated.pixelHeight == 4)
+    #expect(store.items == [annotated])
+
+    // 原文件被标注版覆盖（原子写替换目录项，inode 变化）。
+    #expect(FileManager.default.fileExists(atPath: imageURL.path))
+    let annotatedFileNumber = try #require(fileSystemNumber(of: imageURL))
+    #expect(originalFileNumber != annotatedFileNumber)
+    let decoded = try #require(decodeImage(at: imageURL), "历史图片应当是合法 PNG")
+    #expect(decoded.width == 5)
+    #expect(decoded.height == 4)
+
+    // 重启 App 后仍是标注版。
+    let reloaded = HistoryStore(rootURL: root)
+    #expect(reloaded.items == [annotated])
+}
+
+@Test @MainActor func replaceWithAnnotatedPreservesOtherItemsAndOrder() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let older = try store.append(
+        makeImage(width: 2, height: 2),
+        source: .region(CGRect(x: 1, y: 2, width: 3, height: 4)),
+        capturedAt: Date(timeIntervalSince1970: 1_000)
+    )
+    let newer = try store.append(
+        makeImage(width: 3, height: 3),
+        source: .display(1),
+        capturedAt: Date(timeIntervalSince1970: 2_000)
+    )
+
+    _ = try store.replaceWithAnnotated(id: older.id, image: makeImage(width: 9, height: 7))
+
+    #expect(store.items.map(\.id) == [newer.id, older.id], "替换不应改变历史顺序")
+    #expect(!store.items[0].isAnnotated)
+    #expect(store.items[1].isAnnotated)
+    #expect(store.items[1].pixelWidth == 9)
+    #expect(store.items[1].pixelHeight == 7)
+    #expect(store.items[1].source == .region(CGRect(x: 1, y: 2, width: 3, height: 4)))
+
+    let reloaded = HistoryStore(rootURL: root)
+    #expect(reloaded.items.map(\.id) == [newer.id, older.id])
+    #expect(!reloaded.items[0].isAnnotated)
+    #expect(reloaded.items[1].isAnnotated)
+    #expect(reloaded.items[1].pixelWidth == 9)
+    #expect(reloaded.items[1].pixelHeight == 7)
+}
+
+@Test @MainActor func replaceWithAnnotatedRewritesIndexAtomically() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let item = try store.append(makeImage(), source: .display(1), capturedAt: Date(timeIntervalSince1970: 1_000))
+
+    let indexURL = root.appendingPathComponent("index.json")
+    let beforeFileNumber = try #require(fileSystemNumber(of: indexURL))
+
+    _ = try store.replaceWithAnnotated(id: item.id, image: makeImage(width: 4, height: 4))
+
+    let afterFileNumber = try #require(fileSystemNumber(of: indexURL))
+    #expect(beforeFileNumber != afterFileNumber)
+    #expect(!FileManager.default.fileExists(atPath: indexURL.appendingPathExtension("tmp").path), "原子写不应遗留临时文件")
+    #expect(HistoryStore(rootURL: root).items.first?.isAnnotated == true)
+}
+
+@Test @MainActor func replaceWithAnnotatedUnknownIDThrowsAndDoesNotLeakFiles() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let existing = try store.append(makeImage(), source: .display(1), capturedAt: Date(timeIntervalSince1970: 1_000))
+    let imagesBefore = try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil)
+
+    #expect(throws: HistoryError.itemNotFound) {
+        _ = try store.replaceWithAnnotated(id: UUID(), image: makeImage(width: 3, height: 3))
+    }
+
+    #expect(store.items.count == 1)
+    #expect(store.items.first == existing)
+    #expect(!store.items[0].isAnnotated)
+    let imagesAfter = try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil)
+    #expect(imagesAfter.count == imagesBefore.count)
+}
+

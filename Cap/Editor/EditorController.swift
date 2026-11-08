@@ -1,0 +1,310 @@
+import AppKit
+import CoreGraphics
+
+/// 编辑器：冻结面板 + 工具条 + 画布。
+///
+/// 输出回调由 AppDelegate 注入：
+/// - `onFinish`：Enter / ⌘C / 「完成」——复制标注版并关闭
+/// - `onSave`：⌘S / 「保存」——保存标注版并关闭
+/// - `onCancel`：Esc / 「关闭」——保留原图并关闭
+@MainActor
+final class EditorController {
+    let session: EditorSession
+    let selectionFrame: CGRect
+
+    private(set) var panel: EditorPanelWindow?
+    private(set) var toolbar: EditorToolbarWindow?
+    private(set) var canvas: EditorCanvasView?
+
+    var onFinish: ((CGImage) -> Void)?
+    var onSave: ((CGImage) -> Void)?
+    var onCancel: (() -> Void)?
+    var onToolChanged: ((EditorTool) -> Void)?
+
+    private var toolButtons: [EditorTool: NSButton] = [:]
+    private var colorButtons: [AnnotationColor: NSButton] = [:]
+
+    init(session: EditorSession, selectionFrame: CGRect) {
+        self.session = session
+        self.selectionFrame = selectionFrame
+    }
+
+    // MARK: - 显示
+
+    func present() {
+        guard panel == nil else { return }
+
+        let canvas = EditorCanvasView(session: session)
+        canvas.frame = CGRect(origin: .zero, size: selectionFrame.size)
+        canvas.onKeyDown = { [weak self] event in
+            self?.handleKeyDown(event) ?? false
+        }
+        self.canvas = canvas
+
+        let panel = EditorPanelWindow(frame: selectionFrame)
+        panel.contentView = canvas
+        panel.makeKeyAndOrderFront(nil)
+        self.panel = panel
+
+        let toolbarContent = makeToolbarContentView()
+        let layoutSize = toolbarContent.fittingSize
+
+        let toolbar = EditorToolbarWindow(contentSize: layoutSize)
+        toolbar.contentView = toolbarContent
+        self.toolbar = toolbar
+
+        let visibleFrame = NSScreen.screens.first(where: { $0.frame.intersects(selectionFrame) })?.visibleFrame
+            ?? NSScreen.main?.visibleFrame
+            ?? selectionFrame
+        let origin = ToolbarLayout.origin(
+            toolbarSize: layoutSize,
+            selectionFrame: selectionFrame,
+            visibleFrame: visibleFrame
+        )
+        toolbar.setFrame(CGRect(origin: origin, size: layoutSize), display: false)
+        toolbar.orderFront(nil)
+
+        NSApp.activate(ignoringOtherApps: true)
+        panel.makeKey()
+        canvas.window?.makeFirstResponder(canvas)
+        Log.editor.notice("Editor presented frame=\(String(describing: self.selectionFrame), privacy: .public)")
+    }
+
+    func close() {
+        toolbar?.orderOut(nil)
+        toolbar?.close()
+        toolbar = nil
+        panel?.orderOut(nil)
+        panel?.close()
+        panel = nil
+        canvas = nil
+    }
+
+    // MARK: - 动作
+
+    func selectTool(_ tool: EditorTool) {
+        switch tool {
+        case .close:
+            cancel()
+        case .complete:
+            finish()
+        case .save:
+            save()
+        case .undo:
+            session.undo()
+            canvas?.refresh()
+        case .redo:
+            session.redo()
+            canvas?.refresh()
+        default:
+            session.tool = tool
+            updateToolSelection()
+            onToolChanged?(tool)
+        }
+    }
+
+    func undo() {
+        session.undo()
+        canvas?.refresh()
+    }
+
+    func redo() {
+        session.redo()
+        canvas?.refresh()
+    }
+
+    func finish() {
+        let image = AnnotationRenderer.render(session: session)
+        let callback = onFinish
+        close()
+        callback?(image)
+    }
+
+    func save() {
+        let image = AnnotationRenderer.render(session: session)
+        let callback = onSave
+        close()
+        callback?(image)
+    }
+
+    func cancel() {
+        let callback = onCancel
+        close()
+        callback?()
+    }
+
+    // MARK: - 键盘
+
+    private func handleKeyDown(_ event: NSEvent) -> Bool {
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        let hasCommand = modifiers.contains(.command)
+        let hasShift = modifiers.contains(.shift)
+
+        switch event.keyCode {
+        case 53: // Esc
+            cancel()
+            return true
+        case 36, 76: // Return / Enter
+            if hasCommand {
+                finish()
+            } else {
+                finish()
+            }
+            return true
+        case 51, 117: // Delete / Forward delete
+            session.deleteLast()
+            canvas?.refresh()
+            return true
+        case 6 where hasCommand: // ⌘Z
+            if hasShift { redo() } else { undo() }
+            return true
+        case 1 where hasCommand: // ⌘S
+            save()
+            return true
+        case 8 where hasCommand: // ⌘C
+            finish()
+            return true
+        default:
+            return false
+        }
+    }
+
+    // MARK: - 工具条
+
+    private func makeToolbarContentView() -> NSView {
+        let stack = NSStackView()
+        stack.orientation = .horizontal
+        stack.spacing = 6
+        stack.edgeInsets = NSEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+        stack.wantsLayer = true
+        stack.layer?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(0.96).cgColor
+        stack.layer?.cornerRadius = 10
+
+        let toolSymbols: [(EditorTool, String, String)] = [
+            (.close, "xmark", "关闭"),
+            (.crop, "crop", "裁剪"),
+            (.rectangle, "rectangle", "矩形"),
+            (.arrow, "arrow.up.right", "箭头"),
+            (.line, "minus", "直线"),
+            (.text, "textformat", "文字"),
+            (.pen, "pencil.tip", "画笔"),
+            (.highlight, "highlighter", "高亮"),
+            (.mosaic, "squareshape.split.3x3", "马赛克"),
+            (.number, "1.circle", "序号"),
+        ]
+
+        for (tool, symbol, tooltip) in toolSymbols {
+            let button = NSButton(image: NSImage(systemSymbolName: symbol, accessibilityDescription: tooltip) ?? NSImage(), target: self, action: #selector(toolButtonTapped(_:)))
+            button.bezelStyle = .texturedRounded
+            button.toolTip = tooltip
+            button.identifier = NSUserInterfaceItemIdentifier(tool.rawValue)
+            button.setButtonType(.toggle)
+            toolButtons[tool] = button
+            stack.addArrangedSubview(button)
+        }
+
+        stack.addArrangedSubview(NSBox.separator())
+
+        for color in AnnotationColor.allCases {
+            let button = NSButton(title: "", target: self, action: #selector(colorButtonTapped(_:)))
+            button.bezelStyle = .circular
+            button.identifier = NSUserInterfaceItemIdentifier(color.rawValue)
+            button.image = colorSwatchImage(for: color)
+            button.imagePosition = .imageOnly
+            colorButtons[color] = button
+            stack.addArrangedSubview(button)
+        }
+
+        let slider = NSSlider(value: Double(session.style.lineWidth), minValue: Double(AnnotationStyle.minimumLineWidth), maxValue: Double(AnnotationStyle.maximumLineWidth), target: self, action: #selector(widthChanged(_:)))
+        slider.controlSize = .small
+        slider.frame.size.width = 90
+        stack.addArrangedSubview(slider)
+
+        stack.addArrangedSubview(NSBox.separator())
+
+        let undoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: "撤销") ?? NSImage(), target: self, action: #selector(undoTapped))
+        undoButton.bezelStyle = .texturedRounded
+        undoButton.toolTip = "撤销 ⌘Z"
+        stack.addArrangedSubview(undoButton)
+
+        let redoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.forward", accessibilityDescription: "重做") ?? NSImage(), target: self, action: #selector(redoTapped))
+        redoButton.bezelStyle = .texturedRounded
+        redoButton.toolTip = "重做 ⇧⌘Z"
+        stack.addArrangedSubview(redoButton)
+
+        stack.addArrangedSubview(NSBox.separator())
+
+        let completeButton = NSButton(image: NSImage(systemSymbolName: "checkmark", accessibilityDescription: "完成") ?? NSImage(), target: self, action: #selector(completeTapped))
+        completeButton.bezelStyle = .texturedRounded
+        completeButton.toolTip = "完成并复制 Enter"
+        stack.addArrangedSubview(completeButton)
+
+        let saveButton = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: "保存") ?? NSImage(), target: self, action: #selector(saveTapped))
+        saveButton.bezelStyle = .texturedRounded
+        saveButton.toolTip = "保存 ⌘S"
+        stack.addArrangedSubview(saveButton)
+
+        stack.layoutSubtreeIfNeeded()
+        updateToolSelection()
+        updateColorSelection()
+        return stack
+    }
+
+    private func colorSwatchImage(for color: AnnotationColor) -> NSImage {
+        let nsColor: NSColor
+        switch color {
+        case .red: nsColor = .systemRed
+        case .yellow: nsColor = .systemYellow
+        case .blue: nsColor = .systemBlue
+        }
+        let image = NSImage(size: CGSize(width: 14, height: 14))
+        image.lockFocus()
+        nsColor.setFill()
+        NSBezierPath(ovalIn: CGRect(x: 1, y: 1, width: 12, height: 12)).fill()
+        image.unlockFocus()
+        return image
+    }
+
+    private func updateToolSelection() {
+        for (tool, button) in toolButtons {
+            let isDrawingTool = tool.isDrawingTool
+            button.state = (isDrawingTool && tool == session.tool) ? .on : .off
+        }
+    }
+
+    private func updateColorSelection() {
+        for (color, button) in colorButtons {
+            button.state = (color == session.style.color) ? .on : .off
+        }
+    }
+
+    // MARK: - 工具条动作
+
+    @objc private func toolButtonTapped(_ sender: NSButton) {
+        guard let raw = sender.identifier?.rawValue, let tool = EditorTool(rawValue: raw) else { return }
+        selectTool(tool)
+    }
+
+    @objc private func colorButtonTapped(_ sender: NSButton) {
+        guard let raw = sender.identifier?.rawValue, let color = AnnotationColor(rawValue: raw) else { return }
+        session.style.color = color
+        updateColorSelection()
+    }
+
+    @objc private func widthChanged(_ sender: NSSlider) {
+        session.style.lineWidth = CGFloat(sender.doubleValue)
+    }
+
+    @objc private func undoTapped() { undo() }
+    @objc private func redoTapped() { redo() }
+    @objc private func completeTapped() { finish() }
+    @objc private func saveTapped() { save() }
+}
+
+private extension NSBox {
+    static func separator() -> NSBox {
+        let box = NSBox()
+        box.boxType = .separator
+        return box
+    }
+}

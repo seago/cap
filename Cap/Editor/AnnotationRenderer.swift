@@ -1,6 +1,5 @@
 import AppKit
 import CoreGraphics
-import CoreText
 
 /// 把 `EditorSession` 的标注渲染成位图。
 ///
@@ -176,22 +175,15 @@ enum AnnotationRenderer {
         outputSize: CGSize
     ) {
         guard !text.isEmpty else { return }
-
-        let font = CTFontCreateUIFontForLanguage(.system, fontSize, nil)
-            ?? CTFontCreateWithName("Helvetica" as CFString, fontSize, nil)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: font,
-            .foregroundColor: NSColor(cgColor: color) ?? NSColor.systemRed,
-        ]
-        let attributed = NSAttributedString(string: text, attributes: attributes)
-        let line = CTLineCreateWithAttributedString(attributed)
-
-        context.saveGState()
-        // 上下文是左上原点（y 向下），TextMatrix 需要再翻一次 y，否则字形上下颠倒。
-        context.textMatrix = CGAffineTransform(scaleX: 1, y: -1)
-        context.textPosition = CGPoint(x: point.x, y: point.y + fontSize)
-        CTLineDraw(line, context)
-        context.restoreGState()
+        let nsColor = NSColor(cgColor: color) ?? NSColor.systemRed
+        guard let image = textImage(text, fontSize: fontSize, color: nsColor) else { return }
+        let rect = CGRect(
+            x: point.x,
+            y: point.y,
+            width: CGFloat(image.width),
+            height: CGFloat(image.height)
+        )
+        drawUprightImage(image, in: rect, context: context)
     }
 
     private static func drawNumber(
@@ -213,24 +205,44 @@ enum AnnotationRenderer {
         context.setFillColor(color)
         context.fillEllipse(in: circle)
 
-        let fontSize = radius * 1.3
-        let font = CTFontCreateUIFontForLanguage(.system, fontSize, nil)
-            ?? CTFontCreateWithName("Helvetica" as CFString, fontSize, nil)
+        let digitSize = radius * 1.3
+        guard let image = textImage("\(value)", fontSize: digitSize, color: .white) else { return }
+        let rect = CGRect(
+            x: center.x - CGFloat(image.width) / 2,
+            y: center.y - CGFloat(image.height) / 2,
+            width: CGFloat(image.width),
+            height: CGFloat(image.height)
+        )
+        drawUprightImage(image, in: rect, context: context)
+    }
+
+    /// 用 AppKit 把文字渲染成小位图（自然方向、不自带翻转问题）。
+    private static func textImage(_ text: String, fontSize: CGFloat, color: NSColor) -> CGImage? {
+        let font = NSFont.systemFont(ofSize: fontSize)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font,
-            .foregroundColor: NSColor.white,
+            .foregroundColor: color,
         ]
-        let attributed = NSAttributedString(string: "\(value)", attributes: attributes)
-        let line = CTLineCreateWithAttributedString(attributed)
-        let bounds = CTLineGetBoundsWithOptions(line, .useOpticalBounds)
+        let textSize = (text as NSString).size(withAttributes: attributes)
+        guard textSize.width > 0, textSize.height > 0 else { return nil }
 
+        let padding: CGFloat = 2
+        let size = NSSize(width: ceil(textSize.width) + padding * 2, height: ceil(textSize.height) + padding * 2)
+        let image = NSImage(size: size)
+        image.lockFocus()
+        (text as NSString).draw(at: NSPoint(x: padding, y: padding), withAttributes: attributes)
+        image.unlockFocus()
+
+        guard let tiff = image.tiffRepresentation, let rep = NSBitmapImageRep(data: tiff) else { return nil }
+        return rep.cgImage
+    }
+
+    /// 在左上原点（y 向下）的上下文中正立绘制位图。
+    private static func drawUprightImage(_ image: CGImage, in rect: CGRect, context: CGContext) {
         context.saveGState()
-        context.textMatrix = CGAffineTransform(scaleX: 1, y: -1)
-        context.textPosition = CGPoint(
-            x: center.x - bounds.width / 2 - bounds.origin.x,
-            y: center.y - bounds.height / 2 - bounds.origin.y
-        )
-        CTLineDraw(line, context)
+        context.translateBy(x: rect.minX, y: rect.maxY)
+        context.scaleBy(x: 1, y: -1)
+        context.draw(image, in: CGRect(x: 0, y: 0, width: rect.width, height: rect.height))
         context.restoreGState()
     }
 

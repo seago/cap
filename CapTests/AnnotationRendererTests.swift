@@ -170,11 +170,19 @@ private func isNonBlack(_ p: (r: Int, g: Int, b: Int, a: Int)) -> Bool {
     session.addNumber(at: CGPoint(x: 40, y: 40))
 
     let output = AnnotationRenderer.render(session: session)
-    // 圆心是白色数字（非红非黑）
-    let center = pixel(of: output, x: 40, y: 40)
-    #expect(center.r > 200 && center.g > 200 && center.b > 200)
-    // 圆环左侧是红色
+
+    // 圆环左侧应为红色
     #expect(isReddish(pixel(of: output, x: 40 - 14, y: 40)))
+
+    // 圆内应存在白色数字像素（不强制正好在圆心，数字字形中间可能镂空）
+    var whitePixels = 0
+    for x in 32..<48 {
+        for y in 30..<50 {
+            let p = pixel(of: output, x: x, y: y)
+            if p.r > 200 && p.g > 200 && p.b > 200 { whitePixels += 1 }
+        }
+    }
+    #expect(whitePixels > 5)
 }
 
 @MainActor
