@@ -53,6 +53,20 @@ enum AnnotationRenderer {
         return context.makeImage() ?? session.sourceImage
     }
 
+    /// 在任意已翻转为左上原点的上下文中绘制单条标注（用于画布实时预览）。
+    @MainActor
+    static func drawPreview(
+        kind: AnnotationKind,
+        style: AnnotationStyle,
+        cropOrigin: CGPoint,
+        in context: CGContext,
+        outputSize: CGSize,
+        source: CGImage
+    ) {
+        let annotation = Annotation(kind: kind, style: style)
+        draw(annotation, in: context, outputSize: outputSize, cropOrigin: cropOrigin, source: source)
+    }
+
     // MARK: - 绘制
 
     private static func draw(

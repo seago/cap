@@ -23,6 +23,7 @@ final class EditorController {
 
     private var toolButtons: [EditorTool: NSButton] = [:]
     private var colorButtons: [AnnotationColor: NSButton] = [:]
+    private let textEditing = TextEditingController()
 
     init(session: EditorSession, selectionFrame: CGRect) {
         self.session = session
@@ -38,6 +39,24 @@ final class EditorController {
         canvas.frame = CGRect(origin: .zero, size: selectionFrame.size)
         canvas.onKeyDown = { [weak self] event in
             self?.handleKeyDown(event) ?? false
+        }
+        canvas.onCommit = { [weak self] kind in
+            guard let self else { return }
+            if case .number(_, let center) = kind {
+                self.session.addNumber(at: center)
+            } else {
+                self.session.add(kind)
+            }
+            self.canvas?.refresh()
+        }
+        canvas.onCrop = { [weak self] rect in
+            guard let self else { return }
+            if self.session.applyCrop(rect) {
+                self.canvas?.refresh()
+            }
+        }
+        canvas.onRequestText = { [weak self] imagePoint in
+            self?.beginTextInput(at: imagePoint)
         }
         self.canvas = canvas
 
@@ -131,6 +150,37 @@ final class EditorController {
         let callback = onCancel
         close()
         callback?()
+    }
+
+    /// 文字工具：把像素坐标换算成视图坐标，叠一个输入框。
+    private func beginTextInput(at imagePoint: CGPoint) {
+        guard let canvas else { return }
+        let viewPoint = CGPoint(
+            x: imagePoint.x * canvas.bounds.width / max(session.imageSize.width, 1),
+            y: imagePoint.y * canvas.bounds.height / max(session.imageSize.height, 1)
+        )
+        let nsColor: NSColor
+        switch session.style.color {
+        case .red: nsColor = .systemRed
+        case .yellow: nsColor = .systemYellow
+        case .blue: nsColor = .systemBlue
+        }
+
+        textEditing.onCommit = { [weak self] text, origin, fontSize in
+            guard let self else { return }
+            self.session.add(.text(text, origin: origin, fontSize: fontSize))
+            self.canvas?.refresh()
+        }
+        textEditing.onCancel = { [weak self] in
+            self?.canvas?.refresh()
+        }
+        textEditing.begin(
+            in: canvas,
+            atViewPoint: viewPoint,
+            imagePoint: imagePoint,
+            fontSize: 22,
+            color: nsColor
+        )
     }
 
     // MARK: - 键盘

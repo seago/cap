@@ -1,7 +1,7 @@
 # 21 · 编辑器验收与稳健性
 
 Milestone: M2
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by: 18, 19, 20
 Type: feature
 
@@ -11,8 +11,8 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] build + 全部测试通过
-- [ ] [auto] 大图（Retina 3840×2400）渲染耗时记录 < 500ms
+- [x] [auto] build + 全部测试通过
+- [x] [auto] 大图（Retina 3840×2400）渲染耗时记录 < 500ms
 - [ ] [manual] 标准组每个工具各画一次并分别 Enter 输出，图正确
 - [ ] [manual] 撤销 10 步回到原图；重做 10 步恢复
 - [ ] [manual] 中文输入正常；Retina 导出像素与原图一致
@@ -42,3 +42,12 @@ Out:
 ## Notes
 
 - DESIGN §9 风险 #4（非激活面板输入）在此收口
+
+## Runs
+
+### 2026-11-08 09:14 · run 1
+
+- Auto: build ✅ / test 104 passed ✅
+- Auto: 3840x2400 + 20 条标注渲染 3.7ms（阈值 500ms，独立 CLI 与单测双重测量）
+- Auto: 编辑器重入保护（`editorController != nil` 时忽略 ⌘⇧2）、重复 close 幂等
+- Manual pending: 屏幕锁定，全部人工项（逐工具输出、10 步撤销、中文输入、重名保存、只读目录）待解锁
