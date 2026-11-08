@@ -55,6 +55,18 @@
 		3C0000000000000000000012 /* FileExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000002 /* FileExporter.swift */; };
 		3C0000000000000000000013 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000003 /* FileNamingTests.swift */; };
 		3C0000000000000000000014 /* FileExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0000000000000000000004 /* FileExporterTests.swift */; };
+
+		7B0000000000000000000011 /* Thumbnailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0000000000000000000001 /* Thumbnailer.swift */; };
+		7B0000000000000000000012 /* HistoryWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0000000000000000000002 /* HistoryWindow.swift */; };
+		7B0000000000000000000013 /* HistoryGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0000000000000000000003 /* HistoryGridItemView.swift */; };
+		7B0000000000000000000014 /* HistoryRetentionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0000000000000000000004 /* HistoryRetentionTests.swift */; };
+		7B0000000000000000000015 /* ThumbnailerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0000000000000000000005 /* ThumbnailerTests.swift */; };
+		8C0000000000000000000011 /* MenuBarPopoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000001 /* MenuBarPopoverController.swift */; };
+		8C0000000000000000000012 /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000002 /* MenuBarPopoverView.swift */; };
+		8C0000000000000000000013 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000003 /* SettingsStore.swift */; };
+		8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000004 /* LaunchAtLogin.swift */; };
+		8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000005 /* SettingsStoreTests.swift */; };
+		8C0000000000000000000016 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000006 /* AppIcon.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +131,18 @@
 		3C0000000000000000000002 /* FileExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExporter.swift; sourceTree = "<group>"; };
 		3C0000000000000000000003 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		3C0000000000000000000004 /* FileExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExporterTests.swift; sourceTree = "<group>"; };
+
+		7B0000000000000000000001 /* Thumbnailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thumbnailer.swift; sourceTree = "<group>"; };
+		7B0000000000000000000002 /* HistoryWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryWindow.swift; sourceTree = "<group>"; };
+		7B0000000000000000000003 /* HistoryGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryGridItemView.swift; sourceTree = "<group>"; };
+		7B0000000000000000000004 /* HistoryRetentionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRetentionTests.swift; sourceTree = "<group>"; };
+		7B0000000000000000000005 /* ThumbnailerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailerTests.swift; sourceTree = "<group>"; };
+		8C0000000000000000000001 /* MenuBarPopoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverController.swift; sourceTree = "<group>"; };
+		8C0000000000000000000002 /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
+		8C0000000000000000000003 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		8C0000000000000000000004 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
+		8C0000000000000000000005 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
+		8C0000000000000000000006 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +186,7 @@
 			children = (
 				AA0000000000000000000005 /* App */,
 				AA0000000000000000000006 /* MenuBar */,
+				8C0000000000000000000021 /* Settings */,
 				AA000000000000000000000A /* HotKey */,
 				AA000000000000000000000B /* Permissions */,
 				BB0000000000000000000021 /* Capture */,
@@ -188,6 +213,10 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000022 /* MenuBarController.swift */,
+				8C0000000000000000000001 /* MenuBarPopoverController.swift */,
+				8C0000000000000000000002 /* MenuBarPopoverView.swift */,
+				7B0000000000000000000002 /* HistoryWindow.swift */,
+				7B0000000000000000000003 /* HistoryGridItemView.swift */,
 			);
 			path = MenuBar;
 			sourceTree = "<group>";
@@ -234,6 +263,7 @@
 			children = (
 				CC0000000000000000000001 /* HistoryItem.swift */,
 				CC0000000000000000000002 /* HistoryStore.swift */,
+				7B0000000000000000000001 /* Thumbnailer.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -280,6 +310,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000000000000000000024 /* Info.plist */,
+				8C0000000000000000000006 /* AppIcon.icns */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -304,8 +335,21 @@
 				6A0000000000000000000001 /* EditorPerformanceTests.swift */,
 				3C0000000000000000000003 /* FileNamingTests.swift */,
 				3C0000000000000000000004 /* FileExporterTests.swift */,
+				7B0000000000000000000004 /* HistoryRetentionTests.swift */,
+				7B0000000000000000000005 /* ThumbnailerTests.swift */,
+				8C0000000000000000000005 /* SettingsStoreTests.swift */,
 			);
 			path = CapTests;
+			sourceTree = "<group>";
+		};
+
+		8C0000000000000000000021 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				8C0000000000000000000003 /* SettingsStore.swift */,
+				8C0000000000000000000004 /* LaunchAtLogin.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -388,6 +432,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C0000000000000000000016 /* AppIcon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +481,13 @@
 				FF0000000000000000000011 /* SelectionOverlayWindow.swift in Sources */,
 				FF0000000000000000000012 /* SelectionCanvasView.swift in Sources */,
 				FF0000000000000000000013 /* SelectionOverlayController.swift in Sources */,
+				7B0000000000000000000011 /* Thumbnailer.swift in Sources */,
+				7B0000000000000000000012 /* HistoryWindow.swift in Sources */,
+				7B0000000000000000000013 /* HistoryGridItemView.swift in Sources */,
+				8C0000000000000000000011 /* MenuBarPopoverController.swift in Sources */,
+				8C0000000000000000000012 /* MenuBarPopoverView.swift in Sources */,
+				8C0000000000000000000013 /* SettingsStore.swift in Sources */,
+				8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,6 +512,9 @@
 				6A0000000000000000000011 /* EditorPerformanceTests.swift in Sources */,
 				3C0000000000000000000013 /* FileNamingTests.swift in Sources */,
 				3C0000000000000000000014 /* FileExporterTests.swift in Sources */,
+				7B0000000000000000000014 /* HistoryRetentionTests.swift in Sources */,
+				7B0000000000000000000015 /* ThumbnailerTests.swift in Sources */,
+				8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

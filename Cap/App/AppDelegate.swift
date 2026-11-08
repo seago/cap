@@ -10,6 +10,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let screenCaptureService = ScreenCaptureService()
     private let clipboardWriter = ClipboardWriter()
     private let historyStore = HistoryStore()
+    private let settings = SettingsStore()
+    private let launchAtLogin = LaunchAtLoginController()
+    private var historyWindowController: HistoryWindowController?
     private var selectionOverlay: SelectionOverlayController?
     private var editorController: EditorController?
     private var isCapturing = false
@@ -17,7 +20,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         Log.app.info("Cap launched, version \(AppInfo.version, privacy: .public)")
         Log.app.notice("Screen recording permission: \(CGPreflightScreenCaptureAccess(), privacy: .public)")
-        menuBarController = MenuBarController()
+        let menuBarController = MenuBarController(
+            historyStore: historyStore,
+            settings: settings,
+            launchAtLogin: launchAtLogin
+        )
+        menuBarController.onOpenHistory = { [weak self] in
+            self?.openHistoryWindow()
+        }
+        self.menuBarController = menuBarController
 
         let hotKeyCenter = HotKeyCenter()
         hotKeyCenter.onTrigger = { [weak self] in
@@ -165,15 +176,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        menuBarController?.flashSaved()
+
         if saveToFile {
             do {
-                let url = try FileExporter().save(image)
+                let exporter = FileExporter(
+                    directory: settings.saveDirectory,
+                    format: settings.imageFormat,
+                    jpegQuality: settings.jpegQuality
+                )
+                let url = try exporter.save(image)
                 Log.editor.notice("Saved annotated image to \(url.path, privacy: .public)")
             } catch {
                 Log.editor.error("Save failed: \(error.localizedDescription, privacy: .public)")
                 presentCaptureError(error)
             }
         }
+    }
+
+    /// 打开历史窗口（单例，重复点击前置）。
+    private func openHistoryWindow() {
+        if let window = historyWindowController {
+            window.present()
+            return
+        }
+        let controller = HistoryWindowController(store: historyStore)
+        historyWindowController = controller
+        controller.present()
     }
 
     // MARK: - 历史与错误

@@ -70,4 +70,28 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
     /// 相对 `History/images/` 的文件名，形如 `{uuid}.png`。
     let fileName: String
     let isAnnotated: Bool
+    /// 相对 `History/thumbs/` 的缩略图文件名，形如 `{uuid}.jpg`。
+    ///
+    /// #24 之前的索引没有该字段，解码后为 `nil`；`HistoryStore` 加载时会补生成缩略图。
+    let thumbFileName: String?
+
+    init(
+        id: UUID,
+        createdAt: Date,
+        source: HistorySource,
+        pixelWidth: Int,
+        pixelHeight: Int,
+        fileName: String,
+        isAnnotated: Bool,
+        thumbFileName: String? = nil
+    ) {
+        self.id = id
+        self.createdAt = createdAt
+        self.source = source
+        self.pixelWidth = pixelWidth
+        self.pixelHeight = pixelHeight
+        self.fileName = fileName
+        self.isAnnotated = isAnnotated
+        self.thumbFileName = thumbFileName
+    }
 }

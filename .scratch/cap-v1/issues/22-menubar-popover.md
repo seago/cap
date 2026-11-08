@@ -1,7 +1,7 @@
 # 22 · 菜单栏 popover
 
 Milestone: M3
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by:
 Type: feature
 
@@ -11,8 +11,8 @@ Type: feature
 
 ## Acceptance
 
-- [ ] [auto] `RecentHistoryTests`：取最近 8 条、空历史返回空、顺序新到旧
-- [ ] [auto] build + 既有测试通过
+- [x] [auto] `RecentHistoryTests`：取最近 8 条、空历史返回空、顺序新到旧
+- [x] [auto] build + 既有测试通过
 - [ ] [manual] 点图标弹出 popover，显示权限状态与 2×4 网格；点缩略图复制并收起
 - [ ] [manual] 权限未授权时显示「去授权」并可跳转
 - [ ] [manual] popover 外点击自动收起
@@ -40,3 +40,11 @@ Out:
 ## Notes
 
 - `NSPopover` + NSStatusItem button；不抢焦点
+
+## Runs
+
+### 2026-11-08 10:24 · run 1
+
+- Auto: build ✅ / test 129 passed ✅
+- 实现: `MenuBarPopoverController` + SwiftUI popover（权限状态灯、最近 8 张缩略图网格、全部截图/设置/退出）；`.historyStoreDidChange` 通知自动刷新
+- Manual pending: 屏幕已锁（登录窗口），需解锁后验证 popover 外观、点击复制、外点收起

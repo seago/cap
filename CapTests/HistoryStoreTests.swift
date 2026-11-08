@@ -161,9 +161,12 @@ private func fileSystemNumber(of url: URL) -> Int? {
     let store = HistoryStore(rootURL: root)
     #expect(store.items.isEmpty)
 
-    var isDirectory: ObjCBool = false
-    #expect(FileManager.default.fileExists(atPath: store.imagesURL.path, isDirectory: &isDirectory))
-    #expect(isDirectory.boolValue)
+    for directory in [store.imagesURL, store.thumbsURL] {
+        var isDirectory: ObjCBool = false
+        #expect(FileManager.default.fileExists(atPath: directory.path, isDirectory: &isDirectory))
+        #expect(isDirectory.boolValue)
+    }
+    #expect(HistoryStore.defaultHistoryLimit == 100)
 }
 
 @Test @MainActor func replaceWithAnnotatedOverwritesImageAndMarksAnnotated() throws {
@@ -274,3 +277,127 @@ private func fileSystemNumber(of url: URL) -> Int? {
     #expect(imagesAfter.count == imagesBefore.count)
 }
 
+// MARK: - #23 删除单条 / 清空历史
+
+@Test @MainActor func deleteRemovesIndexEntryImageAndThumbnail() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let older = try store.append(
+        makeImage(width: 8, height: 6),
+        source: .display(1),
+        capturedAt: Date(timeIntervalSince1970: 1_000)
+    )
+    let newer = try store.append(
+        makeImage(width: 9, height: 7),
+        source: .display(1),
+        capturedAt: Date(timeIntervalSince1970: 2_000)
+    )
+    let olderThumbFileName = try #require(older.thumbFileName)
+    let olderThumbURL = store.thumbsURL.appendingPathComponent(olderThumbFileName)
+    #expect(FileManager.default.fileExists(atPath: olderThumbURL.path))
+
+    try store.delete(id: older.id)
+
+    #expect(store.items == [newer])
+    #expect(!FileManager.default.fileExists(atPath: store.imageURL(for: older).path), "删除记录应删掉图片文件")
+    #expect(!FileManager.default.fileExists(atPath: olderThumbURL.path), "删除记录应删掉缩略图文件")
+    #expect(FileManager.default.fileExists(atPath: store.imageURL(for: newer).path), "不应误删其他记录")
+
+    // 索引已更新：重启后只剩 newer，且磁盘无残留。
+    let reloaded = HistoryStore(rootURL: root)
+    #expect(reloaded.items == [newer])
+    let imageFiles = try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil)
+    let thumbFiles = try FileManager.default.contentsOfDirectory(at: store.thumbsURL, includingPropertiesForKeys: nil)
+    #expect(imageFiles.count == 1)
+    #expect(thumbFiles.count == 1)
+}
+
+@Test @MainActor func deleteUnknownIDThrowsAndChangesNothing() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let existing = try store.append(makeImage(), source: .display(1))
+    let imagesBefore = try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil)
+    let thumbsBefore = try FileManager.default.contentsOfDirectory(at: store.thumbsURL, includingPropertiesForKeys: nil)
+
+    #expect(throws: HistoryError.itemNotFound) {
+        try store.delete(id: UUID())
+    }
+
+    #expect(store.items == [existing])
+    let imagesAfter = try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil)
+    let thumbsAfter = try FileManager.default.contentsOfDirectory(at: store.thumbsURL, includingPropertiesForKeys: nil)
+    #expect(imagesAfter.count == imagesBefore.count)
+    #expect(thumbsAfter.count == thumbsBefore.count)
+}
+
+@Test @MainActor func clearAllEmptiesIndexAndDirectories() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    _ = try store.append(makeImage(width: 2, height: 2), source: .display(1), capturedAt: Date(timeIntervalSince1970: 1_000))
+    _ = try store.append(makeImage(width: 3, height: 3), source: .display(1), capturedAt: Date(timeIntervalSince1970: 2_000))
+    _ = try store.append(makeImage(width: 4, height: 4), source: .display(1), capturedAt: Date(timeIntervalSince1970: 3_000))
+
+    // 一张只存在于 images/ 的孤儿文件，清空历史时一并清掉。
+    let orphanURL = store.imagesURL.appendingPathComponent("\(UUID().uuidString).png")
+    let orphanPNG = try #require(ImageEncoder.pngData(from: makeImage(width: 4, height: 2)))
+    try orphanPNG.write(to: orphanURL)
+
+    try store.clearAll()
+
+    #expect(store.items.isEmpty)
+    #expect(store.recentItems(limit: 8).isEmpty)
+    #expect(try FileManager.default.contentsOfDirectory(at: store.imagesURL, includingPropertiesForKeys: nil).isEmpty)
+    #expect(try FileManager.default.contentsOfDirectory(at: store.thumbsURL, includingPropertiesForKeys: nil).isEmpty)
+
+    // 索引已清空：重启后仍为空。
+    let reloaded = HistoryStore(rootURL: root)
+    #expect(reloaded.items.isEmpty)
+}
+
+// MARK: - #22 popover 用的读取接口
+
+@Test @MainActor func recentItemsReturnsNewestFirstAndRespectsLimit() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    #expect(store.recentItems(limit: 8).isEmpty, "空历史返回空数组")
+
+    let first = try store.append(makeImage(width: 2, height: 2), source: .display(1), capturedAt: Date(timeIntervalSince1970: 1_000))
+    let second = try store.append(makeImage(width: 3, height: 3), source: .display(1), capturedAt: Date(timeIntervalSince1970: 2_000))
+    let third = try store.append(makeImage(width: 4, height: 4), source: .display(1), capturedAt: Date(timeIntervalSince1970: 3_000))
+
+    #expect(store.recentItems(limit: 2).map(\.id) == [third.id, second.id])
+    #expect(store.recentItems(limit: 8).map(\.id) == [third.id, second.id, first.id])
+    #expect(store.recentItems(limit: 0).isEmpty)
+    #expect(store.recentItems(limit: -1).isEmpty)
+}
+
+@Test @MainActor func imageDataReturnsOriginalPNGBytes() throws {
+    let root = makeTempRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+
+    let store = HistoryStore(rootURL: root)
+    let item = try store.append(makeImage(width: 8, height: 6), source: .display(1))
+
+    let data = try #require(store.imageData(for: item))
+    #expect(Array(data.prefix(8)) == [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], "imageData 应是 PNG 原始字节")
+    #expect(data == (try Data(contentsOf: store.imageURL(for: item))))
+
+    let decoded = try #require(decodeImage(at: store.imageURL(for: item)))
+    #expect(decoded.width == 8)
+    #expect(decoded.height == 6)
+    #expect(store.loadImage(for: item)?.width == 8)
+
+    // 标注版替换后，imageData 返回标注后的 PNG 字节（popover 复制用）。
+    let annotated = try store.replaceWithAnnotated(id: item.id, image: makeImage(width: 5, height: 4))
+    let annotatedData = try #require(store.imageData(for: annotated))
+    #expect(annotatedData != data)
+    #expect(try #require(decodeImage(at: store.imageURL(for: annotated))).width == 5)
+}
