@@ -74,6 +74,11 @@
 		9E0000000000000000000013 /* ScrollCaptureControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */; };
 		9F0000000000000000000011 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0000000000000000000001 /* TextRecognizer.swift */; };
 		9F0000000000000000000012 /* OCRTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0000000000000000000002 /* OCRTests.swift */; };
+		AA1000000000000000000011 /* PinnedImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000001 /* PinnedImageModel.swift */; };
+		AA1000000000000000000012 /* PinnedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000002 /* PinnedImageView.swift */; };
+		AA1000000000000000000013 /* PinnedImageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000003 /* PinnedImageWindow.swift */; };
+		AA1000000000000000000014 /* PinnedImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000004 /* PinnedImageController.swift */; };
+		AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000005 /* PinnedImageModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +162,11 @@
 		9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureControllerTests.swift; sourceTree = "<group>"; };
 		9F0000000000000000000001 /* TextRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizer.swift; sourceTree = "<group>"; };
 		9F0000000000000000000002 /* OCRTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRTests.swift; sourceTree = "<group>"; };
+		AA1000000000000000000001 /* PinnedImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageModel.swift; sourceTree = "<group>"; };
+		AA1000000000000000000002 /* PinnedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageView.swift; sourceTree = "<group>"; };
+		AA1000000000000000000003 /* PinnedImageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageWindow.swift; sourceTree = "<group>"; };
+		AA1000000000000000000004 /* PinnedImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageController.swift; sourceTree = "<group>"; };
+		AA1000000000000000000005 /* PinnedImageModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +219,7 @@
 				2B0000000000000000000021 /* Editor */,
 				9D0000000000000000000021 /* Scroll */,
 				9F0000000000000000000021 /* OCR */,
+				AA1000000000000000000021 /* Pin */,
 				DD0000000000000000000021 /* Selection */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
@@ -357,6 +368,7 @@
 				9D0000000000000000000002 /* ScrollStitcherTests.swift */,
 				9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */,
 				9F0000000000000000000002 /* OCRTests.swift */,
+				AA1000000000000000000005 /* PinnedImageModelTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -387,6 +399,17 @@
 				9F0000000000000000000001 /* TextRecognizer.swift */,
 			);
 			path = OCR;
+			sourceTree = "<group>";
+		};
+		AA1000000000000000000021 /* Pin */ = {
+			isa = PBXGroup;
+			children = (
+				AA1000000000000000000001 /* PinnedImageModel.swift */,
+				AA1000000000000000000002 /* PinnedImageView.swift */,
+				AA1000000000000000000003 /* PinnedImageWindow.swift */,
+				AA1000000000000000000004 /* PinnedImageController.swift */,
+			);
+			path = Pin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -529,6 +552,10 @@
 				9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */,
 				9E0000000000000000000012 /* ScrollCaptureOverlay.swift in Sources */,
 				9F0000000000000000000011 /* TextRecognizer.swift in Sources */,
+				AA1000000000000000000011 /* PinnedImageModel.swift in Sources */,
+				AA1000000000000000000012 /* PinnedImageView.swift in Sources */,
+				AA1000000000000000000013 /* PinnedImageWindow.swift in Sources */,
+				AA1000000000000000000014 /* PinnedImageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,6 +586,7 @@
 				9D0000000000000000000012 /* ScrollStitcherTests.swift in Sources */,
 				9E0000000000000000000013 /* ScrollCaptureControllerTests.swift in Sources */,
 				9F0000000000000000000012 /* OCRTests.swift in Sources */,
+				AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,6 +6,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private var hotKeyCenter: HotKeyCenter?
     private var scrollHotKeyCenter: HotKeyCenter?
+    private var pinHotKeyCenter: HotKeyCenter?
+    private let pinnedImageController = PinnedImageController()
     private var onboardingController: OnboardingWindowController?
 
     private let screenCaptureService = ScreenCaptureService()
@@ -68,6 +70,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         self.scrollHotKeyCenter = scrollHotKeyCenter
 
+        let pinHotKeyCenter = HotKeyCenter(identifier: 3)
+        pinHotKeyCenter.onTrigger = { [weak self] in
+            self?.pinnedImageController.toggleClickThroughAll()
+        }
+        if !pinHotKeyCenter.register(.optionCommandP) {
+            Log.app.error("Failed to register ⌥⌘P")
+        }
+        self.pinHotKeyCenter = pinHotKeyCenter
+
         let onboardingController = OnboardingWindowController()
         onboardingController.showIfNeeded()
         self.onboardingController = onboardingController
@@ -76,6 +87,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         editorController?.close()
         scrollCaptureController?.cancel()
+        pinnedImageController.closeAll()
         scrollOverlay?.dismiss()
         selectionOverlay?.dismiss()
         hotKeyCenter?.unregister()
@@ -327,6 +339,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.editorController = nil
             Log.editor.notice("Editor cancelled; original stays in clipboard and history")
         }
+        controller.onPin = { [weak self] image in
+            guard let self else { return }
+            let near = self.editorController?.panel?.frame
+            self.pinnedImageController.pin(image: image, near: near)
+        }
 
         editorController = controller
         controller.present()
@@ -367,6 +384,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// 把历史里的一条截图贴到屏幕。
+    private func pinHistoryItem(_ item: HistoryItem) {
+        guard let image = historyStore.loadImage(for: item) else {
+            presentCaptureError(CaptureError.captureFailed)
+            return
+        }
+        pinnedImageController.pin(image: image, near: historyWindowController?.window?.frame)
+    }
+
     /// 打开历史窗口（单例，重复点击前置）。
     private func openHistoryWindow() {
         if let window = historyWindowController {
@@ -374,6 +400,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         let controller = HistoryWindowController(store: historyStore)
+        controller.onPin = { [weak self] item in
+            self?.pinHistoryItem(item)
+        }
         historyWindowController = controller
         controller.present()
     }

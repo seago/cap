@@ -21,6 +21,8 @@ final class HistoryWindowController: NSWindowController {
     private let store: HistoryStore
     private let clipboardWriter = ClipboardWriter()
     private let textRecognizer: TextRecognizing
+    /// 把某条历史截图贴到屏幕（#30，AppDelegate 注入）。
+    var onPin: ((HistoryItem) -> Void)?
     private let collectionHostView = FlippedDocumentView()
     private let scrollView = NSScrollView()
     private let headerLabel = NSTextField(labelWithString: "")
@@ -175,6 +177,7 @@ final class HistoryWindowController: NSWindowController {
             itemView.onRevealInFinder = { [weak self] in self?.revealInFinder(item) }
             itemView.onDelete = { [weak self] in self?.delete(item) }
             itemView.onRecognizeText = { [weak self] in self?.recognizeText(for: item) }
+            itemView.onPin = { [weak self] in self?.onPin?(item) }
             return itemView
         }
         for itemView in itemViews {

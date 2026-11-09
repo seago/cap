@@ -19,6 +19,8 @@ final class EditorController {
     var onFinish: ((CGImage) -> Void)?
     var onSave: ((CGImage) -> Void)?
     var onCancel: (() -> Void)?
+    /// 把当前渲染结果贴到屏幕（#30）。
+    var onPin: ((CGImage) -> Void)?
     var onToolChanged: ((EditorTool) -> Void)?
 
     private var toolButtons: [EditorTool: NSButton] = [:]
@@ -174,6 +176,12 @@ final class EditorController {
         callback?()
     }
 
+    /// 把当前标注结果钉到屏幕，编辑器保持打开。
+    func pin() {
+        let image = AnnotationRenderer.render(session: session)
+        onPin?(image)
+    }
+
     /// 文字工具：把像素坐标换算成视图坐标，叠一个输入框。
     private func restoreCanvasFocus() {
         if let canvas {
@@ -240,6 +248,9 @@ final class EditorController {
             return true
         case 1 where hasCommand: // ⌘S
             save()
+            return true
+        case 17 where hasCommand: // ⌘T
+            pin()
             return true
         case 8 where hasCommand: // ⌘C
             finish()
@@ -314,6 +325,11 @@ final class EditorController {
 
         stack.addArrangedSubview(NSBox.separator())
 
+        let pinButton = NSButton(image: NSImage(systemSymbolName: "pin", accessibilityDescription: "贴到屏幕") ?? NSImage(), target: self, action: #selector(pinTapped))
+        pinButton.bezelStyle = .texturedRounded
+        pinButton.toolTip = "贴到屏幕 ⌘T"
+        stack.addArrangedSubview(pinButton)
+
         let completeButton = NSButton(image: NSImage(systemSymbolName: "checkmark", accessibilityDescription: "完成") ?? NSImage(), target: self, action: #selector(completeTapped))
         completeButton.bezelStyle = .texturedRounded
         completeButton.toolTip = "完成并复制 Enter"
@@ -377,6 +393,7 @@ final class EditorController {
 
     @objc private func undoTapped() { undo() }
     @objc private func redoTapped() { redo() }
+    @objc private func pinTapped() { pin() }
     @objc private func completeTapped() { finish() }
     @objc private func saveTapped() { save() }
 }

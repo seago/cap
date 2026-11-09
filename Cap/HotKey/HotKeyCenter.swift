@@ -12,6 +12,13 @@ struct HotKeyMapping: Equatable, Sendable {
         displayString: "⌘⇧2"
     )
 
+    /// 贴图钉屏：切换所有贴图的点击穿透（穿透后只能靠这个热键恢复）。
+    static let optionCommandP = HotKeyMapping(
+        keyCode: UInt32(kVK_ANSI_P),
+        modifiers: UInt32(cmdKey | optionKey),
+        displayString: "⌥⌘P"
+    )
+
     /// 滚动长截图（v1.1）。避开系统保留的 ⌘⇧3/4/5/6（截图与 Touch Bar 截图）。
     static let commandShift7 = HotKeyMapping(
         keyCode: UInt32(kVK_ANSI_7),
@@ -122,7 +129,10 @@ private func capHotKeyEventHandler(
 
     let center = Unmanaged<HotKeyCenter>.fromOpaque(userData).takeUnretainedValue()
     // 只处理本实例注册的那个热键（多个 HotKeyCenter 共用同一 Carbon 签名）。
-    guard hotKeyID.signature == 0x43415031, hotKeyID.id == center.identifier else { return noErr }
+    // 注意：不匹配时必须返回 eventNotHandledErr，否则会吞掉其它实例的热键事件。
+    guard hotKeyID.signature == 0x43415031, hotKeyID.id == center.identifier else {
+        return OSStatus(eventNotHandledErr)
+    }
     MainActor.assumeIsolated {
         center.handleHotKeyPressed()
     }
