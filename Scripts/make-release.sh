@@ -42,9 +42,21 @@ echo "==> 架构：$ARCHS"
 
 mkdir -p "$DIST"
 ZIP="$DIST/Cap-${VERSION}-macos-universal.zip"
-rm -f "$ZIP" "$ZIP.sha256"
+DMG="$DIST/Cap-${VERSION}-macos-universal.dmg"
+SHA_FILE="$DIST/Cap-${VERSION}-macos-universal.sha256"
+rm -f "$ZIP" "$DMG" "$SHA_FILE" "$ZIP.sha256"
+
+echo "==> 打包 zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
-shasum -a 256 "$ZIP" | tee "$ZIP.sha256"
+
+echo "==> 打包 dmg（拖进 Applications 安装）"
+STAGING=$(mktemp -d /tmp/cap-dmg.XXXXXX)
+trap 'rm -rf "$STAGING"' EXIT
+ditto "$APP" "$STAGING/Cap.app"
+ln -s /Applications "$STAGING/Applications"
+hdiutil create -quiet -volname "Cap ${VERSION}" -srcfolder "$STAGING" -ov -format UDZO "$DMG"
+
+shasum -a 256 "$ZIP" "$DMG" | tee "$SHA_FILE"
 
 cat > "$DIST/release-notes.md" <<NOTES
 # Cap $VERSION
@@ -70,7 +82,7 @@ GitHub Actions 构建产物为 ad-hoc 签名（未公证）；本机使用请按
 ## 校验
 
 \`\`\`
-$(cat "$ZIP.sha256")
+$(cat "$SHA_FILE")
 \`\`\`
 
 详细验收见仓库 \`.scratch/cap-v1/acceptance-v1.1.md\`。
@@ -81,4 +93,4 @@ echo "==> 说明：dist/release-notes.md"
 echo
 echo "下一步："
 echo "  git tag -a v$VERSION -m \"Cap v${VERSION}\" && git push origin v$VERSION"
-echo "  gh release create v$VERSION \"$ZIP\" --title \"Cap v${VERSION}\" --notes-file dist/release-notes.md"
+echo "  gh release create v$VERSION \"$ZIP\" \"$DMG\" --title \"Cap v${VERSION}\" --notes-file dist/release-notes.md"

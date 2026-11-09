@@ -134,5 +134,7 @@
 - macOS runner 用 `macos-15`（默认 Xcode）；本机是 Xcode 27.2，CI 用系统最新稳定 Xcode 即可（工程 compatibilityVersion 是 Xcode 14）。
 - 私有仓库：Release 仅 collaborator 可见；Actions 用量 macOS runner 按 10 倍分钟计费。
 - CI 里没有本机自签身份 `Cap Local Signing`，用 `CODE_SIGN_IDENTITY=-`（ad-hoc）；用户下载后需右键打开/去 quarantine。
+- 发布产物同时出 **dmg**（`hdiutil create -format UDZO`，内含 Cap.app + `/Applications` 软链）和 **zip**（`ditto -c -k --keepParent`），两者都附 SHA256；dmg 是给人拖拽安装，zip 给脚本/更新用。
+- workflow 幂等：Release 已存在时 `gh release edit` 更新说明 + `gh release upload --clobber` 覆盖附件。
 - 正式对外分发需要 Developer ID + `notarytool` 公证 + `stapler staple`；当前不做。
 - 版本号来源：`Cap.xcodeproj` 的 `MARKETING_VERSION`（当前 0.1.0）；tag 用 `v<版本>`。

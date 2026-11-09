@@ -80,7 +80,7 @@ git push origin v0.1.0
 ```
 
 - 工作流：`.github/workflows/release.yml`（test → build & package → `gh release create`）
-- 产物：`Cap-<版本>-macos-universal.zip` + SHA256（x86_64 + arm64），说明文件由 `Scripts/make-release.sh` 生成
+- 产物：`Cap-<版本>-macos-universal.dmg`（拖进 Applications 安装）+ `Cap-<版本>-macos-universal.zip`（解压安装）+ SHA256（x86_64 + arm64），说明文件由 `Scripts/make-release.sh` 生成
 - 也可在 GitHub Actions 页面手动 `Run workflow` 填版本号，或本地 `Scripts/make-release.sh` 打包后网页上传
 - **CI 产物是 ad-hoc 签名（未公证）**：首次打开需右键 → 打开；若提示「已损坏」执行
   `xattr -dr com.apple.quarantine /Applications/Cap.app`。
