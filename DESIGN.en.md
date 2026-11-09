@@ -40,7 +40,7 @@ A tool for daily personal use, not a public product. Typical use: in any app, su
 | Region selection (any direction, cross-display, 1px accuracy) | Scrolling capture (shipped v1.1) |
 | Window selection (hover highlight, click, shadow by default) | OCR / text recognition (shipped v1.1) |
 | Full screen (display under mouse) | Pinned screenshots (shipped v1.1) |
-| Multi-display (all displays covered, cross-display drag) | Upload / share (v1.1 pending) |
+| Multi-display (all displays covered, cross-display drag) | Upload / share (v1.1 shipped: custom HTTP endpoint) |
 | Annotation: crop, rectangle, arrow, line, text, pen, highlight, mosaic/blur, number, undo/redo | Screen recording / GIF |
 | Three colors (red/yellow/blue) + line-width slider + system font | Delayed capture |
 | Clipboard (PNG + TIFF); annotated version overwrites | Full style panel, color picker, ellipse |
@@ -477,6 +477,7 @@ History/
 | `launchAtLoginDefaultApplied` | set to true after the first-launch login item registration (actual state from `SMAppService`) |
 | `historyLimit` | 100 (not exposed in v1) |
 | `cap.accessibilityPrompted` | set to true after the first scrolling-capture Accessibility prompt |
+| `uploadEndpoint` / `uploadFieldName` / `uploadAuthorization` / `uploadResponseURLKey` | upload endpoint (empty = not configured), multipart field name (default `file`), optional `Authorization` header, optional response URL key |
 
 ### 6.3 Saving
 
@@ -548,9 +549,9 @@ History/
 | Pinned screenshots | ✅ Accepted | Editor ⌘T / history right-click "Pin to Screen"; drag/zoom/click-through/close; ⌥⌘P toggles click-through globally; `sharingType=.none` keeps them out of captures |
 | Custom shortcuts | ✅ Accepted | Three recordable actions; conflict warnings; hotkeys temporarily unregistered while recording |
 | Localization | ✅ Accepted | zh-Hans / en / zh-Hant String Catalog, follows the system language; 124 keys |
-| Upload / share | ⏳ Pending | See §10; plan: user-configured HTTP endpoint + `UploadService` protocol |
+| Upload / share | ✅ Accepted | User-configured HTTP endpoint (multipart `file` field + optional Authorization); returned URL goes to the clipboard and is stored in history; `UploadService` protocol is replaceable; entry hidden until configured |
 
-**Acceptance**: 177 unit tests + live smoke tests (scrolling capture, OCR, pinning, shortcut recording, English UI); commits in git (`7274185`, `a2cf38c`, `27035f9`, `0d7a8e7`, `30af388`).
+**Acceptance**: 191 unit tests + live smoke tests (scrolling capture, OCR, pinning, shortcut recording, English UI, upload); commits in git (`7274185`, `a2cf38c`, `27035f9`, `0d7a8e7`, `30af388`, `67e8407`).
 
 ---
 
@@ -620,7 +621,7 @@ Status (2026-11-09): the first three are implemented and accepted, plus custom s
 - **Scrolling capture** (implemented): select a region → AXRaise the target window to the front → per-frame capture + HID scroll wheel events → `ScrollStitcher` feature-matching stitch. Verified on a long Chrome page (1100×2625) with no misalignment; `CGEvent.postToPid` does not work for Chrome and the first scroll frame is occasionally swallowed — both handled (duplicate-frame retry). Limitation: sticky headers/dynamic content may stop it early (stop rather than emit a misaligned image).
 - **OCR** (implemented): Vision `VNRecognizeTextRequest`, on-device and offline, mixed Chinese/English; result copied and stored in `HistoryItem.ocrText`.
 - **Pinned screenshots** (implemented): borderless `NSPanel` showing an image; drag, scroll-wheel anchored zoom (0.1–8x), double-click reset, Esc close, right-click copy/click-through; excluded from captures by default.
-- **Upload / share**: needs a target service decision (self-hosted / image host / clipboard sharing); leave an `UploadService` protocol and keep network logic out of the capture flow.
+- **Upload / share** (implemented): no built-in image host; the user fills in their own HTTP endpoint, triggered from history (right-click → Upload & Copy Link) or the editor upload button; multipart POST, response parsed from JSON `url` / `link` / `data.url` or a plain-text URL; on success the link is copied to the clipboard and stored in `HistoryItem.uploadedURL`. The `UploadService` protocol + `UploadCoordinator` isolate network code; capture/editor flows only consume the result.
 - **Architectural seams**: `OutputService` is already a replaceable outlet; `HistoryItem` has an `ocrText` field; the editor renderer is decoupled from capture, so pinning reuses rendered output.
 
 ---

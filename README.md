@@ -32,6 +32,7 @@ Scripts/install.sh
 - **OCR（v1.1）**：历史窗口右键「识别文字」，本地 Vision 识别中英文并复制文本
 - **贴图钉屏（v1.1）**：编辑器 ⌘T 或历史右键「贴到屏幕」把截图钉成浮窗；拖动移动、滚轮缩放、双击复位、Esc 关闭、右键复制/点击穿透；⌥⌘P 全局切换穿透
 - **多语言（v1.1）**：简体中文 / English / 繁體中文，跟随系统语言切换（String Catalog，无需手动设置）
+- **上传/分享（v1.1）**：设置区填自己的 HTTP 端点（可选鉴权头/字段名），历史右键「上传并复制链接」或编辑器上传按钮，成功后链接自动进剪贴板；不内置图床
 
 ## 常用快捷键
 
@@ -87,6 +88,17 @@ Scripts/          签名身份、安装、图标生成
 CapTests/         Swift Testing 单测（模型/算法/渲染/设置）
 ```
 
+## 上传（可选）
+
+默认不配置任何上传服务。在菜单栏 popover → 设置 → 上传 里填写自己的 HTTP 端点（需接受 `multipart/form-data` 的 `file` 字段，返回 JSON `{"url": "..."}` 或纯文本 URL）。本地验收可用自带脚本：
+
+```bash
+python3 Scripts/mock-upload-server.py --port 8765 --dir /tmp/cap-uploads
+# 再在设置里填 http://127.0.0.1:8765/upload
+```
+
+响应会依次尝试 `url` / `link` / `data.url` 等字段，也接受纯文本 URL；鉴权头以 `Authorization` 发送。鉴权值以明文存在 UserDefaults，只建议填短期 token。
+
 ## 故障排查
 
 - **⌘⇧2 没反应**：确认 `/Applications/Cap.app` 在运行；权限被撤销时菜单栏图标会变成橙色感叹号，点开 popover 按提示重新授权。
@@ -94,4 +106,5 @@ CapTests/         Swift Testing 单测（模型/算法/渲染/设置）
 - **改了代码后权限失效**：确认用 `Scripts/install.sh` 安装（稳定自签身份 `Cap Local Signing`），不要用 ad-hoc 签名重建。
 - **构建报 `unable to find xcodebuild` 或 SDK 错误**：本机 `DEVELOPER_DIR` 可能过期，构建时加前缀：
   `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild ...`
+- **上传失败**：确认端点 URL 可访问、返回 2xx 且响应含合法 URL；HTTP 4xx 不重试（多为鉴权/配置问题），5xx 与网络错误会自动重试 1 次。
 - **历史/缩略图异常**：删除 `~/Library/Application Support/Cap/History/index.json` 后重启，会从 `images/` 重建索引。

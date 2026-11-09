@@ -118,3 +118,12 @@
 - 运行时资源是编译后的 `en.lproj/Localizable.strings` 与 `zh-Hant.lproj/Localizable.strings`；`zh-Hans` 不生成 lproj，直接回退 key（中文）。
 - 验证语言：`Cap.app/Contents/MacOS/Cap -AppleLanguages '(en)'`；也可以通过 `defaults write dev.bruce.cap AppleLanguages -array en`。
 - `LocalizationTests` 锁住三语言资源存在、关键 key 翻译、占位符一致性；GUI 手动项待系统语言切换实测。
+
+### 上传（#31）
+
+- 配置存 UserDefaults：`uploadEndpoint` / `uploadFieldName` / `uploadAuthorization` / `uploadResponseURLKey`；未配置时历史右键菜单项隐藏、编辑器上传按钮提示先配置。
+- multipart 字段名默认 `file`，文件整体一次 POST；`Authorization` 头可选（明文存 UserDefaults，只建议短期 token）。
+- 响应解析顺序：自定义字段名 → `url` / `link` / `imageUrl` / `data.url` / `data.link` → 纯文本 URL；以上都没有则报「上传结果不是有效链接」。
+- 重试策略：超时/网络错误/5xx 重试 1 次；4xx 直接报错（鉴权/配置问题重试无意义）。
+- 本地验收：`python3 Scripts/mock-upload-server.py --port 8765 --dir /tmp/cap-uploads`，然后设置端点 `http://127.0.0.1:8765/upload`；脚本会把上传文件存到 --dir 并返回 JSON。
+- 成功路径：URL 复制到剪贴板 + 写回 `HistoryItem.uploadedURL`（卡片显示「· 已上传」）；失败只提示，不动历史。

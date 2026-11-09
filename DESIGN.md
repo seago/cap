@@ -40,7 +40,7 @@
 | 区域选择（任意方向、跨屏、1px 精度） | 滚动长截图 |
 | 窗口选择（悬停高亮、单击、默认带阴影） | OCR / 文字识别 |
 | 全屏（鼠标所在屏） | 贴图钉屏 |
-| 多显示器（所有屏覆盖、跨屏拖选） | 上传 / 分享（v1.1 待做；滚动/OCR/贴图已完成） |
+| 多显示器（所有屏覆盖、跨屏拖选） | 上传 / 分享（v1.1 已完成：自定义 HTTP 端点） |
 | 标注：裁剪、矩形、箭头、直线、文字、画笔、高亮、马赛克/模糊、序号、撤销/重做 | 录屏 / GIF |
 | 三色（红/黄/蓝）+ 线宽滑块 + 系统字体 | 延时截图 |
 | 剪贴板（PNG + TIFF）；标注后覆盖 | 完整样式面板、取色器、椭圆 |
@@ -477,6 +477,7 @@ History/
 | `launchAtLoginDefaultApplied` | 首次启动自动注册登录项后置 true（实际状态以 `SMAppService` 为准） |
 | `historyLimit` | 100（v1 不暴露修改） |
 | `cap.accessibilityPrompted` | 滚动截图首次提示过辅助功能权限后置 true |
+| `uploadEndpoint` / `uploadFieldName` / `uploadAuthorization` / `uploadResponseURLKey` | 上传端点（默认空 = 未配置）、multipart 字段名（默认 `file`）、可选 `Authorization` 头、可选响应 URL 字段名 |
 
 界面语言不落 UserDefaults：全部文案走 `Localizable.xcstrings`，运行时由系统按「首选语言」自动选择；开发语言是 `zh-Hans`，因此缺失翻译时回退简体中文。
 
@@ -550,9 +551,9 @@ History/
 | 贴图钉屏 | ✅ 已验收 | 编辑器 ⌘T / 历史右键「贴到屏幕」；拖动/缩放/穿透/关闭；⌥⌘P 全局穿透切换；`sharingType=.none` 不进截图 |
 | 自定义快捷键 | ✅ 已验收 | 三个动作可录制；冲突提示；录制期间临时注销热键 |
 | 多语言 | ✅ 已验收 | String Catalog：zh-Hans / en / zh-Hant，跟随系统语言；124 个 key；AppKit 字符串走 `String(localized:)` |
-| 上传 / 分享 | ⏳ 待做 | 见 §10；计划「用户自定义 HTTP 端点 + `UploadService` 协议」 |
+| 上传 / 分享 | ✅ 已验收 | 用户自定义 HTTP 端点（multipart `file` 字段 + 可选 Authorization）；成功 URL 进剪贴板并写回历史；`UploadService` 协议可替换；未配置时入口隐藏 |
 
-**验收**：177 项单测 + 实机 liveness（滚动截图、OCR、贴图、录制快捷键、英文界面）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`、`30af388`）。
+**验收**：191 项单测 + 实机 liveness（滚动截图、OCR、贴图、录制快捷键、英文界面、上传）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`、`30af388`、`67e8407`）。
 
 ---
 
@@ -619,7 +620,7 @@ History/
 - **滚动长截图**（已实现）：框选区域 → 把目标窗口 AXRaise 到前台 → 逐帧截图 + HID 滚轮事件 → `ScrollStitcher` 特征匹配拼接。实测 Chrome 长页 1100×2625 无错位；`CGEvent.postToPid` 对 Chrome 无效、第一帧滚动偶发被吞，均已在实现中处理（重复帧重试）。限制：吸顶导航/动态内容可能提前停止（宁可停也不输出错位图）。
 - **OCR**（已实现）：Vision 的 `VNRecognizeTextRequest`，本地、离线，中英混排；结果直接复制并写回 `HistoryItem.ocrText`。
 - **贴图钉屏**（已实现）：无边框 `NSPanel` 显示图片，拖动、滚轮锚点缩放（0.1–8x）、双击复位、Esc 关闭、右键复制/穿透；默认不进截图。
-- **上传 / 分享**：需要先决定目标服务（自建 / 图床 / 剪贴板共享）；架构上留 `UploadService` 协议，不把网络逻辑塞进截图流程。
+- **上传 / 分享**（已实现）：不内置图床；用户在设置区填自己的 HTTP 端点，历史右键「上传并复制链接」或编辑器上传按钮触发；multipart POST，响应解析 JSON `url`/`link`/`data.url` 或纯文本 URL；成功后链接进剪贴板并写回 `HistoryItem.uploadedURL`。`UploadService` 协议 + `UploadCoordinator` 隔离网络逻辑，截图/编辑器流程只拿结果。
 - **架构接缝**：`OutputService` 已经是可替换的出口；`HistoryItem` 预留 `ocrText` 字段；编辑器渲染器与采集解耦，贴图可直接复用渲染结果。
 
 ---

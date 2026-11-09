@@ -32,6 +32,7 @@ After the first launch, enable Cap under **System Settings → Privacy & Securit
 - **OCR (v1.1)**: right-click → *Recognize Text* in the history window; on-device Vision recognizes Chinese and English and copies the text
 - **Pinned screenshots (v1.1)**: ⌘T in the editor or right-click → *Pin to Screen* keeps a screenshot in a floating window; drag to move, scroll to zoom, double-click to reset, Esc to close, right-click to copy or click through; ⌥⌘P toggles click-through for all pins
 - **Localization (v1.1)**: Simplified Chinese / English / Traditional Chinese, following the system language
+- **Upload / share (v1.1)**: configure your own HTTP endpoint (optional auth header and field name); right-click → *Upload & Copy Link* in history or use the editor's upload button; the returned link is copied to the clipboard. No built-in image hosts
 
 ## Default shortcuts
 
@@ -87,6 +88,17 @@ Scripts/          Signing identity, install, icon generation
 CapTests/         Swift Testing unit tests (models / algorithms / rendering / settings)
 ```
 
+## Upload (optional)
+
+Nothing is configured by default. Fill in your own HTTP endpoint under menu-bar popover → Settings → Upload (it must accept a `multipart/form-data` `file` field and return JSON `{"url": "..."}` or a plain-text URL). For local testing:
+
+```bash
+python3 Scripts/mock-upload-server.py --port 8765 --dir /tmp/cap-uploads
+# then set http://127.0.0.1:8765/upload in Settings
+```
+
+The response parser tries `url` / `link` / `data.url` and also accepts plain-text URLs; the auth value is sent as the `Authorization` header. It is stored in plain UserDefaults, so only use short-lived tokens.
+
 ## Troubleshooting
 
 - **⌘⇧2 does nothing**: make sure `/Applications/Cap.app` is running. If the permission was revoked, the menu-bar icon turns into an orange exclamation mark; open the popover and follow the prompt to re-authorize.
@@ -94,4 +106,5 @@ CapTests/         Swift Testing unit tests (models / algorithms / rendering / se
 - **Permissions break after a rebuild**: install with `Scripts/install.sh` (stable self-signed `Cap Local Signing` identity); do not rebuild with ad-hoc signing.
 - **Build errors like `unable to find xcodebuild` or SDK not found**: the local `DEVELOPER_DIR` may be stale; prefix builds with:
   `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild ...`
+- **Upload fails**: make sure the endpoint is reachable, returns 2xx and contains a valid URL. HTTP 4xx is not retried (usually auth/config), while 5xx and network errors are retried once.
 - **Broken history or thumbnails**: delete `~/Library/Application Support/Cap/History/index.json` and restart; the index is rebuilt from `images/`.
