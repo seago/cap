@@ -58,3 +58,10 @@ Out:
 - Manual: 点击缩略图复制成功（日志 `Copied history item from popover` + 剪贴板 600x400），popover 自动收起 ✅
 - Manual: 缩略图右键菜单 复制/在 Finder 显示/删除 ✅
 - Manual: 「全部截图」打开历史窗口；「设置/收起设置」切换；「退出」可用 ✅
+
+### 2026-11-09 21:18 · run 3（用户反馈修复：popover 离菜单栏太远）
+
+- 现象: popover 在菜单栏下方约 140pt 处悬空
+- 根因: 固定 `popover.contentSize = 320x360`，而 SwiftUI 内容实际高度 239；NSPopover 缩小窗口时按左下角钉住，导致顶部整体下移（差值 ≈ 360-239 + 阴影）
+- 修复: `NSHostingController.sizingOptions = [.preferredContentSize]`，show 前用 `preferredContentSize` 同步 `popover.contentSize`；不再写死高度
+- 验证: 空状态/展开设置两种高度下 popover 顶部都锚定在菜单栏下（CG y=26），展开时高度 239→382 顶部不移动

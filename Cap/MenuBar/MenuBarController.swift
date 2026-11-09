@@ -85,6 +85,8 @@ final class MenuBarController: NSObject {
 
     @objc private func togglePopover() {
         guard let button = statusItem.button else { return }
+        let screen = button.window?.screen?.frame ?? .zero
+        Log.app.debug("Popover anchor button=frame=\(String(describing: button.frame), privacy: .public) window=\(String(describing: button.window?.frame), privacy: .public) screen=\(String(describing: screen), privacy: .public)")
         popoverController.toggle(relativeTo: button)
     }
 }

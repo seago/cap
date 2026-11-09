@@ -6,6 +6,7 @@ import SwiftUI
 final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     private let popover = NSPopover()
     private let model = MenuBarPopoverModel()
+    private lazy var hostingController = NSHostingController(rootView: MenuBarPopoverView(model: model))
 
     private let historyStore: HistoryStore
     private let settings: SettingsStore
@@ -27,21 +28,34 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         self.launchAtLogin = launchAtLogin
         super.init()
 
+        // 让 popover 跟着 SwiftUI 内容真实高度走；固定 contentSize 会让窗口按左下图钉住，
+        // 内容变矮时整个 popover 顶部往下掉（表现为离菜单栏很远）。
+        hostingController.sizingOptions = [.preferredContentSize]
         popover.behavior = .transient
         popover.delegate = self
-        popover.contentViewController = NSHostingController(rootView: MenuBarPopoverView(model: model))
-        popover.contentSize = NSSize(width: 320, height: 360)
+        popover.contentViewController = hostingController
         wireActions()
         observeHistoryChanges()
     }
 
     var isShown: Bool { popover.isShown }
 
+    /// 内容（例如展开设置区）变化后同步 popover 尺寸。
+    private func updatePopoverSize() {
+        let size = hostingController.preferredContentSize
+        guard size.width > 0, size.height > 0 else { return }
+        if popover.contentSize != size {
+            popover.contentSize = size
+        }
+    }
+
     func toggle(relativeTo button: NSStatusBarButton) {
         if popover.isShown {
             popover.performClose(nil)
         } else {
             refreshModel()
+            updatePopoverSize()
+            NSApp.activate(ignoringOtherApps: true)
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         }
     }
