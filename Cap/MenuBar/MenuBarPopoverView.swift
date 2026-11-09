@@ -29,6 +29,10 @@ final class MenuBarPopoverModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var shortcutRows: [HotKeyShortcutRow] = []
     @Published var captureShortcutDisplay: String = HotKeyMapping.commandShift2.displayString
+    @Published var uploadEndpoint = ""
+    @Published var uploadFieldName = "file"
+    @Published var uploadAuthorization = ""
+    @Published var uploadConfigured = false
 
     var onCopy: ((UUID) -> Void)?
     var onRevealInFinder: ((UUID) -> Void)?
@@ -40,6 +44,9 @@ final class MenuBarPopoverModel: ObservableObject {
     var onChooseDirectory: (() -> Void)?
     var onChangeFormat: ((ImageFormat) -> Void)?
     var onRecordHotKey: ((HotKeyAction, HotKeyMapping?) -> Void)?
+    var onUploadEndpointChange: ((String) -> Void)?
+    var onUploadFieldNameChange: ((String) -> Void)?
+    var onUploadAuthorizationChange: ((String) -> Void)?
     var onToggleLaunchAtLogin: ((Bool) -> Void)?
     var onQuit: (() -> Void)?
     var onRefresh: (() -> Void)?
@@ -162,6 +169,41 @@ struct MenuBarPopoverView: View {
                     }
                 }
             }
+            Text("上传")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+            HStack {
+                Text("端点")
+                    .font(.system(size: 11))
+                TextField("https://example.com/upload", text: Binding(
+                    get: { model.uploadEndpoint },
+                    set: { model.onUploadEndpointChange?($0) }
+                ))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 11))
+            }
+            HStack {
+                Text("字段名")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                TextField("file", text: Binding(
+                    get: { model.uploadFieldName },
+                    set: { model.onUploadFieldNameChange?($0) }
+                ))
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 11))
+                .frame(width: 90)
+                Spacer()
+            }
+            SecureField("鉴权头（可选，如 Bearer …）", text: Binding(
+                get: { model.uploadAuthorization },
+                set: { model.onUploadAuthorizationChange?($0) }
+            ))
+            .textFieldStyle(.roundedBorder)
+            .font(.system(size: 11))
+            Text(model.uploadConfigured ? "上传成功后链接自动复制到剪贴板" : "未配置时历史窗口的上传入口隐藏")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
             HStack {
                 Text("保存到")
                     .font(.system(size: 11))

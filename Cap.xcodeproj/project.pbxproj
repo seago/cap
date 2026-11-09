@@ -68,6 +68,10 @@
 		8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000005 /* SettingsStoreTests.swift */; };
 		8C0000000000000000000016 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000006 /* AppIcon.icns */; };
 		AA3000000000000000000011 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA3000000000000000000001 /* Localizable.xcstrings */; };
+		EF0000000000000000000011 /* UploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000001 /* UploadService.swift */; };
+		EF0000000000000000000012 /* UploadSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000002 /* UploadSettingsStore.swift */; };
+		EF0000000000000000000013 /* UploadServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000003 /* UploadServiceTests.swift */; };
+		EF0000000000000000000014 /* UploadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000004 /* UploadCoordinator.swift */; };
 		9D0000000000000000000011 /* ScrollStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000001 /* ScrollStitcher.swift */; };
 		9D0000000000000000000012 /* ScrollStitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000002 /* ScrollStitcherTests.swift */; };
 		9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000001 /* ScrollCaptureController.swift */; };
@@ -160,6 +164,10 @@
 		8C0000000000000000000005 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		8C0000000000000000000006 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		AA3000000000000000000001 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		EF0000000000000000000001 /* UploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadService.swift; sourceTree = "<group>"; };
+		EF0000000000000000000002 /* UploadSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadSettingsStore.swift; sourceTree = "<group>"; };
+		EF0000000000000000000003 /* UploadServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadServiceTests.swift; sourceTree = "<group>"; };
+		EF0000000000000000000004 /* UploadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadCoordinator.swift; sourceTree = "<group>"; };
 		9D0000000000000000000001 /* ScrollStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcher.swift; sourceTree = "<group>"; };
 		9D0000000000000000000002 /* ScrollStitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcherTests.swift; sourceTree = "<group>"; };
 		9E0000000000000000000001 /* ScrollCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureController.swift; sourceTree = "<group>"; };
@@ -228,6 +236,7 @@
 				9D0000000000000000000021 /* Scroll */,
 				9F0000000000000000000021 /* OCR */,
 				AA1000000000000000000021 /* Pin */,
+				EF0000000000000000000021 /* Upload */,
 				DD0000000000000000000021 /* Selection */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
@@ -380,6 +389,7 @@
 				AA1000000000000000000005 /* PinnedImageModelTests.swift */,
 				AB0000000000000000000002 /* HotKeySettingsTests.swift */,
 				AA4000000000000000000001 /* LocalizationTests.swift */,
+				EF0000000000000000000003 /* UploadServiceTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -422,6 +432,16 @@
 				AA1000000000000000000004 /* PinnedImageController.swift */,
 			);
 			path = Pin;
+			sourceTree = "<group>";
+		};
+		EF0000000000000000000021 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				EF0000000000000000000001 /* UploadService.swift */,
+				EF0000000000000000000002 /* UploadSettingsStore.swift */,
+				EF0000000000000000000004 /* UploadCoordinator.swift */,
+			);
+			path = Upload;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -564,6 +584,9 @@
 				8C0000000000000000000013 /* SettingsStore.swift in Sources */,
 				8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */,
 				AB0000000000000000000011 /* ShortcutRecorderView.swift in Sources */,
+				EF0000000000000000000011 /* UploadService.swift in Sources */,
+				EF0000000000000000000012 /* UploadSettingsStore.swift in Sources */,
+				EF0000000000000000000014 /* UploadCoordinator.swift in Sources */,
 				9D0000000000000000000011 /* ScrollStitcher.swift in Sources */,
 				9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */,
 				9E0000000000000000000012 /* ScrollCaptureOverlay.swift in Sources */,
@@ -605,6 +628,7 @@
 				AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */,
 				AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */,
 				AA4000000000000000000011 /* LocalizationTests.swift in Sources */,
+				EF0000000000000000000013 /* UploadServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

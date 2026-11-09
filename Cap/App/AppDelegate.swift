@@ -12,7 +12,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let clipboardWriter = ClipboardWriter()
     private let historyStore = HistoryStore()
     private let settings = SettingsStore()
+    private let uploadSettings = UploadSettingsStore()
     private let launchAtLogin = LaunchAtLoginController()
+    private lazy var uploadCoordinator = UploadCoordinator(settings: uploadSettings, historyStore: historyStore)
     private var historyWindowController: HistoryWindowController?
     private var selectionOverlay: SelectionOverlayController?
     private var editorController: EditorController?
@@ -27,7 +29,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let menuBarController = MenuBarController(
             historyStore: historyStore,
             settings: settings,
-            launchAtLogin: launchAtLogin
+            launchAtLogin: launchAtLogin,
+            uploadSettings: uploadSettings
         )
         menuBarController.onOpenHistory = { [weak self] in
             self?.openHistoryWindow()
@@ -395,6 +398,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let near = self.editorController?.panel?.frame
             self.pinnedImageController.pin(image: image, near: near)
         }
+        controller.onUpload = { [weak self] image in
+            self?.uploadAnnotatedImage(image)
+        }
 
         editorController = controller
         controller.present()
@@ -435,6 +441,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// 上传编辑器当前的标注结果：成功复制链接，失败提示且不关闭编辑器。
+    private func uploadAnnotatedImage(_ image: CGImage) {
+        guard uploadSettings.isConfigured else {
+            presentAlert(
+                title: String(localized: "未配置上传端点"),
+                message: String(localized: "请在菜单栏 popover 的设置区填写上传端点后再上传。")
+            )
+            return
+        }
+        guard let data = ImageEncoder.pngData(from: image) else {
+            presentAlert(title: String(localized: "上传失败"), message: String(localized: "图片数据无效"))
+            return
+        }
+        let filename = "Cap-\(Int(Date().timeIntervalSince1970)).png"
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                _ = try await uploadCoordinator.uploadPNG(data, filename: filename)
+                menuBarController?.flashSaved()
+            } catch {
+                Log.upload.error("Upload failed: \(error.localizedDescription, privacy: .public)")
+                presentAlert(title: String(localized: "上传失败"), message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func presentAlert(title: String, message: String) {
+        NSSound.beep()
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: String(localized: "好"))
+        alert.runModal()
+    }
+
     /// 把历史里的一条截图贴到屏幕。
     private func pinHistoryItem(_ item: HistoryItem) {
         guard let image = historyStore.loadImage(for: item) else {
@@ -450,7 +492,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             window.present()
             return
         }
-        let controller = HistoryWindowController(store: historyStore)
+        let controller = HistoryWindowController(store: historyStore, uploadCoordinator: uploadCoordinator)
         controller.onPin = { [weak self] item in
             self?.pinHistoryItem(item)
         }

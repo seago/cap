@@ -76,6 +76,8 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
     let thumbFileName: String?
     /// OCR 识别出的文本（#29 预留字段）；旧索引没有该字段时解码为 nil。
     let ocrText: String?
+    /// 上传成功后的分享链接（#31）；未上传过为 nil。
+    let uploadedURL: String?
 
     init(
         id: UUID,
@@ -86,7 +88,8 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
         fileName: String,
         isAnnotated: Bool,
         thumbFileName: String? = nil,
-        ocrText: String? = nil
+        ocrText: String? = nil,
+        uploadedURL: String? = nil
     ) {
         self.id = id
         self.createdAt = createdAt
@@ -97,5 +100,6 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
         self.isAnnotated = isAnnotated
         self.thumbFileName = thumbFileName
         self.ocrText = ocrText
+        self.uploadedURL = uploadedURL
     }
 }

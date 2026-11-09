@@ -17,14 +17,16 @@ final class MenuBarController: NSObject {
     init(
         historyStore: HistoryStore,
         settings: SettingsStore,
-        launchAtLogin: LaunchAtLoginControlling
+        launchAtLogin: LaunchAtLoginControlling,
+        uploadSettings: UploadSettingsStore
     ) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         self.settings = settings
         popoverController = MenuBarPopoverController(
             historyStore: historyStore,
             settings: settings,
-            launchAtLogin: launchAtLogin
+            launchAtLogin: launchAtLogin,
+            uploadSettings: uploadSettings
         )
         super.init()
 

@@ -230,7 +230,37 @@ final class HistoryStore {
             fileName: original.fileName,
             isAnnotated: original.isAnnotated,
             thumbFileName: original.thumbFileName,
-            ocrText: text
+            ocrText: text,
+            uploadedURL: original.uploadedURL
+        )
+        items[index] = updated
+        do {
+            try writeIndex()
+        } catch {
+            items[index] = original
+            throw error
+        }
+        postDidChange()
+        return updated
+    }
+
+    /// 上传成功后记录分享链接（#31）。
+    func setUploadedURL(id: UUID, url: String) throws -> HistoryItem {
+        guard let index = items.firstIndex(where: { $0.id == id }) else {
+            throw HistoryError.itemNotFound
+        }
+        let original = items[index]
+        let updated = HistoryItem(
+            id: original.id,
+            createdAt: original.createdAt,
+            source: original.source,
+            pixelWidth: original.pixelWidth,
+            pixelHeight: original.pixelHeight,
+            fileName: original.fileName,
+            isAnnotated: original.isAnnotated,
+            thumbFileName: original.thumbFileName,
+            ocrText: original.ocrText,
+            uploadedURL: url
         )
         items[index] = updated
         do {

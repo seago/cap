@@ -16,6 +16,14 @@ final class HistoryGridItemView: NSView {
     var onDelete: (() -> Void)?
     var onRecognizeText: (() -> Void)?
     var onPin: (() -> Void)?
+    var onUpload: (() -> Void)?
+
+    /// 是否显示「上传并复制链接」菜单项（未配置端点时隐藏）。
+    var uploadEnabled = false {
+        didSet { uploadMenuItem?.isHidden = !uploadEnabled }
+    }
+
+    private var uploadMenuItem: NSMenuItem?
 
     private let thumbnailView = NSImageView()
     private let dateLabel = NSTextField(labelWithString: "")
@@ -50,6 +58,9 @@ final class HistoryGridItemView: NSView {
         var detail = "\(item.pixelWidth)×\(item.pixelHeight)"
         if item.isAnnotated {
             detail += String(localized: " · 已标注")
+        }
+        if item.uploadedURL != nil {
+            detail += String(localized: " · 已上传")
         }
         detailLabel.stringValue = detail
 
@@ -120,15 +131,20 @@ final class HistoryGridItemView: NSView {
         addMenuItem(title: String(localized: "复制"), action: #selector(copyClicked))
         addMenuItem(title: String(localized: "识别文字"), action: #selector(recognizeClicked))
         addMenuItem(title: String(localized: "贴到屏幕"), action: #selector(pinClicked))
+        let uploadItem = addMenuItem(title: String(localized: "上传并复制链接"), action: #selector(uploadClicked))
+        uploadItem.isHidden = !uploadEnabled
+        uploadMenuItem = uploadItem
         addMenuItem(title: String(localized: "在 Finder 中显示"), action: #selector(revealClicked))
         addMenuItem(title: String(localized: "删除"), action: #selector(deleteClicked))
         menu = contextMenu
     }
 
-    private func addMenuItem(title: String, action: Selector) {
+    @discardableResult
+    private func addMenuItem(title: String, action: Selector) -> NSMenuItem {
         let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: "")
         menuItem.target = self
         contextMenu.addItem(menuItem)
+        return menuItem
     }
 
     @objc private func previewClicked() {
@@ -145,6 +161,10 @@ final class HistoryGridItemView: NSView {
 
     @objc private func pinClicked() {
         onPin?()
+    }
+
+    @objc private func uploadClicked() {
+        onUpload?()
     }
 
     @objc private func revealClicked() {

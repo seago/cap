@@ -21,6 +21,7 @@ final class HistoryWindowController: NSWindowController {
     private let store: HistoryStore
     private let clipboardWriter = ClipboardWriter()
     private let textRecognizer: TextRecognizing
+    private let uploadCoordinator: UploadCoordinator?
     /// 把某条历史截图贴到屏幕（#30，AppDelegate 注入）。
     var onPin: ((HistoryItem) -> Void)?
     private let collectionHostView = FlippedDocumentView()
@@ -40,9 +41,14 @@ final class HistoryWindowController: NSWindowController {
     private var previewController: HistoryPreviewWindowController?
     private var statusClearTask: Task<Void, Never>?
 
-    init(store: HistoryStore, textRecognizer: TextRecognizing = VisionTextRecognizer()) {
+    init(
+        store: HistoryStore,
+        textRecognizer: TextRecognizing = VisionTextRecognizer(),
+        uploadCoordinator: UploadCoordinator? = nil
+    ) {
         self.store = store
         self.textRecognizer = textRecognizer
+        self.uploadCoordinator = uploadCoordinator
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -57,6 +63,12 @@ final class HistoryWindowController: NSWindowController {
         buildContent()
         window.center()
         observeStore()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(uploadSettingsDidChange),
+            name: UploadSettingsStore.didChangeNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -178,6 +190,8 @@ final class HistoryWindowController: NSWindowController {
             itemView.onDelete = { [weak self] in self?.delete(item) }
             itemView.onRecognizeText = { [weak self] in self?.recognizeText(for: item) }
             itemView.onPin = { [weak self] in self?.onPin?(item) }
+            itemView.uploadEnabled = uploadCoordinator?.isConfigured ?? false
+            itemView.onUpload = { [weak self] in self?.upload(item) }
             return itemView
         }
         for itemView in itemViews {
@@ -327,6 +341,31 @@ final class HistoryWindowController: NSWindowController {
                 self?.showStatus(String(localized: "识别失败：\(error.localizedDescription)"))
             }
         }
+    }
+
+    /// 上传单条历史截图（成功把链接复制到剪贴板，并写回索引）。
+    private func upload(_ item: HistoryItem) {
+        guard let uploadCoordinator else {
+            showStatus(String(localized: "未配置上传端点，无法上传"))
+            return
+        }
+        guard uploadCoordinator.isConfigured else {
+            showStatus(String(localized: "未配置上传端点，无法上传"))
+            return
+        }
+        showStatus(String(localized: "正在上传…"))
+        Task { @MainActor [weak self] in
+            do {
+                _ = try await uploadCoordinator.uploadHistoryItem(item)
+                self?.showStatus(String(localized: "已上传并复制链接"))
+            } catch {
+                self?.showStatus(String(localized: "上传失败：\(error.localizedDescription)"))
+            }
+        }
+    }
+
+    @objc private func uploadSettingsDidChange() {
+        reloadHistory()
     }
 
     private func showStatus(_ text: String) {

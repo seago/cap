@@ -11,6 +11,7 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     private let historyStore: HistoryStore
     private let settings: SettingsStore
     private let launchAtLogin: LaunchAtLoginControlling
+    private let uploadSettings: UploadSettingsStore
 
     var onOpenHistory: (() -> Void)?
     var onScrollCapture: (() -> Void)?
@@ -23,11 +24,13 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     init(
         historyStore: HistoryStore,
         settings: SettingsStore,
-        launchAtLogin: LaunchAtLoginControlling
+        launchAtLogin: LaunchAtLoginControlling,
+        uploadSettings: UploadSettingsStore
     ) {
         self.historyStore = historyStore
         self.settings = settings
         self.launchAtLogin = launchAtLogin
+        self.uploadSettings = uploadSettings
         super.init()
 
         // 让 popover 跟着 SwiftUI 内容真实高度走；固定 contentSize 会让窗口按左下图钉住，
@@ -92,6 +95,17 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
             self?.refreshModel()
         }
         model.onToggleLaunchAtLogin = { [weak self] enabled in self?.toggleLaunchAtLogin(enabled) }
+        model.onUploadEndpointChange = { [weak self] value in
+            self?.uploadSettings.endpoint = value
+            self?.refreshModel()
+        }
+        model.onUploadFieldNameChange = { [weak self] value in
+            self?.uploadSettings.fieldName = value
+        }
+        model.onUploadAuthorizationChange = { [weak self] value in
+            self?.uploadSettings.authorization = value
+            self?.refreshModel()
+        }
         model.onRecordHotKey = { [weak self] action, mapping in
             self?.recordHotKey(action: action, mapping: mapping)
         }
@@ -123,6 +137,10 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
             HotKeyShortcutRow(action: $0, mapping: settings.hotKey(for: $0))
         }
         model.captureShortcutDisplay = settings.hotKey(for: .capture).displayString
+        model.uploadEndpoint = uploadSettings.endpoint
+        model.uploadFieldName = uploadSettings.fieldName
+        model.uploadAuthorization = uploadSettings.authorization
+        model.uploadConfigured = uploadSettings.isConfigured
     }
 
     private func recentThumbnails() -> [PopoverThumbnail] {

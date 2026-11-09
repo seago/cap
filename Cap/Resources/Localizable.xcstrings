@@ -1,6 +1,22 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    " · 已上传": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · Uploaded"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · 已上傳"
+          }
+        }
+      }
+    },
     " · 已标注": {
       "localizations": {
         "en": {
@@ -157,6 +173,166 @@
           "stringUnit": {
             "state": "translated",
             "value": "PNG（無損）"
+          }
+        }
+      }
+    },
+    "file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "file"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "file"
+          }
+        }
+      }
+    },
+    "https://example.com/upload": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://example.com/upload"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://example.com/upload"
+          }
+        }
+      }
+    },
+    "上传": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳"
+          }
+        }
+      }
+    },
+    "上传失败": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload Failed"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳失敗"
+          }
+        }
+      }
+    },
+    "上传失败：%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload failed: %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳失敗：%@"
+          }
+        }
+      }
+    },
+    "上传并复制链接": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload & Copy Link"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳並複製連結"
+          }
+        }
+      }
+    },
+    "上传成功后链接自动复制到剪贴板": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The link is copied to the clipboard after upload"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳成功後連結會自動複製到剪貼板"
+          }
+        }
+      }
+    },
+    "上传端点 URL 无效": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid upload endpoint URL"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳端點 URL 無效"
+          }
+        }
+      }
+    },
+    "上传结果不是有效链接": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload response did not contain a valid link"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳結果不是有效連結"
+          }
+        }
+      }
+    },
+    "上传超时": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload timed out"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳逾時"
           }
         }
       }
@@ -353,6 +529,22 @@
         }
       }
     },
+    "图片数据无效": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid image data"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圖片資料無效"
+          }
+        }
+      }
+    },
     "图片无法读取": {
       "localizations": {
         "en": {
@@ -449,6 +641,22 @@
         }
       }
     },
+    "字段名": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Field name"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欄位名稱"
+          }
+        }
+      }
+    },
     "完成": {
       "localizations": {
         "en": {
@@ -509,6 +717,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "螢幕錄製權限正常"
+          }
+        }
+      }
+    },
+    "已上传并复制链接": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploaded and copied link"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已上傳並複製連結"
           }
         }
       }
@@ -1137,6 +1361,54 @@
         }
       }
     },
+    "未配置上传端点": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload endpoint not configured"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定上傳端點"
+          }
+        }
+      }
+    },
+    "未配置上传端点，无法上传": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload endpoint not configured; cannot upload"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定上傳端點，無法上傳"
+          }
+        }
+      }
+    },
+    "未配置时历史窗口的上传入口隐藏": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload entry is hidden until an endpoint is configured"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定時歷史視窗的上傳入口會隱藏"
+          }
+        }
+      }
+    },
     "格式": {
       "localizations": {
         "en": {
@@ -1165,6 +1437,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "框選可滾動區域"
+          }
+        }
+      }
+    },
+    "正在上传…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploading…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在上傳…"
           }
         }
       }
@@ -1537,6 +1825,22 @@
         }
       }
     },
+    "端点": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endpoint"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端點"
+          }
+        }
+      }
+    },
     "箭头": {
       "localizations": {
         "en": {
@@ -1581,6 +1885,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "結束（Esc）"
+          }
+        }
+      }
+    },
+    "网络错误：%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network error: %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "網路錯誤：%@"
           }
         }
       }
@@ -1661,6 +1981,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "請在系統設定 → 一般 → 登入項目中允許 Cap"
+          }
+        }
+      }
+    },
+    "请在菜单栏 popover 的设置区填写上传端点后再上传。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configure an upload endpoint in the menu-bar popover settings first."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請在選單列 popover 的設定區填寫上傳端點後再上傳。"
+          }
+        }
+      }
+    },
+    "请求失败（HTTP %lld）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request failed (HTTP %lld)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請求失敗（HTTP %lld）"
           }
         }
       }
@@ -1901,6 +2253,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "重新檢查"
+          }
+        }
+      }
+    },
+    "鉴权头（可选，如 Bearer …）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authorization header (optional, e.g. Bearer …)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "驗證標頭（選填，例如 Bearer …）"
           }
         }
       }

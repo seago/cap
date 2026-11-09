@@ -21,6 +21,8 @@ final class EditorController {
     var onCancel: (() -> Void)?
     /// 把当前渲染结果贴到屏幕（#30）。
     var onPin: ((CGImage) -> Void)?
+    /// 上传当前标注结果（#31）。
+    var onUpload: ((CGImage) -> Void)?
     var onToolChanged: ((EditorTool) -> Void)?
 
     private var toolButtons: [EditorTool: NSButton] = [:]
@@ -182,6 +184,12 @@ final class EditorController {
         onPin?(image)
     }
 
+    /// 上传当前标注结果，编辑器保持打开。
+    func upload() {
+        let image = AnnotationRenderer.render(session: session)
+        onUpload?(image)
+    }
+
     /// 文字工具：把像素坐标换算成视图坐标，叠一个输入框。
     private func restoreCanvasFocus() {
         if let canvas {
@@ -330,6 +338,11 @@ final class EditorController {
         pinButton.toolTip = String(localized: "贴到屏幕 ⌘T")
         stack.addArrangedSubview(pinButton)
 
+        let uploadButton = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: String(localized: "上传")) ?? NSImage(), target: self, action: #selector(uploadTapped))
+        uploadButton.bezelStyle = .texturedRounded
+        uploadButton.toolTip = String(localized: "上传并复制链接")
+        stack.addArrangedSubview(uploadButton)
+
         let completeButton = NSButton(image: NSImage(systemSymbolName: "checkmark", accessibilityDescription: String(localized: "完成")) ?? NSImage(), target: self, action: #selector(completeTapped))
         completeButton.bezelStyle = .texturedRounded
         completeButton.toolTip = String(localized: "完成并复制 Enter")
@@ -394,6 +407,7 @@ final class EditorController {
     @objc private func undoTapped() { undo() }
     @objc private func redoTapped() { redo() }
     @objc private func pinTapped() { pin() }
+    @objc private func uploadTapped() { upload() }
     @objc private func completeTapped() { finish() }
     @objc private func saveTapped() { save() }
 }
