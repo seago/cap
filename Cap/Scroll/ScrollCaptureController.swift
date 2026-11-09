@@ -50,7 +50,7 @@ final class ScrollCaptureController {
     }
 
     typealias FrameProvider = @MainActor (_ region: CGRect) async throws -> CGImage
-    typealias ScrollAction = @MainActor (_ pid: pid_t, _ points: CGFloat, _ location: CGPoint) -> Void
+    typealias ScrollAction = @MainActor (_ points: CGFloat, _ location: CGPoint) -> Void
     typealias AccessibilityCheck = @MainActor () -> Bool
 
     let configuration: Configuration
@@ -105,6 +105,14 @@ final class ScrollCaptureController {
 
         let scrollPoints = max(24, region.height * configuration.scrollRatio)
         var stalledPairs = 0
+        var duplicateDrops = 0
+        let originalCursor = CGEvent(source: nil)?.location
+        defer {
+            if let originalCursor {
+                CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: originalCursor, mouseButton: .left)?
+                    .post(tap: .cghidEventTap)
+            }
+        }
 
         for _ in 0..<configuration.maximumFrames {
             if isCancelled { return .failure(.cancelled) }
@@ -118,15 +126,27 @@ final class ScrollCaptureController {
             }
             frames.append(frame)
             onProgress?(frames.count, nil)
+            let frameCount = frames.count
+            Log.scroll.debug("Scroll frame \(frameCount, privacy: .public) captured")
 
             if frames.count >= 2, let offset = stitcher.findOffset(previous: frames[frames.count - 2], next: frame) {
-                onProgress?(frames.count, offset)
+                let capturedOffset = offset
+                Log.scroll.debug("Scroll frame \(frameCount, privacy: .public) offset=\(capturedOffset, privacy: .public)")
                 if offset <= 0 {
-                    stalledPairs += 1
+                    // 第一帧后的滚动偶尔会被系统吞掉（窗口刚激活）：丢掉重复帧并重试。
+                    if frames.count == 2, duplicateDrops < 3 {
+                        duplicateDrops += 1
+                        frames.removeLast()
+                        Log.scroll.notice("Scroll duplicate frame dropped (retry \(duplicateDrops, privacy: .public))")
+                    } else {
+                        stalledPairs += 1
+                    }
                 } else {
                     stalledPairs = 0
                 }
+                onProgress?(frames.count, offset)
             } else if frames.count >= 2 {
+                Log.scroll.debug("Scroll frame \(frameCount, privacy: .public) no overlap")
                 stalledPairs += 1
             }
 
@@ -134,8 +154,11 @@ final class ScrollCaptureController {
                 break
             }
 
-            scrollAction(targetPID, scrollPoints, scrollLocation)
-            await sleep(configuration.settleMilliseconds)
+            scrollAction(scrollPoints, scrollLocation)
+            let settle = duplicateDrops > 0 && frames.count <= 2
+                ? max(configuration.settleMilliseconds, 420)
+                : configuration.settleMilliseconds
+            await sleep(settle)
         }
 
         if isCancelled { return .failure(.cancelled) }
@@ -147,6 +170,7 @@ final class ScrollCaptureController {
         let stitched: StitchedImage
         do {
             stitched = try stitcher.stitch(frames: frames)
+            Log.scroll.notice("Scroll stitched dims=\(stitched.image.width, privacy: .public)x\(stitched.image.height, privacy: .public) pooledFrames=\(self.frames.count, privacy: .public) stitchedFrames=\(stitched.frameCount, privacy: .public)")
         } catch {
             Log.scroll.error("Scroll stitching failed: \(String(describing: error), privacy: .public)")
             return finishAfterFailure(hasStitchedContent: false, fallbackFailure: .noScrollableContent)
@@ -171,8 +195,18 @@ final class ScrollCaptureController {
         return .failure(fallbackFailure)
     }
 
-    /// 默认的滚动事件发送：把滚动事件直接投递给目标进程。
-    static func postScroll(to pid: pid_t, points: CGFloat, location: CGPoint) {
+    /// 默认的滚动事件发送。
+    ///
+    /// 实测（macOS 27）`CGEvent.postToPid` 对 Chrome / 多数 App 不生效，
+    /// 因此走 HID tap：先把光标移到目标区域中心，再发送系统级滚轮事件。
+    /// 目标 App 在前台（调用方会先激活），滚动就落在它身上。
+    static func postScroll(points: CGFloat, location: CGPoint) {
+        CGWarpMouseCursorPosition(location)
+        let move = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: location, mouseButton: .left)
+        move?.post(tap: .cghidEventTap)
+        usleep(20_000)
+        let cursor = CGEvent(source: nil)?.location ?? .zero
+
         guard let source = CGEventSource(stateID: .hidSystemState),
               let event = CGEvent(
                 scrollWheelEvent2Source: source,
@@ -186,6 +220,7 @@ final class ScrollCaptureController {
             return
         }
         event.location = location
-        event.postToPid(pid)
+        event.post(tap: .cghidEventTap)
+        Log.scroll.debug("Scroll posted points=\(Int(points), privacy: .public) cursor=\(Int(cursor.x), privacy: .public),\(Int(cursor.y), privacy: .public)")
     }
 }

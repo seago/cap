@@ -170,12 +170,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        startScrollCapture(region: screenRect, targetPID: window.ownerPID, scrollLocation: cgCenter)
+        startScrollCapture(region: screenRect, target: window, scrollLocation: cgCenter)
     }
 
-    private func startScrollCapture(region: CGRect, targetPID: pid_t, scrollLocation: CGPoint) {
-        // 把目标 App 提到前面，避免其它窗口挡住选区、影响逐帧截图。
-        NSRunningApplication(processIdentifier: targetPID)?.activate(options: [.activateAllWindows])
+    private func startScrollCapture(region: CGRect, target: WindowInfo, scrollLocation: CGPoint) {
+        let targetPID = target.ownerPID
+        let targetName = NSRunningApplication(processIdentifier: targetPID)?.localizedName ?? "?"
+        Log.scroll.notice("Scroll capture start target=\(targetName, privacy: .public) pid=\(targetPID, privacy: .public) region=\(String(describing: region), privacy: .public)")
+
+        // 把目标窗口提到最前：AXRaise 比 NSRunningApplication.activate 更可靠
+        // （用户正在别的 App 里操作时，后台 App 的 activate 请求可能被系统忽略）。
+        raiseWindow(target, pid: targetPID)
 
         let overlay = ScrollCaptureOverlay()
         overlay.onStop = { [weak self] in
@@ -191,8 +196,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let cgRect = WindowIndex.cgRect(fromScreenRect: rect, mainScreenHeight: mainHeight)
                 return try await captureService.capture(region: cgRect)
             },
-            scrollAction: { pid, points, location in
-                ScrollCaptureController.postScroll(to: pid, points: points, location: location)
+            scrollAction: { points, location in
+                ScrollCaptureController.postScroll(points: points, location: location)
             }
         )
         controller.onProgress = { [weak self] frameCount, offset in
@@ -371,6 +376,55 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let controller = HistoryWindowController(store: historyStore)
         historyWindowController = controller
         controller.present()
+    }
+
+    /// 把目标 App 的指定窗口提到最前（AXRaise），并尽力激活 App。
+    private func raiseWindow(_ target: WindowInfo, pid: pid_t) {
+        _ = NSRunningApplication(processIdentifier: pid)?.activate(options: [.activateAllWindows])
+
+        let axApp = AXUIElementCreateApplication(pid)
+        var windowsRef: CFTypeRef?
+        if AXUIElementCopyAttributeValue(axApp, kAXWindowsAttribute as CFString, &windowsRef) == .success,
+           let axWindows = windowsRef as? [AXUIElement] {
+            for axWindow in axWindows {
+                guard let position = axPosition(of: axWindow), let size = axSize(of: axWindow) else { continue }
+                let axFrame = CGRect(origin: position, size: size)
+                if abs(axFrame.minX - target.bounds.minX) < 4,
+                   abs(axFrame.minY - target.bounds.minY) < 4,
+                   abs(axFrame.width - target.bounds.width) < 8,
+                   abs(axFrame.height - target.bounds.height) < 8 {
+                    let status = AXUIElementPerformAction(axWindow, kAXRaiseAction as CFString)
+                    Log.scroll.debug("Scroll AXRaise status=\(status.rawValue, privacy: .public)")
+                    break
+                }
+            }
+        }
+        // 等待目标 App 真正成为前台，否则第一批滚动事件可能被吞掉。
+        let deadline = Date().addingTimeInterval(1.2)
+        while Date() < deadline {
+            if NSWorkspace.shared.frontmostApplication?.processIdentifier == pid { break }
+            usleep(50_000)
+        }
+        let front = NSWorkspace.shared.frontmostApplication?.localizedName ?? "nil"
+        Log.scroll.debug("Scroll frontmost=\(front, privacy: .public)")
+    }
+
+    private func axPosition(of element: AXUIElement) -> CGPoint? {
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXPositionAttribute as CFString, &value) == .success,
+              let value else { return nil }
+        var point = CGPoint.zero
+        guard AXValueGetValue(value as! AXValue, .cgPoint, &point) else { return nil }
+        return point
+    }
+
+    private func axSize(of element: AXUIElement) -> CGSize? {
+        var value: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXSizeAttribute as CFString, &value) == .success,
+              let value else { return nil }
+        var size = CGSize.zero
+        guard AXValueGetValue(value as! AXValue, .cgSize, &size) else { return nil }
+        return size
     }
 
     // MARK: - 历史与错误

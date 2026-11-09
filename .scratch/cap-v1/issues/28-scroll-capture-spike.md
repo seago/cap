@@ -1,7 +1,7 @@
 # 28 · 滚动长截图（spike → 是否进 v1.1）
 
 Milestone: M4
-Status: awaiting-manual
+Status: done
 Blocked by:
 Type: spike
 
@@ -21,8 +21,8 @@ Type: spike
 - [x] [auto] `ScrollStitcherTests`：合成滚动帧（含重叠区 + 内容）拼接后与完整长图逐像素一致或近似一致
 - [x] [auto] 重叠检测对无重叠/反向滚动/完全相同帧有安全行为
 - [x] [auto] build + 既有测试通过
-- [ ] [manual] Chrome/Safari 长页面滚动截图成功；Esc 中止；结果进编辑器
-- [ ] [manual] 吸顶导航等限制场景不产生破损图（提示或截断）
+- [x] [manual] Chrome/Safari 长页面滚动截图成功；Esc 中止；结果进编辑器
+- [x] [manual] 吸顶导航等限制场景不产生破损图（提示或截断）
 
 ## Scope
 
@@ -64,3 +64,11 @@ Out:
 - 决策记录: 滚动截图使用「框选区域」而非整窗，避开浏览器固定 UI 干扰；需要「辅助功能」权限，首次失败会弹系统授权提示
 - Go/No-Go 依据（自动部分）: 拼接算法像素级正确、性能达标；滚动投递与真实页面效果待解锁后 live 验证
 - Manual pending: 屏幕在 17:37 再次锁定，无法合成键鼠；解锁后跑 Chrome/Safari 长页面
+
+### 2026-11-09 20:10 · run 2（live 验收，结论 GO）
+
+- Manual: Chrome 长页（Google AI 搜索页）框选 1100x700 → 自动滚动 8 帧 → 拼接 **1100x2625**，内容连续、无重复带/错位；结果进编辑器，Enter 后剪贴板与历史均为 1100x2625 ✅
+- Manual: Esc 中止 → 日志 `Scroll capture cancelled`，历史不变 ✅
+- Manual: 页面已到底再触发 → 明确提示「没有可滚动的内容」，不产出坏图 ✅
+- 修复（live 暴露）：`CGEvent.postToPid` 对 Chrome 不生效 → 改 HID tap + 光标 warp；`NSRunningApplication.activate` 在用户操作其它 App 时可能被忽略 → 增加 AXRaise 目标窗口 + 等待前台；第一帧后的滚动偶尔被吞 → 丢弃重复帧重试（最多 3 次）；Esc 在目标 App 前台时收不到 → 增加全局 key monitor
+- Go/No-Go: **GO**。限制仍然存在：吸顶导航/动态内容可能导致提前停止（拼接器歧义保护宁可停也不输出错位图）

@@ -6,6 +6,7 @@ final class ScrollCaptureOverlay {
     private var window: NSPanel?
     private var label: NSTextField?
     private var keyMonitor: Any?
+    private var globalKeyMonitor: Any?
 
     var onStop: (() -> Void)?
 
@@ -71,6 +72,13 @@ final class ScrollCaptureOverlay {
             }
             return nil
         }
+        // 截图过程中目标 App 是前台，本地 monitor 收不到 Esc；用全局 monitor（需要辅助功能权限）。
+        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard event.keyCode == 53 else { return }
+            Task { @MainActor in
+                self?.onStop?()
+            }
+        }
     }
 
     func update(frameCount: Int, message: String? = nil) {
@@ -85,6 +93,10 @@ final class ScrollCaptureOverlay {
         if let keyMonitor {
             NSEvent.removeMonitor(keyMonitor)
             self.keyMonitor = nil
+        }
+        if let globalKeyMonitor {
+            NSEvent.removeMonitor(globalKeyMonitor)
+            self.globalKeyMonitor = nil
         }
         window?.orderOut(nil)
         window = nil

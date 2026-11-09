@@ -73,7 +73,7 @@ private func makeController(
         frameProvider: providerOverride ?? { _ in
             frame(of: tall, offset: box.offset)
         },
-        scrollAction: { _, points, _ in
+        scrollAction: { points, _ in
             if noScroll { return }
             let requested = Int(points)
             box.offset = min(maxOffset, box.offset + (requested > 0 ? requested : step))
@@ -133,7 +133,7 @@ private func makeController(
             captured += 1
             return frame(of: tall, offset: box.offset)
         },
-        scrollAction: { _, points, _ in
+        scrollAction: { points, _ in
             box.offset = min(maxOffset, box.offset + Int(points))
         },
         accessibilityCheck: { true },
@@ -157,7 +157,7 @@ private func makeController(
     let controller = ScrollCaptureController(
         configuration: .init(maximumFrames: 20, scrollRatio: 0.2, settleMilliseconds: 0),
         frameProvider: { _ in frame(of: tall, offset: box.offset) },
-        scrollAction: { _, points, _ in
+        scrollAction: { points, _ in
             if box.offset > 400 { box.controller?.cancel() }
             box.offset = min(20000 - frameHeight, box.offset + Int(points))
         },
@@ -181,7 +181,7 @@ private func makeController(
             if box.calls >= 3 { throw CancellationError() }
             return frame(of: tall, offset: box.offset)
         },
-        scrollAction: { _, points, _ in
+        scrollAction: { points, _ in
             box.offset = min(tallHeight - frameHeight, box.offset + Int(points))
         },
         accessibilityCheck: { true },
@@ -211,7 +211,7 @@ private func makeController(
             }
             return frame(of: tall, offset: 0)
         },
-        scrollAction: { _, _, _ in },
+        scrollAction: { _, _ in },
         accessibilityCheck: { true },
         sleep: { _ in }
     )
