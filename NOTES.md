@@ -66,3 +66,44 @@
 - 菜单栏 Cap 图标位置约 x=1436-1448、y=8-22（截图 diff 证据）
 - Cap 自己的屏幕录制权限（TCC）只能由用户在系统设置里授予
 - 屏幕录制 TCC 已对 `dev.bruce.cap` 授权，且随固定签名保持（重建不失效）
+
+## 实现笔记（v1 → v1.1，2026-11-09）
+
+### 环境 / 构建
+
+- 本机 `DEVELOPER_DIR` 是过期的（指向 Android SDK 里的 CommandLineTools）；所有 `xcodebuild` 都要加前缀
+  `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。
+- Release / `Scripts/install.sh` 产物是 Universal（arm64 + x86_64）；Debug 默认 `ONLY_ACTIVE_ARCH=YES`，只编本机架构。
+- 用 `Scripts/install.sh` 安装到 `/Applications/Cap.app`；TCC 依赖稳定的自签身份 `Cap Local Signing`，ad-hoc 重建会丢授权。
+- 截图验证编辑器/钉屏时用 `CAP_EDITOR_CAPTURABLE=1` 启动（两者默认 `sharingType=.none`，不进入 screencapture）。
+
+### 权限（macOS 27）
+
+- 屏幕录制：`CGPreflightScreenCaptureAccess()` + 引导页深链；授权后一般不需要重启进程。
+- 辅助功能：滚动截图自动滚动必需；首次失败时 `AXIsProcessTrustedWithOptions(prompt)` 弹系统提示，
+  在系统设置勾选 Cap 时 macOS 27 会要求**管理员密码**确认（不是点一下就行）。
+- 自动化验收时注意：锁屏会拦截合成键鼠事件；菜单栏 popover/history 等普通窗口可用 AX 操作，但目标 App 前台时 Esc 需要全局 monitor。
+
+### 技术坑（都已在代码里处理）
+
+- Carbon 多热键：多个 `InstallEventHandler` 时，不匹配的事件必须返回 `eventNotHandledErr`；
+  返回 `noErr` 会吞掉其它实例的热键事件（表现为后加的热键生效、旧的失效）。
+- `CGEvent.postToPid` 对 Chrome 不生效；滚动截图改 HID tap 滚轮 + `CGWarpMouseCursorPosition`。
+- 用户正在别的 App 操作时，后台 App 的 `NSRunningApplication.activate` 会被忽略；改用 AXRaise 目标窗口。
+- 第一帧后的滚动偶发被吞：丢弃重复帧重试（最多 3 次）。
+- NSPopover 写死 `contentSize` 且与 SwiftUI 实际内容高度不一致时，窗口按左下角收缩，顶部会往下掉；
+  用 `NSHostingController.sizingOptions = [.preferredContentSize]` + show 前同步尺寸。
+- 钉屏窗口的 `performDrag` 在非激活面板里拖不动；改手动算 delta 移动窗口。
+- 滚轮缩放要区分 `hasPreciseScrollingDeltas`（触控板 delta 小、滚轮 delta 大），否则一次滚动直接到 8x。
+- 菜单栏图标默认被 screencapture 截到；Cap 自己的覆盖层/编辑器/钉屏都设 `sharingType=.none`。
+
+### 快捷键
+
+| 动作 | 默认 | UserDefaults key |
+|---|---|---|
+| 截图 | ⌘⇧2 | `hotKey.capture.keyCode/.modifiers` |
+| 滚动长截图 | ⌘⇧7 | `hotKey.scrollCapture.*` |
+| 贴图穿透切换 | ⌥⌘P | `hotKey.pinClickThrough.*` |
+
+- 存的是 Carbon keyCode + modifiers（cmdKey=256、shiftKey=512、optionKey=2048、controlKey=4096）。
+- 录制期间临时注销全部全局热键，结束后按当前设置重注册；冲突/注册失败保留原设置并提示。

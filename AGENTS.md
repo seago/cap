@@ -38,3 +38,12 @@ Refs: <ticket 路径或 issue 编号，没有则省略>
 
 - `workflows/cap-planning.md` — 队列空时拆 ticket，批准后写入 `.scratch/cap-v1/issues/`
 - `workflows/cap-implementation.md` — 每个 ready ticket 一次 run，产出 commit + brief
+
+## 项目文档
+
+- `README.md` — 构建/安装/功能/快捷键/权限/项目结构/故障排查
+- `DESIGN.md` — 设计稿、里程碑与 v1.1 实现状态
+- `NOTES.md` — 环境事实与实现笔记（TCC、构建坑、技术决策）
+- `GLOSSARY.md` — 领域术语（产品 + 工作流）
+- `docs/adr/` — 架构决策记录
+- `.scratch/cap-v1/` — tickets 与 milestones（实施记录）

@@ -32,6 +32,16 @@ Scripts/install.sh
 - **OCR（v1.1）**：历史窗口右键「识别文字」，本地 Vision 识别中英文并复制文本
 - **贴图钉屏（v1.1）**：编辑器 ⌘T 或历史右键「贴到屏幕」把截图钉成浮窗；拖动移动、滚轮缩放、双击复位、Esc 关闭、右键复制/点击穿透；⌥⌘P 全局切换穿透
 
+## 常用快捷键
+
+| 动作 | 默认 | 说明 |
+|---|---|---|
+| 截图 | ⌘⇧2 | 拖拽选区 / 单击窗口 / Enter 全屏 |
+| 滚动长截图 | ⌘⇧7 | 框选可滚动区域后自动滚动拼接；Esc 中止 |
+| 贴图穿透切换 | ⌥⌘P | 所有贴图窗口在「可点击 / 点击穿透」之间切换 |
+
+三个快捷键都可以在菜单栏 popover → 设置 → 快捷键 里点击录制修改（⌫ 恢复默认、Esc 取消）。
+
 ## 权限
 
 - 屏幕录制：截图必需
@@ -55,3 +65,32 @@ Scripts/install.sh
   - 更老的 Intel Mac（Ventura/Sonoma 及以下）不在 v1 支持范围内
 - Debug 构建只编译当前机器架构（`ONLY_ACTIVE_ARCH=YES`）；**Release / `Scripts/install.sh` 产物才是 Universal**。
 - `Cap Local Signing` 自签身份只在本机受信。拷到另一台 Mac（含 Intel）需要重新签名并重新授予屏幕录制权限；分发给他人需要正式签名 + 公证。
+
+## 项目结构
+
+```text
+Cap/
+  App/            AppDelegate、入口
+  MenuBar/        NSStatusItem、popover、历史窗口
+  Capture/        ScreenCaptureKit 采集、窗口索引
+  Selection/      多屏选区覆盖层
+  Editor/         冻结面板、标注模型与渲染、工具条、画布交互、文字输入
+  Scroll/         滚动长截图（帧采集、自动滚动、拼接）
+  Pin/            贴图钉屏浮窗
+  OCR/            Vision 文字识别
+  Output/         剪贴板、PNG/JPEG 编码与保存
+  History/        历史索引、缩略图、剪枝
+  Settings/       UserDefaults 设置、登录自启、快捷键录制控件
+  Resources/      Info.plist、AppIcon
+Scripts/          签名身份、安装、图标生成
+CapTests/         Swift Testing 单测（模型/算法/渲染/设置）
+```
+
+## 故障排查
+
+- **⌘⇧2 没反应**：确认 `/Applications/Cap.app` 在运行；权限被撤销时菜单栏图标会变成橙色感叹号，点开 popover 按提示重新授权。
+- **滚动截图提示需要辅助功能**：系统设置 → 隐私与安全性 → 辅助功能 勾选 Cap（macOS 27 上首次授权需要输入管理员密码）。
+- **改了代码后权限失效**：确认用 `Scripts/install.sh` 安装（稳定自签身份 `Cap Local Signing`），不要用 ad-hoc 签名重建。
+- **构建报 `unable to find xcodebuild` 或 SDK 错误**：本机 `DEVELOPER_DIR` 可能过期，构建时加前缀：
+  `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild ...`
+- **历史/缩略图异常**：删除 `~/Library/Application Support/Cap/History/index.json` 后重启，会从 `images/` 重建索引。
