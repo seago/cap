@@ -38,11 +38,12 @@ final class ScreenCaptureService {
 
     /// 区域截取：`rect` 使用 CoreGraphics 全局屏幕坐标（点，原点主屏左上，跨显示器）。
     func capture(region: CGRect) async throws -> CGImage {
-        guard permissionCheck() else {
-            throw CaptureError.permissionDenied
-        }
+        // 参数校验先于权限检查：无效区域与 TCC 状态无关，测试也因此在无权限环境可复现。
         guard region.width >= 1, region.height >= 1 else {
             throw CaptureError.invalidRegion
+        }
+        guard permissionCheck() else {
+            throw CaptureError.permissionDenied
         }
         do {
             return try await SCScreenshotManager.captureImage(in: region)

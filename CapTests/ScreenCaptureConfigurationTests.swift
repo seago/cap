@@ -32,7 +32,8 @@ import Testing
 }
 
 @Test @MainActor func regionSmallerThanOnePointIsInvalid() async {
-    let service = ScreenCaptureService()
+    // 显式注入权限：CI 上没有屏幕录制 TCC 授权，不能依赖宿主的真实权限状态。
+    let service = ScreenCaptureService(permissionCheck: { true })
     await #expect(throws: CaptureError.invalidRegion) {
         try await service.capture(region: CGRect(x: 10, y: 10, width: 0, height: 0))
     }
