@@ -1,6 +1,6 @@
 # Cap
 
-macOS 菜单栏常驻的截图工具。设计稿见 `DESIGN.md`，实施记录见 `.scratch/cap-v1/`。
+macOS 菜单栏常驻的截图工具。[English](README.en.md) · 设计稿见 `DESIGN.md`（[English](DESIGN.en.md)），实施记录见 `.scratch/cap-v1/`。
 
 ## 构建与测试
 
@@ -31,6 +31,7 @@ Scripts/install.sh
 - **滚动长截图（v1.1）**：⌘⇧7 框选可滚动区域，自动滚动并拼接成长图；Esc 中止
 - **OCR（v1.1）**：历史窗口右键「识别文字」，本地 Vision 识别中英文并复制文本
 - **贴图钉屏（v1.1）**：编辑器 ⌘T 或历史右键「贴到屏幕」把截图钉成浮窗；拖动移动、滚轮缩放、双击复位、Esc 关闭、右键复制/点击穿透；⌥⌘P 全局切换穿透
+- **多语言（v1.1）**：简体中文 / English / 繁體中文，跟随系统语言切换（String Catalog，无需手动设置）
 
 ## 常用快捷键
 

@@ -1,7 +1,7 @@
 # 34 · 多语言支持（简体中文 / English / 繁體中文）
 
 Milestone: M5
-Status: in-progress
+Status: done
 Type: feature
 
 ## Goal
@@ -30,3 +30,13 @@ In:
 Out:
 
 - 应用内手动切换语言、第三方语言、文档双语（#35）
+
+## Runs
+
+### 2026-11-10 00:07 · run 1
+
+- Auto: `LocalizationTests` 5 项（app 带 en/zh-Hant 资源、122+ 关键文案翻译、占位符数量一致、无空翻译）；全量 177 项测试绿
+- Auto: Release `/Applications/Cap.app` 内包含 `en.lproj/Localizable.strings` 与 `zh-Hant.lproj/Localizable.strings`；`CFBundleLocalizations` = en / zh-Hans / zh-Hant
+- Manual: `-AppleLanguages '(en)'` 启动 → popover、设置区、按钮、权限条、空状态均为英文（截图记录 `/tmp/popover-en2.png`）✅
+- Manual: 系统语言切换/zh-Hant 界面 —— **Deferred**：验收时屏幕已锁（`locked=1`），合成输入不可用，解锁后补测
+- 实现：String Catalog（开发语言 zh-Hans，124 key）；AppKit 可见字符串统一 `String(localized:)`；SwiftUI 字面量自动提取；快捷键提示改为读取当前实际设置

@@ -107,3 +107,14 @@
 
 - 存的是 Carbon keyCode + modifiers（cmdKey=256、shiftKey=512、optionKey=2048、controlKey=4096）。
 - 录制期间临时注销全部全局热键，结束后按当前设置重注册；冲突/注册失败保留原设置并提示。
+
+### 本地化（v1.1）
+
+- 开发语言是 `zh-Hans`：源码里的中文字面量同时是 key；`en` / `zh-Hant` 翻译在 `Cap/Resources/Localizable.xcstrings`。
+- SwiftUI `Text` / `Button` 的字面量由 String Catalog 自动提取；AppKit 可见字符串必须用 `String(localized: "...")`。
+- 新增/修改文案后先 build，再跑
+  `xcodebuild -project Cap.xcodeproj -exportLocalizations -localizationPath /tmp/loc -exportLanguage en`
+  让 Xcode 把新 key 写进 catalog，然后补翻译（catalog 里 `%lld` / `%@` 占位符数量必须与中文 key 一致）。
+- 运行时资源是编译后的 `en.lproj/Localizable.strings` 与 `zh-Hant.lproj/Localizable.strings`；`zh-Hans` 不生成 lproj，直接回退 key（中文）。
+- 验证语言：`Cap.app/Contents/MacOS/Cap -AppleLanguages '(en)'`；也可以通过 `defaults write dev.bruce.cap AppleLanguages -array en`。
+- `LocalizationTests` 锁住三语言资源存在、关键 key 翻译、占位符一致性；GUI 手动项待系统语言切换实测。

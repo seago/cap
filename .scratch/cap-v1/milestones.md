@@ -97,6 +97,13 @@ Accepted: 2026-11-08（deferred: 重启后自启验证、首次启动引导重�
 
 Accepted: 部分验收（滚动截图 / OCR / 贴图 / 快捷键设置已 Accepted；上传待做）
 
+## M5 · 多语言与文档（2026-11-10）
+
+- [x] #34 三语界面（zh-Hans / en / zh-Hant）：String Catalog + 124 key 翻译；AppKit 字符串全部 `String(localized:)`；快捷键提示改为读取实际设置
+  - Auto: `LocalizationTests` 5 项（三语言资源齐全、关键 key、占位符一致）+ 全量 177 项测试；Release 安装包含 en/zh-Hant lproj
+  - Manual: 英文界面截图已验证；zh-Hant 与系统语言切换的 GUI 验收因锁屏暂时 Deferred（解锁后补测）
+- [x] #35 项目文档双语：README.en.md、DESIGN.en.md 全文 + 中英互链；GLOSSARY/NOTES 补本地化术语与流程
+
 ## 文档
 
 - [x] README：功能、快捷键表、权限、项目结构、故障排查、支持的 Mac

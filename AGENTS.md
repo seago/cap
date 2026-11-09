@@ -41,8 +41,8 @@ Refs: <ticket 路径或 issue 编号，没有则省略>
 
 ## 项目文档
 
-- `README.md` — 构建/安装/功能/快捷键/权限/项目结构/故障排查
-- `DESIGN.md` — 设计稿、里程碑与 v1.1 实现状态
+- `README.md` / `README.en.md` — 构建/安装/功能/快捷键/权限/项目结构/故障排查（中英）
+- `DESIGN.md` / `DESIGN.en.md` — 设计稿、里程碑与 v1.1 实现状态（中英）
 - `NOTES.md` — 环境事实与实现笔记（TCC、构建坑、技术决策）
 - `GLOSSARY.md` — 领域术语（产品 + 工作流）
 - `docs/adr/` — 架构决策记录

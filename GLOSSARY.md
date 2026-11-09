@@ -17,6 +17,9 @@
 | 贴图钉屏 / 钉屏 | 无边框浮窗显示一张截图；可拖动、滚轮缩放、双击复位、穿透点击；默认不进截图 |
 | 历史（History） | `~/Library/Application Support/Cap/History/`：index.json + images/ + thumbs/，上限 100 条 |
 | 标注工具组 | 矩形 / 箭头 / 直线 / 文字 / 画笔 / 高亮 / 马赛克 / 序号 / 裁剪 |
+| 本地化（localization） | 界面文案的多语言版本；v1.1 支持 zh-Hans / en / zh-Hant，跟随系统语言 |
+| String Catalog | `Localizable.xcstrings`：Xcode 的字符串目录，保存 key + 各语言翻译 |
+| 开发语言（development language） | catalog 的源语言，本项目为 `zh-Hans`；缺失翻译时回退到源语言 |
 
 ## 工作流术语
 

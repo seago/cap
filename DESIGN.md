@@ -3,6 +3,7 @@
 > 状态：第 4 轮访谈后的方案稿。产品决定已锁定，工程细节里还有 5 个默认值需要你确认（见 §11）。
 > 日期：2026-11-08 · 工作目录：`/Users/bruce/work/screenshot`
 > 访谈记录：`.grill/answers-round1.json` … `.grill/answers-round4.json`
+> [English version](DESIGN.en.md)
 
 ---
 
@@ -46,7 +47,7 @@
 | 手动保存 PNG / JPEG 到固定目录，冲突自动加序号 | 历史「重新编辑」 |
 | 自动历史 100 张：预览、复制、Finder 显示、删除 | 云同步、账号、分析埋点 |
 | 菜单栏 popover：最近截图、权限状态、快捷键、保存设置、开机自启 | App Store 分发 / 自动更新 |
-| 首次启动权限引导、权限失效提示 | 国际化（v1 只做中文 UI） |
+| 首次启动权限引导、权限失效提示 | 国际化（v1 中文 UI；v1.1 已支持 zh-Hans / en / zh-Hant） |
 | 登录自启；`.app` 安装到 `/Applications` | |
 
 ### 1.4 完成定义
@@ -169,7 +170,7 @@
   - 顶部：权限状态（正常 / 未授权，未授权时显示「去授权」）。
   - 最近截图：2×4 网格，点击复制，右键菜单（复制 / 在 Finder 显示 / 删除）。
   - 「全部截图」：打开历史窗口（720×520）网格，支持预览、复制、在 Finder 显示、删除。
-  - 设置区：快捷键录制、保存目录、格式、开机自启、清空历史、退出。
+  - 设置区：快捷键录制、保存目录、格式、开机自启、清空历史、退出；界面语言跟随系统（v1.1 三语）。
 - 除首次启动引导外，历史窗口是唯一额外窗口；设置仍然只在 popover 内，符合第 4 轮决定。
 - 截图完成、复制成功只做轻提示，不弹通知中心。
 
@@ -215,6 +216,7 @@
 | 第三方依赖 | 无；快捷键自己封装 Carbon |
 | 测试框架 | Swift Testing（`import Testing`） |
 | 日志 | `OSLog`，分类 `capture` / `selection` / `editor` / `history` |
+| 本地化 | String Catalog（`.xcstrings`），开发语言 `zh-Hans`，语言 `en` / `zh-Hans` / `zh-Hant`，跟随系统 |
 
 ### 4.2 本机 SDK 核查（macOS 27.2 SDK，已静态验证）
 
@@ -476,6 +478,8 @@ History/
 | `historyLimit` | 100（v1 不暴露修改） |
 | `cap.accessibilityPrompted` | 滚动截图首次提示过辅助功能权限后置 true |
 
+界面语言不落 UserDefaults：全部文案走 `Localizable.xcstrings`，运行时由系统按「首选语言」自动选择；开发语言是 `zh-Hans`，因此缺失翻译时回退简体中文。
+
 ### 6.3 保存
 
 - 文件名：`Cap yyyy-MM-dd 'at' HH.mm.ss.<ext>`；重名追加 ` 2`、` 3`。
@@ -545,9 +549,10 @@ History/
 | OCR | ✅ 已验收 | Vision 本地中英识别；历史右键「识别文字」复制并写回 `ocrText` |
 | 贴图钉屏 | ✅ 已验收 | 编辑器 ⌘T / 历史右键「贴到屏幕」；拖动/缩放/穿透/关闭；⌥⌘P 全局穿透切换；`sharingType=.none` 不进截图 |
 | 自定义快捷键 | ✅ 已验收 | 三个动作可录制；冲突提示；录制期间临时注销热键 |
+| 多语言 | ✅ 已验收 | String Catalog：zh-Hans / en / zh-Hant，跟随系统语言；124 个 key；AppKit 字符串走 `String(localized:)` |
 | 上传 / 分享 | ⏳ 待做 | 见 §10；计划「用户自定义 HTTP 端点 + `UploadService` 协议」 |
 
-**验收**：172 项单测 + 实机 liveness（滚动截图、OCR、贴图、录制快捷键）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`）。
+**验收**：177 项单测 + 实机 liveness（滚动截图、OCR、贴图、录制快捷键、英文界面）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`、`30af388`）。
 
 ---
 
