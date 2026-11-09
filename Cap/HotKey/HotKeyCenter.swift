@@ -110,9 +110,9 @@ enum HotKeyAction: String, CaseIterable, Sendable {
 
     var title: String {
         switch self {
-        case .capture: return "截图"
-        case .scrollCapture: return "滚动截图"
-        case .pinClickThrough: return "贴图穿透切换"
+        case .capture: return String(localized: "截图")
+        case .scrollCapture: return String(localized: "滚动截图")
+        case .pinClickThrough: return String(localized: "贴图穿透切换")
         }
     }
 

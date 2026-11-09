@@ -4,6 +4,7 @@ import AppKit
 @MainActor
 final class MenuBarController: NSObject {
     private let statusItem: NSStatusItem
+    private let settings: SettingsStore
     private let popoverController: MenuBarPopoverController
 
     /// 打开历史窗口（AppDelegate 注入）。
@@ -19,6 +20,7 @@ final class MenuBarController: NSObject {
         launchAtLogin: LaunchAtLoginControlling
     ) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        self.settings = settings
         popoverController = MenuBarPopoverController(
             historyStore: historyStore,
             settings: settings,
@@ -30,7 +32,7 @@ final class MenuBarController: NSObject {
             let image = NSImage(systemSymbolName: "camera.viewfinder", accessibilityDescription: "Cap")
             image?.isTemplate = true
             button.image = image
-            button.toolTip = "Cap · ⌘⇧2 截图"
+            button.toolTip = String(localized: "Cap · \(settings.hotKey(for: .capture).displayString) 截图")
             button.target = self
             button.action = #selector(togglePopover)
             button.sendAction(on: [.leftMouseUp])
@@ -67,14 +69,14 @@ final class MenuBarController: NSObject {
         button.image = image
         button.contentTintColor = CGPreflightScreenCaptureAccess() ? nil : .systemOrange
         button.toolTip = CGPreflightScreenCaptureAccess()
-            ? "Cap · ⌘⇧2 截图"
-            : "Cap · 缺少屏幕录制权限，点击查看"
+            ? String(localized: "Cap · \(settings.hotKey(for: .capture).displayString) 截图")
+            : String(localized: "Cap · 缺少屏幕录制权限，点击查看")
     }
 
     /// 截图保存成功后短暂显示对勾。
     func flashSaved() {
         guard let button = statusItem.button else { return }
-        let checkmark = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: "已保存")
+        let checkmark = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: String(localized: "已保存"))
         checkmark?.isTemplate = false
         button.image = checkmark
         button.contentTintColor = .systemGreen

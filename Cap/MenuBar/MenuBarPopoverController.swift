@@ -122,6 +122,7 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         model.shortcutRows = HotKeyAction.allCases.map {
             HotKeyShortcutRow(action: $0, mapping: settings.hotKey(for: $0))
         }
+        model.captureShortcutDisplay = settings.hotKey(for: .capture).displayString
     }
 
     private func recentThumbnails() -> [PopoverThumbnail] {
@@ -141,7 +142,7 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
               let tiff = image.tiffRepresentation,
               let rep = NSBitmapImageRep(data: tiff),
               let png = rep.representation(using: .png, properties: [:]) else {
-            model.errorMessage = "无法读取这张截图"
+            model.errorMessage = String(localized: "无法读取这张截图")
             return
         }
         let pasteboard = NSPasteboard.general
@@ -158,7 +159,7 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.directoryURL = settings.saveDirectory
-        panel.prompt = "选择保存目录"
+        panel.prompt = String(localized: "选择保存目录")
         guard panel.runModal() == .OK, let url = panel.url else { return }
         settings.saveDirectory = url
         refreshModel()
@@ -169,11 +170,11 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         do {
             try enabled ? launchAtLogin.enable() : launchAtLogin.disable()
         } catch {
-            failure = "登录自启设置失败：\(error.localizedDescription)"
+            failure = String(localized: "登录自启设置失败：\(error.localizedDescription)")
         }
         refreshModel()
         if launchAtLogin.status == .requiresApproval {
-            failure = "请在系统设置 → 通用 → 登录项中允许 Cap"
+            failure = String(localized: "请在系统设置 → 通用 → 登录项中允许 Cap")
             launchAtLogin.openSystemSettings()
         }
         model.errorMessage = failure
@@ -183,12 +184,12 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     private func recordHotKey(action: HotKeyAction, mapping: HotKeyMapping?) {
         let target = mapping ?? action.defaultMapping
         if let conflict = settings.hotKeyConflict(target, excluding: action) {
-            model.errorMessage = "快捷键 \(target.displayString) 已被「\(conflict.title)」占用"
+            model.errorMessage = String(localized: "快捷键 \(target.displayString) 已被「\(conflict.title)」占用")
             return
         }
         model.errorMessage = nil
         guard onHotKeyChange?(action, target) == true else {
-            model.errorMessage = "快捷键 \(target.displayString) 被系统或其它 App 占用，已保留原设置"
+            model.errorMessage = String(localized: "快捷键 \(target.displayString) 被系统或其它 App 占用，已保留原设置")
             return
         }
         refreshModel()
@@ -204,23 +205,23 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         do {
             try historyStore.delete(id: id)
         } catch {
-            model.errorMessage = "删除失败：\(error.localizedDescription)"
+            model.errorMessage = String(localized: "删除失败：\(error.localizedDescription)")
         }
         refreshModel()
     }
 
     private func clearAllWithConfirmation() {
         let alert = NSAlert()
-        alert.messageText = "清空全部历史截图？"
-        alert.informativeText = "图片会从本机删除，操作不可撤销。"
+        alert.messageText = String(localized: "清空全部历史截图？")
+        alert.informativeText = String(localized: "图片会从本机删除，操作不可撤销。")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "清空")
-        alert.addButton(withTitle: "取消")
+        alert.addButton(withTitle: String(localized: "清空"))
+        alert.addButton(withTitle: String(localized: "取消"))
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         do {
             try historyStore.clearAll()
         } catch {
-            model.errorMessage = "清空失败：\(error.localizedDescription)"
+            model.errorMessage = String(localized: "清空失败：\(error.localizedDescription)")
         }
         refreshModel()
     }

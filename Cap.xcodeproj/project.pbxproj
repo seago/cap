@@ -67,6 +67,7 @@
 		8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000004 /* LaunchAtLogin.swift */; };
 		8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000005 /* SettingsStoreTests.swift */; };
 		8C0000000000000000000016 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000006 /* AppIcon.icns */; };
+		AA3000000000000000000011 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA3000000000000000000001 /* Localizable.xcstrings */; };
 		9D0000000000000000000011 /* ScrollStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000001 /* ScrollStitcher.swift */; };
 		9D0000000000000000000012 /* ScrollStitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000002 /* ScrollStitcherTests.swift */; };
 		9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000001 /* ScrollCaptureController.swift */; };
@@ -81,6 +82,7 @@
 		AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000005 /* PinnedImageModelTests.swift */; };
 		AB0000000000000000000011 /* ShortcutRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000001 /* ShortcutRecorderView.swift */; };
 		AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000002 /* HotKeySettingsTests.swift */; };
+		AA4000000000000000000011 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4000000000000000000001 /* LocalizationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +159,7 @@
 		8C0000000000000000000004 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		8C0000000000000000000005 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		8C0000000000000000000006 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		AA3000000000000000000001 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		9D0000000000000000000001 /* ScrollStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcher.swift; sourceTree = "<group>"; };
 		9D0000000000000000000002 /* ScrollStitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcherTests.swift; sourceTree = "<group>"; };
 		9E0000000000000000000001 /* ScrollCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureController.swift; sourceTree = "<group>"; };
@@ -171,6 +174,7 @@
 		AA1000000000000000000005 /* PinnedImageModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageModelTests.swift; sourceTree = "<group>"; };
 		AB0000000000000000000001 /* ShortcutRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderView.swift; sourceTree = "<group>"; };
 		AB0000000000000000000002 /* HotKeySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeySettingsTests.swift; sourceTree = "<group>"; };
+		AA4000000000000000000001 /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -342,6 +346,7 @@
 			children = (
 				AA0000000000000000000024 /* Info.plist */,
 				8C0000000000000000000006 /* AppIcon.icns */,
+				AA3000000000000000000001 /* Localizable.xcstrings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -374,6 +379,7 @@
 				9F0000000000000000000002 /* OCRTests.swift */,
 				AA1000000000000000000005 /* PinnedImageModelTests.swift */,
 				AB0000000000000000000002 /* HotKeySettingsTests.swift */,
+				AA4000000000000000000001 /* LocalizationTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -476,11 +482,13 @@
 			};
 			buildConfigurationList = AA0000000000000000000060 /* Build configuration list for PBXProject "Cap" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = AA0000000000000000000002;
 			productRefGroup = AA0000000000000000000003 /* Products */;
@@ -499,6 +507,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C0000000000000000000016 /* AppIcon.icns in Resources */,
+				AA3000000000000000000011 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +604,7 @@
 				9F0000000000000000000012 /* OCRTests.swift in Sources */,
 				AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */,
 				AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */,
+				AA4000000000000000000011 /* LocalizationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

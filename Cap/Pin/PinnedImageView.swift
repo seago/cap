@@ -80,14 +80,14 @@ final class PinnedImageView: NSView {
 
     override func rightMouseDown(with event: NSEvent) {
         let menu = NSMenu()
-        let copy = NSMenuItem(title: "复制", action: #selector(copyClicked), keyEquivalent: "")
+        let copy = NSMenuItem(title: String(localized: "复制"), action: #selector(copyClicked), keyEquivalent: "")
         copy.target = self
         menu.addItem(copy)
-        let through = NSMenuItem(title: "点击穿透", action: #selector(throughClicked), keyEquivalent: "")
+        let through = NSMenuItem(title: String(localized: "点击穿透"), action: #selector(throughClicked), keyEquivalent: "")
         through.target = self
         menu.addItem(through)
         menu.addItem(.separator())
-        let close = NSMenuItem(title: "关闭", action: #selector(closeClicked), keyEquivalent: "")
+        let close = NSMenuItem(title: String(localized: "关闭"), action: #selector(closeClicked), keyEquivalent: "")
         close.target = self
         menu.addItem(close)
         NSMenu.popUpContextMenu(menu, with: event, for: self)

@@ -272,16 +272,16 @@ final class EditorController {
         stack.layer?.cornerRadius = 10
 
         let toolSymbols: [(EditorTool, String, String)] = [
-            (.close, "xmark", "关闭"),
-            (.crop, "crop", "裁剪"),
-            (.rectangle, "rectangle", "矩形"),
-            (.arrow, "arrow.up.right", "箭头"),
-            (.line, "minus", "直线"),
-            (.text, "textformat", "文字"),
-            (.pen, "pencil.tip", "画笔"),
-            (.highlight, "highlighter", "高亮"),
-            (.mosaic, "squareshape.split.3x3", "马赛克"),
-            (.number, "1.circle", "序号"),
+            (.close, "xmark", String(localized: "关闭")),
+            (.crop, "crop", String(localized: "裁剪")),
+            (.rectangle, "rectangle", String(localized: "矩形")),
+            (.arrow, "arrow.up.right", String(localized: "箭头")),
+            (.line, "minus", String(localized: "直线")),
+            (.text, "textformat", String(localized: "文字")),
+            (.pen, "pencil.tip", String(localized: "画笔")),
+            (.highlight, "highlighter", String(localized: "高亮")),
+            (.mosaic, "squareshape.split.3x3", String(localized: "马赛克")),
+            (.number, "1.circle", String(localized: "序号")),
         ]
 
         for (tool, symbol, tooltip) in toolSymbols {
@@ -313,31 +313,31 @@ final class EditorController {
 
         stack.addArrangedSubview(NSBox.separator())
 
-        let undoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: "撤销") ?? NSImage(), target: self, action: #selector(undoTapped))
+        let undoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.backward", accessibilityDescription: String(localized: "撤销")) ?? NSImage(), target: self, action: #selector(undoTapped))
         undoButton.bezelStyle = .texturedRounded
-        undoButton.toolTip = "撤销 ⌘Z"
+        undoButton.toolTip = String(localized: "撤销 ⌘Z")
         stack.addArrangedSubview(undoButton)
 
-        let redoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.forward", accessibilityDescription: "重做") ?? NSImage(), target: self, action: #selector(redoTapped))
+        let redoButton = NSButton(image: NSImage(systemSymbolName: "arrow.uturn.forward", accessibilityDescription: String(localized: "重做")) ?? NSImage(), target: self, action: #selector(redoTapped))
         redoButton.bezelStyle = .texturedRounded
-        redoButton.toolTip = "重做 ⇧⌘Z"
+        redoButton.toolTip = String(localized: "重做 ⇧⌘Z")
         stack.addArrangedSubview(redoButton)
 
         stack.addArrangedSubview(NSBox.separator())
 
-        let pinButton = NSButton(image: NSImage(systemSymbolName: "pin", accessibilityDescription: "贴到屏幕") ?? NSImage(), target: self, action: #selector(pinTapped))
+        let pinButton = NSButton(image: NSImage(systemSymbolName: "pin", accessibilityDescription: String(localized: "贴到屏幕")) ?? NSImage(), target: self, action: #selector(pinTapped))
         pinButton.bezelStyle = .texturedRounded
-        pinButton.toolTip = "贴到屏幕 ⌘T"
+        pinButton.toolTip = String(localized: "贴到屏幕 ⌘T")
         stack.addArrangedSubview(pinButton)
 
-        let completeButton = NSButton(image: NSImage(systemSymbolName: "checkmark", accessibilityDescription: "完成") ?? NSImage(), target: self, action: #selector(completeTapped))
+        let completeButton = NSButton(image: NSImage(systemSymbolName: "checkmark", accessibilityDescription: String(localized: "完成")) ?? NSImage(), target: self, action: #selector(completeTapped))
         completeButton.bezelStyle = .texturedRounded
-        completeButton.toolTip = "完成并复制 Enter"
+        completeButton.toolTip = String(localized: "完成并复制 Enter")
         stack.addArrangedSubview(completeButton)
 
-        let saveButton = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: "保存") ?? NSImage(), target: self, action: #selector(saveTapped))
+        let saveButton = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: String(localized: "保存")) ?? NSImage(), target: self, action: #selector(saveTapped))
         saveButton.bezelStyle = .texturedRounded
-        saveButton.toolTip = "保存 ⌘S"
+        saveButton.toolTip = String(localized: "保存 ⌘S")
         stack.addArrangedSubview(saveButton)
 
         stack.layoutSubtreeIfNeeded()

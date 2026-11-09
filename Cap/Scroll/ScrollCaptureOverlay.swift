@@ -15,14 +15,14 @@ final class ScrollCaptureOverlay {
     func present(near region: CGRect) {
         guard window == nil else { return }
 
-        let label = NSTextField(labelWithString: "滚动截图中…")
+        let label = NSTextField(labelWithString: String(localized: "滚动截图中…"))
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .labelColor
 
         let icon = NSImageView(image: NSImage(systemSymbolName: "arrow.down.doc", accessibilityDescription: nil) ?? NSImage())
         icon.contentTintColor = .labelColor
 
-        let stopButton = NSButton(title: "结束（Esc）", target: self, action: #selector(stopTapped))
+        let stopButton = NSButton(title: String(localized: "结束（Esc）"), target: self, action: #selector(stopTapped))
         stopButton.bezelStyle = .rounded
         stopButton.controlSize = .small
 
@@ -85,7 +85,7 @@ final class ScrollCaptureOverlay {
         if let message {
             label?.stringValue = message
         } else {
-            label?.stringValue = "滚动截图中… 已捕获 \(frameCount) 屏"
+            label?.stringValue = String(localized: "滚动截图中… 已捕获 \(frameCount) 屏")
         }
     }
 

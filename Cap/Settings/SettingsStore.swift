@@ -124,8 +124,8 @@ final class SettingsStore {
 extension ImageFormat {
     var displayName: String {
         switch self {
-        case .png: return "PNG（无损）"
-        case .jpeg: return "JPEG（质量 0.85）"
+        case .png: return String(localized: "PNG（无损）")
+        case .jpeg: return String(localized: "JPEG（质量 0.85）")
         }
     }
 

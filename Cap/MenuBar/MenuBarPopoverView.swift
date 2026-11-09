@@ -28,6 +28,7 @@ final class MenuBarPopoverModel: ObservableObject {
     @Published var showsSettings = false
     @Published var errorMessage: String?
     @Published var shortcutRows: [HotKeyShortcutRow] = []
+    @Published var captureShortcutDisplay: String = HotKeyMapping.commandShift2.displayString
 
     var onCopy: ((UUID) -> Void)?
     var onRevealInFinder: ((UUID) -> Void)?
@@ -90,7 +91,7 @@ struct MenuBarPopoverView: View {
     private var thumbnailsGrid: some View {
         Group {
             if model.thumbnails.isEmpty {
-                Text("还没有截图，按 ⌘⇧2 开始")
+                Text(String(localized: "还没有截图，按 \(model.captureShortcutDisplay) 开始"))
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -134,9 +135,9 @@ struct MenuBarPopoverView: View {
 
     private var actionRow: some View {
         HStack(spacing: 10) {
-            Button("全部截图") { model.onOpenHistory?() }
-            Button("滚动截图") { model.onScrollCapture?() }
-                .help("⌘⇧7 框选可滚动区域")
+            Button(String(localized: "历史")) { model.onOpenHistory?() }
+            Button(String(localized: "长截图")) { model.onScrollCapture?() }
+                .help(String(localized: "框选可滚动区域"))
             Button(model.showsSettings ? "收起设置" : "设置") {
                 model.showsSettings.toggle()
             }

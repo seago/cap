@@ -26,11 +26,11 @@ enum FileExportError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return "无法编码要保存的图片。"
+            return String(localized: "无法编码要保存的图片。")
         case .directoryCreationFailed:
-            return "无法创建保存目录。"
+            return String(localized: "无法创建保存目录。")
         case .writeFailed:
-            return "无法写入保存文件。"
+            return String(localized: "无法写入保存文件。")
         }
     }
 }

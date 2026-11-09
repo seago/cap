@@ -16,17 +16,17 @@ enum ScrollCaptureFailure: Error, Equatable, Sendable {
     var userMessage: String {
         switch self {
         case .alreadyRunning:
-            return "已经在进行滚动截图。"
+            return String(localized: "已经在进行滚动截图。")
         case .accessibilityPermissionRequired:
-            return "滚动截图需要「辅助功能」权限，才能自动滚动页面。请在系统设置 → 隐私与安全性 → 辅助功能中勾选 Cap。"
+            return String(localized: "滚动截图需要「辅助功能」权限，才能自动滚动页面。请在系统设置 → 隐私与安全性 → 辅助功能中勾选 Cap。")
         case .noScrollableContent:
-            return "这块区域没有可滚动的内容。请框选一个能上下滚动的页面区域后重试。"
+            return String(localized: "这块区域没有可滚动的内容。请框选一个能上下滚动的页面区域后重试。")
         case .tooShort:
-            return "没有截到更多内容，结果和单张截图差不多。"
+            return String(localized: "没有截到更多内容，结果和单张截图差不多。")
         case .captureFailed:
-            return "滚动过程中截图失败，已保留已截到的部分。"
+            return String(localized: "滚动过程中截图失败，已保留已截到的部分。")
         case .cancelled:
-            return "已取消滚动截图。"
+            return String(localized: "已取消滚动截图。")
         }
     }
 }

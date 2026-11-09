@@ -27,9 +27,9 @@ final class HistoryWindowController: NSWindowController {
     private let scrollView = NSScrollView()
     private let headerLabel = NSTextField(labelWithString: "")
     private let statusLabel = NSTextField(labelWithString: "")
-    private let emptyStateLabel = NSTextField(labelWithString: "暂无历史截图")
+    private let emptyStateLabel = NSTextField(labelWithString: String(localized: "暂无历史截图"))
     private lazy var clearButton = NSButton(
-        title: "清空历史…",
+        title: String(localized: "清空历史…"),
         target: self,
         action: #selector(clearAllClicked)
     )
@@ -49,7 +49,7 @@ final class HistoryWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "Cap 历史"
+        window.title = String(localized: "Cap 历史")
         window.isReleasedWhenClosed = false
         window.contentMinSize = NSSize(width: 420, height: 320)
         super.init(window: window)
@@ -186,7 +186,7 @@ final class HistoryWindowController: NSWindowController {
     }
 
     private func updateHeader() {
-        headerLabel.stringValue = items.isEmpty ? "全部截图" : "全部截图 · \(items.count) 张"
+        headerLabel.stringValue = items.isEmpty ? String(localized: "全部截图") : String(localized: "全部截图 · \(items.count) 张")
         clearButton.isEnabled = !items.isEmpty
     }
 
@@ -241,7 +241,7 @@ final class HistoryWindowController: NSWindowController {
         }
         do {
             try clipboardWriter.write(image)
-            showStatus("已复制到剪贴板")
+            showStatus(String(localized: "已复制到剪贴板"))
             Log.history.notice("Copied history item \(item.id.uuidString, privacy: .public) to clipboard")
         } catch {
             showError(error)
@@ -271,7 +271,7 @@ final class HistoryWindowController: NSWindowController {
     private func delete(_ item: HistoryItem) {
         do {
             try store.delete(id: item.id)
-            showStatus("已删除一条记录")
+            showStatus(String(localized: "已删除一条记录"))
             Log.history.notice("Deleted history item \(item.id.uuidString, privacy: .public)")
         } catch {
             showError(error)
@@ -281,11 +281,11 @@ final class HistoryWindowController: NSWindowController {
     @objc private func clearAllClicked() {
         guard !items.isEmpty, let window else { return }
         let alert = NSAlert()
-        alert.messageText = "清空历史？"
-        alert.informativeText = "将删除全部 \(items.count) 条截图及其图片、缩略图，此操作不可撤销。"
+        alert.messageText = String(localized: "清空历史？")
+        alert.informativeText = String(localized: "将删除全部 \(items.count) 条截图及其图片、缩略图，此操作不可撤销。")
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "清空")
-        alert.addButton(withTitle: "取消")
+        alert.addButton(withTitle: String(localized: "清空"))
+        alert.addButton(withTitle: String(localized: "取消"))
         alert.beginSheetModal(for: window) { [weak self] response in
             guard response == .alertFirstButtonReturn else { return }
             self?.performClearAll()
@@ -295,7 +295,7 @@ final class HistoryWindowController: NSWindowController {
     private func performClearAll() {
         do {
             try store.clearAll()
-            showStatus("已清空历史")
+            showStatus(String(localized: "已清空历史"))
             Log.history.notice("Cleared all history items")
         } catch {
             showError(error)
@@ -305,10 +305,10 @@ final class HistoryWindowController: NSWindowController {
     /// 对单条历史截图做文字识别，结果复制到剪贴板并写入索引。
     private func recognizeText(for item: HistoryItem) {
         guard let image = store.loadImage(for: item) else {
-            showStatus("图片无法读取")
+            showStatus(String(localized: "图片无法读取"))
             return
         }
-        showStatus("正在识别文字…")
+        showStatus(String(localized: "正在识别文字…"))
         let recognizer = textRecognizer
         let store = self.store
         let clipboardWriter = self.clipboardWriter
@@ -317,14 +317,14 @@ final class HistoryWindowController: NSWindowController {
             do {
                 let result = try await recognizer.recognizeText(in: image)
                 guard !result.isEmpty else {
-                    self?.showStatus("没有识别到文字")
+                    self?.showStatus(String(localized: "没有识别到文字"))
                     return
                 }
                 try clipboardWriter.writeText(result.text)
                 try? store.setOCRText(id: itemID, text: result.text)
-                self?.showStatus("已识别并复制 \(result.text.count) 个字符")
+                self?.showStatus(String(localized: "已识别并复制 \(result.text.count) 个字符"))
             } catch {
-                self?.showStatus("识别失败：\(error.localizedDescription)")
+                self?.showStatus(String(localized: "识别失败：\(error.localizedDescription)"))
             }
         }
     }
@@ -342,10 +342,10 @@ final class HistoryWindowController: NSWindowController {
     private func showError(_ error: Error) {
         NSSound.beep()
         let alert = NSAlert()
-        alert.messageText = "操作失败"
+        alert.messageText = String(localized: "操作失败")
         alert.informativeText = error.localizedDescription
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "好")
+        alert.addButton(withTitle: String(localized: "好"))
         if let window, window.isVisible {
             alert.beginSheetModal(for: window)
         } else {
@@ -397,7 +397,7 @@ private final class HistoryPreviewWindowController: NSWindowController, NSWindow
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "zh_CN")
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        window.title = "预览 · \(formatter.string(from: item.createdAt)) · \(item.pixelWidth)×\(item.pixelHeight) px"
+        window.title = String(localized: "预览 · \(formatter.string(from: item.createdAt)) · \(item.pixelWidth)×\(item.pixelHeight) px")
         super.init(window: window)
 
         let contentView = PreviewContentView()

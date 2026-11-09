@@ -42,7 +42,7 @@ final class TextEditingController: NSObject, NSTextFieldDelegate {
         field.isBezeled = false
         field.drawsBackground = false
         field.focusRingType = .none
-        field.placeholderString = "输入文字"
+        field.placeholderString = String(localized: "输入文字")
         field.delegate = self
 
         canvas.addSubview(field)

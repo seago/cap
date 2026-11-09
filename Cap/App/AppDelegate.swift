@@ -264,7 +264,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         )
         controller.onProgress = { [weak self] frameCount, offset in
-            self?.scrollOverlay?.update(frameCount: frameCount, message: offset == nil ? nil : "滚动截图中… 已捕获 \(frameCount) 屏")
+            self?.scrollOverlay?.update(frameCount: frameCount, message: offset == nil ? nil : String(localized: "滚动截图中… 已捕获 \(frameCount) 屏"))
         }
         scrollCaptureController = controller
 
@@ -531,10 +531,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func presentCaptureError(_ error: Error) {
         let alert = NSAlert()
-        alert.messageText = "操作失败"
+        alert.messageText = String(localized: "操作失败")
         alert.informativeText = error.localizedDescription
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "好")
+        alert.addButton(withTitle: String(localized: "好"))
         NSApp.activate()
         alert.runModal()
     }

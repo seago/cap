@@ -49,11 +49,11 @@ final class HistoryGridItemView: NSView {
 
         var detail = "\(item.pixelWidth)×\(item.pixelHeight)"
         if item.isAnnotated {
-            detail += " · 已标注"
+            detail += String(localized: " · 已标注")
         }
         detailLabel.stringValue = detail
 
-        toolTip = "\(dateLabel.stringValue)\n\(item.pixelWidth)×\(item.pixelHeight) px\n单击复制，右键查看更多操作"
+        toolTip = String(localized: "\(dateLabel.stringValue)\n\(item.pixelWidth)×\(item.pixelHeight) px\n单击复制，右键查看更多操作")
         setAccessibilityLabel("\(dateLabel.stringValue)，\(detail)")
         setAccessibilityRole(.button)
     }
@@ -116,12 +116,12 @@ final class HistoryGridItemView: NSView {
     }
 
     private func buildContextMenu() {
-        addMenuItem(title: "预览", action: #selector(previewClicked))
-        addMenuItem(title: "复制", action: #selector(copyClicked))
-        addMenuItem(title: "识别文字", action: #selector(recognizeClicked))
-        addMenuItem(title: "贴到屏幕", action: #selector(pinClicked))
-        addMenuItem(title: "在 Finder 中显示", action: #selector(revealClicked))
-        addMenuItem(title: "删除", action: #selector(deleteClicked))
+        addMenuItem(title: String(localized: "预览"), action: #selector(previewClicked))
+        addMenuItem(title: String(localized: "复制"), action: #selector(copyClicked))
+        addMenuItem(title: String(localized: "识别文字"), action: #selector(recognizeClicked))
+        addMenuItem(title: String(localized: "贴到屏幕"), action: #selector(pinClicked))
+        addMenuItem(title: String(localized: "在 Finder 中显示"), action: #selector(revealClicked))
+        addMenuItem(title: String(localized: "删除"), action: #selector(deleteClicked))
         menu = contextMenu
     }
 

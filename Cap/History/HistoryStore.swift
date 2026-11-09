@@ -17,13 +17,13 @@ enum HistoryError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return "无法把截图编码为 PNG。"
+            return String(localized: "无法把截图编码为 PNG。")
         case .imageWriteFailed:
-            return "无法写入历史图片文件。"
+            return String(localized: "无法写入历史图片文件。")
         case .indexWriteFailed:
-            return "无法写入历史索引。"
+            return String(localized: "无法写入历史索引。")
         case .itemNotFound:
-            return "找不到这条历史记录。"
+            return String(localized: "找不到这条历史记录。")
         }
     }
 }

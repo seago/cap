@@ -30,9 +30,9 @@ enum OCRError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .requestFailed(let message):
-            return "文字识别失败：\(message)"
+            return String(localized: "文字识别失败：\(message)")
         case .imageUnavailable:
-            return "图片无法读取，无法识别文字。"
+            return String(localized: "图片无法读取，无法识别文字。")
         }
     }
 }

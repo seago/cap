@@ -13,7 +13,7 @@ final class OnboardingWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "Cap 需要屏幕录制权限"
+        window.title = String(localized: "Cap 需要屏幕录制权限")
         window.isReleasedWhenClosed = false
         super.init(window: window)
         buildContent()
@@ -36,10 +36,10 @@ final class OnboardingWindowController: NSWindowController {
     }
 
     private func buildContent() {
-        let title = NSTextField(labelWithString: "Cap 需要「屏幕录制」权限")
+        let title = NSTextField(labelWithString: String(localized: "Cap 需要「屏幕录制」权限"))
         title.font = .systemFont(ofSize: 16, weight: .semibold)
 
-        let body = NSTextField(wrappingLabelWithString: "没有这项权限，Cap 无法截取屏幕。请在系统设置 → 隐私与安全性 → 录屏与系统录音中勾选 Cap，然后回到这里点「重新检测」。\n\n截图只在本机处理，不联网、不上传。")
+        let body = NSTextField(wrappingLabelWithString: String(localized: "没有这项权限，Cap 无法截取屏幕。请在系统设置 → 隐私与安全性 → 录屏与系统录音中勾选 Cap，然后回到这里点「重新检测」。\n\n截图只在本机处理，不联网、不上传。"))
         body.font = .systemFont(ofSize: 12)
         body.textColor = .secondaryLabelColor
         body.preferredMaxLayoutWidth = 416
@@ -48,11 +48,11 @@ final class OnboardingWindowController: NSWindowController {
         statusLabel.textColor = .secondaryLabelColor
         statusLabel.preferredMaxLayoutWidth = 416
 
-        let requestButton = NSButton(title: "请求权限", target: self, action: #selector(requestAccess))
-        let settingsButton = NSButton(title: "打开系统设置", target: self, action: #selector(openSettings))
-        let recheckButton = NSButton(title: "重新检测", target: self, action: #selector(recheck))
-        let restartButton = NSButton(title: "重新启动 Cap", target: self, action: #selector(restart))
-        let laterButton = NSButton(title: "稍后", target: self, action: #selector(later))
+        let requestButton = NSButton(title: String(localized: "请求权限"), target: self, action: #selector(requestAccess))
+        let settingsButton = NSButton(title: String(localized: "打开系统设置"), target: self, action: #selector(openSettings))
+        let recheckButton = NSButton(title: String(localized: "重新检测"), target: self, action: #selector(recheck))
+        let restartButton = NSButton(title: String(localized: "重新启动 Cap"), target: self, action: #selector(restart))
+        let laterButton = NSButton(title: String(localized: "稍后"), target: self, action: #selector(later))
 
         let primary = NSStackView(views: [requestButton, settingsButton])
         primary.orientation = .horizontal
@@ -88,13 +88,13 @@ final class OnboardingWindowController: NSWindowController {
     private func updateStatus() {
         switch model.access {
         case .notDetermined:
-            statusLabel.stringValue = "当前状态：尚未请求权限。"
+            statusLabel.stringValue = String(localized: "当前状态：尚未请求权限。")
         case .granted:
-            statusLabel.stringValue = "当前状态：已授权。"
+            statusLabel.stringValue = String(localized: "当前状态：已授权。")
         case .denied:
-            statusLabel.stringValue = "当前状态：权限被拒绝，请在系统设置中打开。"
+            statusLabel.stringValue = String(localized: "当前状态：权限被拒绝，请在系统设置中打开。")
         case .restartRequired:
-            statusLabel.stringValue = "当前状态：如果已在系统设置中授权，请重新启动 Cap。"
+            statusLabel.stringValue = String(localized: "当前状态：如果已在系统设置中授权，请重新启动 Cap。")
         }
     }
 

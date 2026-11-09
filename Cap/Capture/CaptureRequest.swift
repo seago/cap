@@ -17,19 +17,19 @@ enum CaptureError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            return "Cap 没有屏幕录制权限。请在系统设置中授权后重试。"
+            return String(localized: "Cap 没有屏幕录制权限。请在系统设置中授权后重试。")
         case .displayNotFound:
-            return "找不到鼠标所在的显示器。"
+            return String(localized: "找不到鼠标所在的显示器。")
         case .windowNotFound:
-            return "找不到要截取的窗口。"
+            return String(localized: "找不到要截取的窗口。")
         case .invalidRegion:
-            return "选区太小，无法截取。"
+            return String(localized: "选区太小，无法截取。")
         case .captureFailed:
-            return "截图失败，请重试。"
+            return String(localized: "截图失败，请重试。")
         case .encodingFailed:
-            return "无法把截图编码为 PNG / TIFF。"
+            return String(localized: "无法把截图编码为 PNG / TIFF。")
         case .clipboardWriteFailed:
-            return "无法写入剪贴板。"
+            return String(localized: "无法写入剪贴板。")
         }
     }
 }

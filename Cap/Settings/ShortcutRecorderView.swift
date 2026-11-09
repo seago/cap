@@ -68,7 +68,7 @@ final class ShortcutRecorderButton: NSButton {
     @objc private func startRecording() {
         guard !isRecording else { return }
         isRecording = true
-        title = "按下快捷键…"
+        title = String(localized: "按下快捷键…")
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKey()
         window?.makeFirstResponder(self)
@@ -111,7 +111,7 @@ final class ShortcutRecorderButton: NSButton {
     }
 
     private func updateTitle() {
-        title = isRecording ? "按下快捷键…" : mapping.displayString
-        toolTip = "点击后按下新快捷键；⌫ 恢复默认，Esc 取消"
+        title = isRecording ? String(localized: "按下快捷键…") : mapping.displayString
+        toolTip = String(localized: "点击后按下新快捷键；⌫ 恢复默认，Esc 取消")
     }
 }
