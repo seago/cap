@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "版本号（不带 v），例如 0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show toolchain
+        run: xcodebuild -version
+      - name: Run unit tests
+        run: |
+          xcodebuild -project Cap.xcodeproj -scheme Cap \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/ci-tests \
+            test
+
+  release:
+    name: Build & publish
+    needs: verify
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: v
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if [[ -z "$VERSION" ]]; then
+            echo "无法从 tag 或输入解析版本号" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Show toolchain
+        run: xcodebuild -version
+
+      - name: Build & package (ad-hoc signed)
+        env:
+          CODE_SIGN_IDENTITY: "-"
+        run: Scripts/make-release.sh "${{ steps.v.outputs.version }}"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.v.outputs.tag }}" \
+            dist/Cap-*-macos-universal.zip \
+            --title "Cap ${{ steps.v.outputs.version }}" \
+            --notes-file dist/release-notes.md

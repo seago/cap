@@ -68,6 +68,26 @@ Scripts/install.sh
 - Debug 构建只编译当前机器架构（`ONLY_ACTIVE_ARCH=YES`）；**Release / `Scripts/install.sh` 产物才是 Universal**。
 - `Cap Local Signing` 自签身份只在本机受信。拷到另一台 Mac（含 Intel）需要重新签名并重新授予屏幕录制权限；分发给他人需要正式签名 + 公证。
 
+## 发布版本（GitHub Releases）
+
+仓库是 **private**，Release 仅自己和 collaborator 可见。发布流程已自动化：
+
+```bash
+# 1. 确认版本号（Cap.xcodeproj 的 MARKETING_VERSION）
+# 2. 打 tag 并推送 → GitHub Actions 自动测试 + 构建 Universal zip + 创建 Release
+git tag -a v0.1.0 -m "Cap v0.1.0"
+git push origin v0.1.0
+```
+
+- 工作流：`.github/workflows/release.yml`（test → build & package → `gh release create`）
+- 产物：`Cap-<版本>-macos-universal.zip` + SHA256（x86_64 + arm64），说明文件由 `Scripts/make-release.sh` 生成
+- 也可在 GitHub Actions 页面手动 `Run workflow` 填版本号，或本地 `Scripts/make-release.sh` 打包后网页上传
+- **CI 产物是 ad-hoc 签名（未公证）**：首次打开需右键 → 打开；若提示「已损坏」执行
+  `xattr -dr com.apple.quarantine /Applications/Cap.app`。
+  想要双击直接打开 / 分发给别人，需要 Apple Developer Program（Developer ID + 公证）。
+- 私有仓库的 Actions 消耗每月免费额度（macOS runner 按 10 倍计费）；Actions 被关掉时工作流不会跑，可在
+  仓库 Settings → Actions → General 启用后重新运行。
+
 ## 项目结构
 
 ```text

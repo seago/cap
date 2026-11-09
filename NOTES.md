@@ -127,3 +127,12 @@
 - 重试策略：超时/网络错误/5xx 重试 1 次；4xx 直接报错（鉴权/配置问题重试无意义）。
 - 本地验收：`python3 Scripts/mock-upload-server.py --port 8765 --dir /tmp/cap-uploads`，然后设置端点 `http://127.0.0.1:8765/upload`；脚本会把上传文件存到 --dir 并返回 JSON。
 - 成功路径：URL 复制到剪贴板 + 写回 `HistoryItem.uploadedURL`（卡片显示「· 已上传」）；失败只提示，不动历史。
+
+### 发布 / CI（GitHub Actions）
+
+- `.github/workflows/release.yml`：push `v*` tag 或手动 Run workflow → 先跑单测，再 `Scripts/make-release.sh <版本>`（ad-hoc 签名），最后 `gh release create`。
+- macOS runner 用 `macos-15`（默认 Xcode）；本机是 Xcode 27.2，CI 用系统最新稳定 Xcode 即可（工程 compatibilityVersion 是 Xcode 14）。
+- 私有仓库：Release 仅 collaborator 可见；Actions 用量 macOS runner 按 10 倍分钟计费。
+- CI 里没有本机自签身份 `Cap Local Signing`，用 `CODE_SIGN_IDENTITY=-`（ad-hoc）；用户下载后需右键打开/去 quarantine。
+- 正式对外分发需要 Developer ID + `notarytool` 公证 + `stapler staple`；当前不做。
+- 版本号来源：`Cap.xcodeproj` 的 `MARKETING_VERSION`（当前 0.1.0）；tag 用 `v<版本>`。

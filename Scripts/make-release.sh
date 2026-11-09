@@ -51,6 +51,8 @@ cat > "$DIST/release-notes.md" <<NOTES
 
 macOS 菜单栏截图工具（Universal：Apple Silicon + Intel，最低 macOS 15.2）。
 
+GitHub Actions 构建产物为 ad-hoc 签名（未公证）；本机使用请按下方「安装」操作。
+
 ## 功能
 
 - ⌘⇧2 截图 → 就地标注 → Enter 复制 / ⌘S 保存
@@ -61,7 +63,8 @@ macOS 菜单栏截图工具（Universal：Apple Silicon + Intel，最低 macOS 1
 ## 安装
 
 1. 解压 zip，把 \`Cap.app\` 拖进 \`/Applications\`
-2. 首次打开：右键 → 打开（自签证书，Gatekeeper 会提示未验证开发者）
+2. 首次打开：右键 → 打开（未公证签名，Gatekeeper 会拦截）。若提示「已损坏」：
+   `xattr -dr com.apple.quarantine /Applications/Cap.app`
 3. 系统设置 → 隐私与安全性 → 录屏与系统录音：勾选 Cap；滚动截图另需辅助功能权限
 
 ## 校验
