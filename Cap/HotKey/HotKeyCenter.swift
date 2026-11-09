@@ -11,14 +11,26 @@ struct HotKeyMapping: Equatable, Sendable {
         modifiers: UInt32(cmdKey | shiftKey),
         displayString: "⌘⇧2"
     )
+
+    /// 滚动长截图（v1.1）。避开系统保留的 ⌘⇧3/4/5/6（截图与 Touch Bar 截图）。
+    static let commandShift7 = HotKeyMapping(
+        keyCode: UInt32(kVK_ANSI_7),
+        modifiers: UInt32(cmdKey | shiftKey),
+        displayString: "⌘⇧7"
+    )
 }
 
 @MainActor
 final class HotKeyCenter {
     private static let signature: OSType = 0x43415031 // 'CAP1'
-    private static let identifier: UInt32 = 1
+
+    fileprivate let identifier: UInt32
 
     var onTrigger: (() -> Void)?
+
+    init(identifier: UInt32 = 1) {
+        self.identifier = identifier
+    }
 
     private var hotKeyRef: EventHotKeyRef?
     private var eventHandlerRef: EventHandlerRef?
@@ -46,7 +58,7 @@ final class HotKeyCenter {
             return false
         }
 
-        let hotKeyID = EventHotKeyID(signature: Self.signature, id: Self.identifier)
+        let hotKeyID = EventHotKeyID(signature: Self.signature, id: identifier)
         let registerStatus = RegisterEventHotKey(
             mapping.keyCode,
             mapping.modifiers,
@@ -107,9 +119,10 @@ private func capHotKeyEventHandler(
         )
     }
     guard status == noErr else { return status }
-    guard hotKeyID.signature == 0x43415031, hotKeyID.id == 1 else { return noErr }
 
     let center = Unmanaged<HotKeyCenter>.fromOpaque(userData).takeUnretainedValue()
+    // 只处理本实例注册的那个热键（多个 HotKeyCenter 共用同一 Carbon 签名）。
+    guard hotKeyID.signature == 0x43415031, hotKeyID.id == center.identifier else { return noErr }
     MainActor.assumeIsolated {
         center.handleHotKeyPressed()
     }

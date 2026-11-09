@@ -12,6 +12,7 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
     private let launchAtLogin: LaunchAtLoginControlling
 
     var onOpenHistory: (() -> Void)?
+    var onScrollCapture: (() -> Void)?
     var onQuit: (() -> Void)?
 
     private let maximumThumbnails = 8
@@ -60,6 +61,10 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         model.onOpenHistory = { [weak self] in
             self?.close()
             self?.onOpenHistory?()
+        }
+        model.onScrollCapture = { [weak self] in
+            self?.close()
+            self?.onScrollCapture?()
         }
         model.onQuit = { [weak self] in self?.onQuit?() }
         model.onOpenPermissionSettings = {

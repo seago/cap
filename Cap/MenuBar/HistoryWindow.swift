@@ -20,6 +20,7 @@ final class HistoryWindowController: NSWindowController {
 
     private let store: HistoryStore
     private let clipboardWriter = ClipboardWriter()
+    private let textRecognizer: TextRecognizing
     private let collectionHostView = FlippedDocumentView()
     private let scrollView = NSScrollView()
     private let headerLabel = NSTextField(labelWithString: "")
@@ -37,8 +38,9 @@ final class HistoryWindowController: NSWindowController {
     private var previewController: HistoryPreviewWindowController?
     private var statusClearTask: Task<Void, Never>?
 
-    init(store: HistoryStore) {
+    init(store: HistoryStore, textRecognizer: TextRecognizing = VisionTextRecognizer()) {
         self.store = store
+        self.textRecognizer = textRecognizer
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -172,6 +174,7 @@ final class HistoryWindowController: NSWindowController {
             itemView.onPreview = { [weak self] in self?.preview(item) }
             itemView.onRevealInFinder = { [weak self] in self?.revealInFinder(item) }
             itemView.onDelete = { [weak self] in self?.delete(item) }
+            itemView.onRecognizeText = { [weak self] in self?.recognizeText(for: item) }
             return itemView
         }
         for itemView in itemViews {
@@ -293,6 +296,33 @@ final class HistoryWindowController: NSWindowController {
             Log.history.notice("Cleared all history items")
         } catch {
             showError(error)
+        }
+    }
+
+    /// 对单条历史截图做文字识别，结果复制到剪贴板并写入索引。
+    private func recognizeText(for item: HistoryItem) {
+        guard let image = store.loadImage(for: item) else {
+            showStatus("图片无法读取")
+            return
+        }
+        showStatus("正在识别文字…")
+        let recognizer = textRecognizer
+        let store = self.store
+        let clipboardWriter = self.clipboardWriter
+        let itemID = item.id
+        Task { @MainActor [weak self] in
+            do {
+                let result = try await recognizer.recognizeText(in: image)
+                guard !result.isEmpty else {
+                    self?.showStatus("没有识别到文字")
+                    return
+                }
+                try clipboardWriter.writeText(result.text)
+                try? store.setOCRText(id: itemID, text: result.text)
+                self?.showStatus("已识别并复制 \(result.text.count) 个字符")
+            } catch {
+                self?.showStatus("识别失败：\(error.localizedDescription)")
+            }
         }
     }
 

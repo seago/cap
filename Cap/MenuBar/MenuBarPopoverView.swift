@@ -25,6 +25,7 @@ final class MenuBarPopoverModel: ObservableObject {
     var onDelete: ((UUID) -> Void)?
     var onClearAll: (() -> Void)?
     var onOpenHistory: (() -> Void)?
+    var onScrollCapture: (() -> Void)?
     var onOpenPermissionSettings: (() -> Void)?
     var onChooseDirectory: (() -> Void)?
     var onChangeFormat: ((ImageFormat) -> Void)?
@@ -124,6 +125,8 @@ struct MenuBarPopoverView: View {
     private var actionRow: some View {
         HStack(spacing: 10) {
             Button("全部截图") { model.onOpenHistory?() }
+            Button("滚动截图") { model.onScrollCapture?() }
+                .help("⌘⇧7 框选可滚动区域")
             Button(model.showsSettings ? "收起设置" : "设置") {
                 model.showsSettings.toggle()
             }

@@ -8,6 +8,8 @@ final class MenuBarController: NSObject {
 
     /// 打开历史窗口（AppDelegate 注入）。
     var onOpenHistory: (() -> Void)?
+    /// 开始滚动长截图（AppDelegate 注入）。
+    var onScrollCapture: (() -> Void)?
 
     init(
         historyStore: HistoryStore,
@@ -34,6 +36,9 @@ final class MenuBarController: NSObject {
 
         popoverController.onOpenHistory = { [weak self] in
             self?.onOpenHistory?()
+        }
+        popoverController.onScrollCapture = { [weak self] in
+            self?.onScrollCapture?()
         }
         popoverController.onQuit = {
             NSApp.terminate(nil)

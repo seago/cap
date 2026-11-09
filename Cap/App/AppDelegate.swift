@@ -5,6 +5,7 @@ import CoreGraphics
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private var hotKeyCenter: HotKeyCenter?
+    private var scrollHotKeyCenter: HotKeyCenter?
     private var onboardingController: OnboardingWindowController?
 
     private let screenCaptureService = ScreenCaptureService()
@@ -15,6 +16,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var historyWindowController: HistoryWindowController?
     private var selectionOverlay: SelectionOverlayController?
     private var editorController: EditorController?
+    private var scrollCaptureController: ScrollCaptureController?
+    private var scrollOverlay: ScrollCaptureOverlay?
+    private var isSelectingScrollRegion = false
     private var isCapturing = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -27,6 +31,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         menuBarController.onOpenHistory = { [weak self] in
             self?.openHistoryWindow()
+        }
+        menuBarController.onScrollCapture = { [weak self] in
+            self?.beginScrollSelection()
         }
         self.menuBarController = menuBarController
 
@@ -52,6 +59,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         self.hotKeyCenter = hotKeyCenter
 
+        let scrollHotKeyCenter = HotKeyCenter(identifier: 2)
+        scrollHotKeyCenter.onTrigger = { [weak self] in
+            self?.beginScrollSelection()
+        }
+        if !scrollHotKeyCenter.register(.commandShift7) {
+            Log.app.error("Failed to register ⌘⇧7")
+        }
+        self.scrollHotKeyCenter = scrollHotKeyCenter
+
         let onboardingController = OnboardingWindowController()
         onboardingController.showIfNeeded()
         self.onboardingController = onboardingController
@@ -59,6 +75,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         editorController?.close()
+        scrollCaptureController?.cancel()
+        scrollOverlay?.dismiss()
         selectionOverlay?.dismiss()
         hotKeyCenter?.unregister()
         Log.app.info("Cap terminating")
@@ -92,6 +110,143 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         overlay.present()
         selectionOverlay = overlay
         Log.selection.notice("Selection overlay presented on \(overlay.windows.count, privacy: .public) screen(s)")
+    }
+
+    /// ⌘⇧7：框选一块可滚动区域，自动滚动并拼接成长图。
+    private func beginScrollSelection() {
+        if editorController != nil || scrollCaptureController != nil || isSelectingScrollRegion {
+            Log.scroll.notice("Scroll capture ignored: another capture UI is active")
+            return
+        }
+        guard CGPreflightScreenCaptureAccess() else {
+            onboardingController?.showIfNeeded()
+            return
+        }
+
+        isSelectingScrollRegion = true
+        let overlay = SelectionOverlayController()
+        overlay.onCancel = { [weak self] in
+            self?.selectionOverlay = nil
+            self?.isSelectingScrollRegion = false
+            Log.scroll.notice("Scroll region selection cancelled")
+        }
+        overlay.onSelect = { [weak self] target, _ in
+            self?.selectionOverlay = nil
+            self?.isSelectingScrollRegion = false
+            self?.handleScrollSelection(target)
+        }
+        overlay.present()
+        selectionOverlay = overlay
+        Log.scroll.notice("Scroll region selection presented")
+    }
+
+    private func handleScrollSelection(_ target: SelectionTarget) {
+        let mainHeight = ScreenCaptureService.mainScreenHeight()
+        let screenRect: CGRect
+        switch target {
+        case .region(let rect):
+            screenRect = rect
+        case .window(let windowID):
+            let windows = WindowIndex.loadCurrent()
+            guard let info = windows.windows.first(where: { $0.windowID == windowID }) else {
+                presentCaptureError(ScrollCaptureFailure.noScrollableContent)
+                return
+            }
+            screenRect = WindowIndex.screenRect(fromCGRect: info.bounds, mainScreenHeight: mainHeight)
+        case .display:
+            presentCaptureError(ScrollCaptureFailure.noScrollableContent)
+            return
+        }
+
+        guard screenRect.width >= 40, screenRect.height >= 40 else {
+            presentCaptureError(ScrollCaptureFailure.noScrollableContent)
+            return
+        }
+
+        // 找选区中心下方的窗口，拿到要滚动的进程。
+        let cgCenter = CGPoint(x: screenRect.midX, y: mainHeight - screenRect.midY)
+        guard let window = WindowIndex.loadCurrent().hitTest(at: cgCenter) else {
+            presentCaptureError(ScrollCaptureFailure.noScrollableContent)
+            return
+        }
+
+        startScrollCapture(region: screenRect, targetPID: window.ownerPID, scrollLocation: cgCenter)
+    }
+
+    private func startScrollCapture(region: CGRect, targetPID: pid_t, scrollLocation: CGPoint) {
+        // 把目标 App 提到前面，避免其它窗口挡住选区、影响逐帧截图。
+        NSRunningApplication(processIdentifier: targetPID)?.activate(options: [.activateAllWindows])
+
+        let overlay = ScrollCaptureOverlay()
+        overlay.onStop = { [weak self] in
+            self?.scrollCaptureController?.cancel()
+        }
+        overlay.present(near: region)
+        scrollOverlay = overlay
+
+        let captureService = screenCaptureService
+        let mainHeight = ScreenCaptureService.mainScreenHeight()
+        let controller = ScrollCaptureController(
+            frameProvider: { rect in
+                let cgRect = WindowIndex.cgRect(fromScreenRect: rect, mainScreenHeight: mainHeight)
+                return try await captureService.capture(region: cgRect)
+            },
+            scrollAction: { pid, points, location in
+                ScrollCaptureController.postScroll(to: pid, points: points, location: location)
+            }
+        )
+        controller.onProgress = { [weak self] frameCount, offset in
+            self?.scrollOverlay?.update(frameCount: frameCount, message: offset == nil ? nil : "滚动截图中… 已捕获 \(frameCount) 屏")
+        }
+        scrollCaptureController = controller
+
+        Task { [weak self] in
+            guard let self else { return }
+            let result = await controller.run(region: region, targetPID: targetPID, scrollLocation: scrollLocation)
+            self.scrollOverlay?.dismiss()
+            self.scrollOverlay = nil
+            self.scrollCaptureController = nil
+
+            switch result {
+            case .success(let image):
+                self.finishScrollCapture(image: image, region: region)
+            case .failure(.cancelled):
+                Log.scroll.notice("Scroll capture cancelled")
+            case .failure(let failure):
+                Log.scroll.error("Scroll capture failed: \(failure.userMessage, privacy: .public)")
+                if failure == .accessibilityPermissionRequired {
+                    self.promptForAccessibilityOnce()
+                }
+                self.presentCaptureError(failure)
+            }
+        }
+    }
+
+    private func finishScrollCapture(image: CGImage, region: CGRect) {
+        do {
+            try clipboardWriter.write(image)
+        } catch {
+            Log.scroll.error("Scroll capture clipboard write failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        let historyItem = recordHistory(for: image, source: .region(region))
+
+        // 长图按屏幕可用高度缩放到编辑器面板里。
+        let visible = NSScreen.screens.first(where: { $0.frame.intersects(region) })?.visibleFrame
+            ?? NSScreen.main?.visibleFrame
+            ?? region
+        let maxHeight = visible.height * 0.8
+        let scale = min(1, maxHeight / CGFloat(image.height))
+        let displaySize = CGSize(
+            width: CGFloat(image.width) * scale,
+            height: CGFloat(image.height) * scale
+        )
+        let origin = CGPoint(
+            x: visible.midX - displaySize.width / 2,
+            y: visible.midY - displaySize.height / 2
+        )
+        presentEditor(image: image, screenFrame: CGRect(origin: origin, size: displaySize), historyItemID: historyItem?.id)
+        Log.scroll.notice("Scroll capture finished: \(image.width, privacy: .public)x\(image.height, privacy: .public) px")
     }
 
     /// 按选区目标截取，成功则写剪贴板与历史，然后进入编辑器。
@@ -219,6 +374,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - 历史与错误
+
+    /// 滚动截图首次失败在权限上时，弹出系统授权提示（只提示一次，之后由用户手动去设置）。
+    private func promptForAccessibilityOnce() {
+        guard !UserDefaults.standard.bool(forKey: "cap.accessibilityPrompted") else { return }
+        UserDefaults.standard.set(true, forKey: "cap.accessibilityPrompted")
+        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+    }
 
     /// 截图进剪贴板后写入历史；历史失败不应让已成功的截图变成失败。
     private func recordHistory(for image: CGImage, source: HistorySource) -> HistoryItem? {

@@ -48,4 +48,15 @@ final class ClipboardWriter {
             throw CaptureError.clipboardWriteFailed
         }
     }
+
+    /// 把纯文本写入剪贴板（OCR 结果复制用）。
+    func writeText(_ text: String) throws {
+        guard let data = text.data(using: .utf8) else {
+            throw CaptureError.clipboardWriteFailed
+        }
+        pasteboard.clear()
+        guard pasteboard.write(data, type: .string) else {
+            throw CaptureError.clipboardWriteFailed
+        }
+    }
 }

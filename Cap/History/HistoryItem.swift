@@ -74,6 +74,8 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
     ///
     /// #24 之前的索引没有该字段，解码后为 `nil`；`HistoryStore` 加载时会补生成缩略图。
     let thumbFileName: String?
+    /// OCR 识别出的文本（#29 预留字段）；旧索引没有该字段时解码为 nil。
+    let ocrText: String?
 
     init(
         id: UUID,
@@ -83,7 +85,8 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
         pixelHeight: Int,
         fileName: String,
         isAnnotated: Bool,
-        thumbFileName: String? = nil
+        thumbFileName: String? = nil,
+        ocrText: String? = nil
     ) {
         self.id = id
         self.createdAt = createdAt
@@ -93,5 +96,6 @@ struct HistoryItem: Codable, Equatable, Identifiable, Sendable {
         self.fileName = fileName
         self.isAnnotated = isAnnotated
         self.thumbFileName = thumbFileName
+        self.ocrText = ocrText
     }
 }

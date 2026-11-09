@@ -14,6 +14,7 @@ final class HistoryGridItemView: NSView {
     var onCopy: (() -> Void)?
     var onRevealInFinder: (() -> Void)?
     var onDelete: (() -> Void)?
+    var onRecognizeText: (() -> Void)?
 
     private let thumbnailView = NSImageView()
     private let dateLabel = NSTextField(labelWithString: "")
@@ -116,6 +117,7 @@ final class HistoryGridItemView: NSView {
     private func buildContextMenu() {
         addMenuItem(title: "预览", action: #selector(previewClicked))
         addMenuItem(title: "复制", action: #selector(copyClicked))
+        addMenuItem(title: "识别文字", action: #selector(recognizeClicked))
         addMenuItem(title: "在 Finder 中显示", action: #selector(revealClicked))
         addMenuItem(title: "删除", action: #selector(deleteClicked))
         menu = contextMenu
@@ -133,6 +135,10 @@ final class HistoryGridItemView: NSView {
 
     @objc private func copyClicked() {
         onCopy?()
+    }
+
+    @objc private func recognizeClicked() {
+        onRecognizeText?()
     }
 
     @objc private func revealClicked() {

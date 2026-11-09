@@ -67,6 +67,13 @@
 		8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000004 /* LaunchAtLogin.swift */; };
 		8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000005 /* SettingsStoreTests.swift */; };
 		8C0000000000000000000016 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8C0000000000000000000006 /* AppIcon.icns */; };
+		9D0000000000000000000011 /* ScrollStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000001 /* ScrollStitcher.swift */; };
+		9D0000000000000000000012 /* ScrollStitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0000000000000000000002 /* ScrollStitcherTests.swift */; };
+		9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000001 /* ScrollCaptureController.swift */; };
+		9E0000000000000000000012 /* ScrollCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000002 /* ScrollCaptureOverlay.swift */; };
+		9E0000000000000000000013 /* ScrollCaptureControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */; };
+		9F0000000000000000000011 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0000000000000000000001 /* TextRecognizer.swift */; };
+		9F0000000000000000000012 /* OCRTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0000000000000000000002 /* OCRTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +150,13 @@
 		8C0000000000000000000004 /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		8C0000000000000000000005 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		8C0000000000000000000006 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		9D0000000000000000000001 /* ScrollStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcher.swift; sourceTree = "<group>"; };
+		9D0000000000000000000002 /* ScrollStitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollStitcherTests.swift; sourceTree = "<group>"; };
+		9E0000000000000000000001 /* ScrollCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureController.swift; sourceTree = "<group>"; };
+		9E0000000000000000000002 /* ScrollCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureOverlay.swift; sourceTree = "<group>"; };
+		9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureControllerTests.swift; sourceTree = "<group>"; };
+		9F0000000000000000000001 /* TextRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRecognizer.swift; sourceTree = "<group>"; };
+		9F0000000000000000000002 /* OCRTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +207,8 @@
 				BB0000000000000000000022 /* Output */,
 				CC0000000000000000000021 /* History */,
 				2B0000000000000000000021 /* Editor */,
+				9D0000000000000000000021 /* Scroll */,
+				9F0000000000000000000021 /* OCR */,
 				DD0000000000000000000021 /* Selection */,
 				AA0000000000000000000007 /* Support */,
 				AA0000000000000000000008 /* Resources */,
@@ -338,6 +354,9 @@
 				7B0000000000000000000004 /* HistoryRetentionTests.swift */,
 				7B0000000000000000000005 /* ThumbnailerTests.swift */,
 				8C0000000000000000000005 /* SettingsStoreTests.swift */,
+				9D0000000000000000000002 /* ScrollStitcherTests.swift */,
+				9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */,
+				9F0000000000000000000002 /* OCRTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -350,6 +369,24 @@
 				8C0000000000000000000004 /* LaunchAtLogin.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		9D0000000000000000000021 /* Scroll */ = {
+			isa = PBXGroup;
+			children = (
+				9D0000000000000000000001 /* ScrollStitcher.swift */,
+				9E0000000000000000000001 /* ScrollCaptureController.swift */,
+				9E0000000000000000000002 /* ScrollCaptureOverlay.swift */,
+			);
+			path = Scroll;
+			sourceTree = "<group>";
+		};
+		9F0000000000000000000021 /* OCR */ = {
+			isa = PBXGroup;
+			children = (
+				9F0000000000000000000001 /* TextRecognizer.swift */,
+			);
+			path = OCR;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -488,6 +525,10 @@
 				8C0000000000000000000012 /* MenuBarPopoverView.swift in Sources */,
 				8C0000000000000000000013 /* SettingsStore.swift in Sources */,
 				8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */,
+				9D0000000000000000000011 /* ScrollStitcher.swift in Sources */,
+				9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */,
+				9E0000000000000000000012 /* ScrollCaptureOverlay.swift in Sources */,
+				9F0000000000000000000011 /* TextRecognizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +556,9 @@
 				7B0000000000000000000014 /* HistoryRetentionTests.swift in Sources */,
 				7B0000000000000000000015 /* ThumbnailerTests.swift in Sources */,
 				8C0000000000000000000015 /* SettingsStoreTests.swift in Sources */,
+				9D0000000000000000000012 /* ScrollStitcherTests.swift in Sources */,
+				9E0000000000000000000013 /* ScrollCaptureControllerTests.swift in Sources */,
+				9F0000000000000000000012 /* OCRTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

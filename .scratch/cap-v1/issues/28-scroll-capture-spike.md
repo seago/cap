@@ -1,7 +1,7 @@
 # 28 · 滚动长截图（spike → 是否进 v1.1）
 
 Milestone: M4
-Status: ready-for-agent
+Status: awaiting-manual
 Blocked by:
 Type: spike
 
@@ -18,9 +18,9 @@ Type: spike
 
 ## Acceptance
 
-- [ ] [auto] `ScrollStitcherTests`：合成滚动帧（含重叠区 + 内容）拼接后与完整长图逐像素一致或近似一致
-- [ ] [auto] 重叠检测对无重叠/反向滚动/完全相同帧有安全行为
-- [ ] [auto] build + 既有测试通过
+- [x] [auto] `ScrollStitcherTests`：合成滚动帧（含重叠区 + 内容）拼接后与完整长图逐像素一致或近似一致
+- [x] [auto] 重叠检测对无重叠/反向滚动/完全相同帧有安全行为
+- [x] [auto] build + 既有测试通过
 - [ ] [manual] Chrome/Safari 长页面滚动截图成功；Esc 中止；结果进编辑器
 - [ ] [manual] 吸顶导航等限制场景不产生破损图（提示或截断）
 
@@ -54,3 +54,13 @@ Out:
 - 拼接用 Vision `VNTranslationalImageRegistrationRequest` 或 NCC 相关；需要处理相邻帧固定高度重叠
 - 自动滚动通过 `CGEvent` scroll wheel 事件 + `CGEventPostToPid`/HID tap；需要 Accessibility 权限（需在引导与错误提示中说明）
 - 失败路径必须比成功路径更清楚：内容没动、滚动到底、权限缺失、窗口不可滚动
+
+## Runs
+
+### 2026-11-09 17:40 · run 1（spike 代码完成）
+
+- Auto: `ScrollStitcher`（vDSP 行特征 + 全分辨率校验）12 帧 1500x800 拼接 55-63ms，合成帧拼接逐像素等于原图；`ScrollStitcherTests` 11 项、`ScrollCaptureControllerTests` 7 项全绿（本次全量 157 测试）
+- 实现: ⌘⇧7 框选 → 自动滚动（CGEvent 投递到目标进程）→ 逐帧截图 → 拼接 → 进编辑器；Esc/结束按钮中止；最大 12 屏；失败给明确文案
+- 决策记录: 滚动截图使用「框选区域」而非整窗，避开浏览器固定 UI 干扰；需要「辅助功能」权限，首次失败会弹系统授权提示
+- Go/No-Go 依据（自动部分）: 拼接算法像素级正确、性能达标；滚动投递与真实页面效果待解锁后 live 验证
+- Manual pending: 屏幕在 17:37 再次锁定，无法合成键鼠；解锁后跑 Chrome/Safari 长页面

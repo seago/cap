@@ -214,6 +214,35 @@ final class HistoryStore {
         return annotatedItem
     }
 
+    /// 保存某条记录的 OCR 文本（#29）。只改索引，不动图片文件。
+    @discardableResult
+    func setOCRText(id: UUID, text: String) throws -> HistoryItem {
+        guard let index = items.firstIndex(where: { $0.id == id }) else {
+            throw HistoryError.itemNotFound
+        }
+        let original = items[index]
+        let updated = HistoryItem(
+            id: original.id,
+            createdAt: original.createdAt,
+            source: original.source,
+            pixelWidth: original.pixelWidth,
+            pixelHeight: original.pixelHeight,
+            fileName: original.fileName,
+            isAnnotated: original.isAnnotated,
+            thumbFileName: original.thumbFileName,
+            ocrText: text
+        )
+        items[index] = updated
+        do {
+            try writeIndex()
+        } catch {
+            items[index] = original
+            throw error
+        }
+        postDidChange()
+        return updated
+    }
+
     /// 删除一条记录：先原子重写索引，再删除对应图片与缩略图。
     func delete(id: UUID) throws {
         guard let index = items.firstIndex(where: { $0.id == id }) else {
