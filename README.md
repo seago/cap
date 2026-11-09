@@ -33,3 +33,17 @@ Scripts/install.sh
 
 - 历史：`~/Library/Application Support/Cap/History/`（`index.json` + `images/` + `thumbs/`）
 - 保存：默认 `~/Pictures/Screenshots/`，可在菜单栏 popover 中修改
+
+## 支持的 Mac
+
+- 安装产物是 **Universal binary**：Apple Silicon（arm64）与 Intel（x86_64）都能运行。
+  ```bash
+  lipo -info /Applications/Cap.app/Contents/MacOS/Cap
+  # x86_64 arm64
+  ```
+- 最低系统 **macOS 15.2**（见 `DESIGN.md` §11）。Intel 机型需支持升级到 macOS Sequoia 15.2：
+  - MacBook Pro 2018 及之后（含 16 英寸 2019）、MacBook Air（2020 Intel）
+  - iMac 2019 及之后、iMac Pro 2017、Mac mini 2018、Mac Pro 2019
+  - 更老的 Intel Mac（Ventura/Sonoma 及以下）不在 v1 支持范围内
+- Debug 构建只编译当前机器架构（`ONLY_ACTIVE_ARCH=YES`）；**Release / `Scripts/install.sh` 产物才是 Universal**。
+- `Cap Local Signing` 自签身份只在本机受信。拷到另一台 Mac（含 Intel）需要重新签名并重新授予屏幕录制权限；分发给他人需要正式签名 + 公证。
