@@ -553,7 +553,7 @@ History/
 | 多语言 | ✅ 已验收 | String Catalog：zh-Hans / en / zh-Hant，跟随系统语言；124 个 key；AppKit 字符串走 `String(localized:)` |
 | 上传 / 分享 | ✅ 已验收 | 用户自定义 HTTP 端点（multipart `file` 字段 + 可选 Authorization）；成功 URL 进剪贴板并写回历史；`UploadService` 协议可替换；未配置时入口隐藏 |
 
-**验收**：191 项单测 + 实机 liveness（滚动截图、OCR、贴图、录制快捷键、英文界面、上传）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`、`30af388`、`67e8407`）。
+**验收**：191 项单测 + 全功能实机回归；v1.1 整体验收通过（报告：`.scratch/cap-v1/acceptance-v1.1.md`）；提交记录见 git（`7274185`、`a2cf38c`、`27035f9`、`0d7a8e7`、`30af388`、`67e8407`）。
 
 ---
 

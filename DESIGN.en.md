@@ -551,7 +551,7 @@ History/
 | Localization | ✅ Accepted | zh-Hans / en / zh-Hant String Catalog, follows the system language; 124 keys |
 | Upload / share | ✅ Accepted | User-configured HTTP endpoint (multipart `file` field + optional Authorization); returned URL goes to the clipboard and is stored in history; `UploadService` protocol is replaceable; entry hidden until configured |
 
-**Acceptance**: 191 unit tests + live smoke tests (scrolling capture, OCR, pinning, shortcut recording, English UI, upload); commits in git (`7274185`, `a2cf38c`, `27035f9`, `0d7a8e7`, `30af388`, `67e8407`).
+**Acceptance**: 191 unit tests + full live regression; v1.1 overall acceptance passed (report: `.scratch/cap-v1/acceptance-v1.1.md`); commits in git (`7274185`, `a2cf38c`, `27035f9`, `0d7a8e7`, `30af388`, `67e8407`).
 
 ---
 
