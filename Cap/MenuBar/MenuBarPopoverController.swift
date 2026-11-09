@@ -14,6 +14,8 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
 
     var onOpenHistory: (() -> Void)?
     var onScrollCapture: (() -> Void)?
+    /// 修改快捷键：返回是否注册成功（AppDelegate 负责重绑）。
+    var onHotKeyChange: ((HotKeyAction, HotKeyMapping) -> Bool)?
     var onQuit: (() -> Void)?
 
     private let maximumThumbnails = 8
@@ -90,6 +92,9 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
             self?.refreshModel()
         }
         model.onToggleLaunchAtLogin = { [weak self] enabled in self?.toggleLaunchAtLogin(enabled) }
+        model.onRecordHotKey = { [weak self] action, mapping in
+            self?.recordHotKey(action: action, mapping: mapping)
+        }
     }
 
     private var historyObserver: NSObjectProtocol?
@@ -114,6 +119,9 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
         model.launchAtLogin = launchStatus.isEnabled
         model.launchAtLoginNeedsApproval = launchStatus == .requiresApproval
         model.thumbnails = recentThumbnails()
+        model.shortcutRows = HotKeyAction.allCases.map {
+            HotKeyShortcutRow(action: $0, mapping: settings.hotKey(for: $0))
+        }
     }
 
     private func recentThumbnails() -> [PopoverThumbnail] {
@@ -169,6 +177,21 @@ final class MenuBarPopoverController: NSObject, NSPopoverDelegate {
             launchAtLogin.openSystemSettings()
         }
         model.errorMessage = failure
+    }
+
+    /// 录制完成：冲突检查 → 交给 AppDelegate 重绑 → 失败提示。
+    private func recordHotKey(action: HotKeyAction, mapping: HotKeyMapping?) {
+        let target = mapping ?? action.defaultMapping
+        if let conflict = settings.hotKeyConflict(target, excluding: action) {
+            model.errorMessage = "快捷键 \(target.displayString) 已被「\(conflict.title)」占用"
+            return
+        }
+        model.errorMessage = nil
+        guard onHotKeyChange?(action, target) == true else {
+            model.errorMessage = "快捷键 \(target.displayString) 被系统或其它 App 占用，已保留原设置"
+            return
+        }
+        refreshModel()
     }
 
     private func revealInFinder(id: UUID) {

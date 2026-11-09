@@ -10,6 +10,9 @@ final class SettingsStore {
         static let launchAtLoginDefaultApplied = "launchAtLoginDefaultApplied"
     }
 
+    /// 快捷键设置变化（popover 需要刷新、AppDelegate 需要重绑）。
+    static let hotKeyDidChangeNotification = Notification.Name("CapHotKeyDidChange")
+
     static let defaultDirectory: URL = FileManager.default
         .homeDirectoryForCurrentUser
         .appendingPathComponent("Pictures/Screenshots", isDirectory: true)
@@ -69,6 +72,53 @@ final class SettingsStore {
 
     /// 历史条数上限（v1 不暴露修改，见 DESIGN §6.2）。
     var historyLimit: Int { 100 }
+
+    // MARK: - 快捷键
+
+    private func hotKeyKeys(for action: HotKeyAction) -> (keyCode: String, modifiers: String) {
+        ("hotKey.\(action.rawValue).keyCode", "hotKey.\(action.rawValue).modifiers")
+    }
+
+    func hotKey(for action: HotKeyAction) -> HotKeyMapping {
+        let keys = hotKeyKeys(for: action)
+        guard let keyCode = defaults.object(forKey: keys.keyCode) as? Int,
+              let modifiers = defaults.object(forKey: keys.modifiers) as? Int else {
+            return action.defaultMapping
+        }
+        return HotKeyMapping(keyCode: UInt32(keyCode), modifiers: UInt32(modifiers))
+    }
+
+    func allHotKeys() -> [HotKeyAction: HotKeyMapping] {
+        var result: [HotKeyAction: HotKeyMapping] = [:]
+        for action in HotKeyAction.allCases {
+            result[action] = hotKey(for: action)
+        }
+        return result
+    }
+
+    /// 该组合是否已经被其它动作占用。
+    func hotKeyConflict(_ mapping: HotKeyMapping, excluding action: HotKeyAction) -> HotKeyAction? {
+        for other in HotKeyAction.allCases where other != action {
+            if hotKey(for: other) == mapping {
+                return other
+            }
+        }
+        return nil
+    }
+
+    func setHotKey(_ mapping: HotKeyMapping, for action: HotKeyAction) {
+        let keys = hotKeyKeys(for: action)
+        defaults.set(Int(mapping.keyCode), forKey: keys.keyCode)
+        defaults.set(Int(mapping.modifiers), forKey: keys.modifiers)
+        NotificationCenter.default.post(name: Self.hotKeyDidChangeNotification, object: action)
+    }
+
+    func resetHotKey(for action: HotKeyAction) {
+        let keys = hotKeyKeys(for: action)
+        defaults.removeObject(forKey: keys.keyCode)
+        defaults.removeObject(forKey: keys.modifiers)
+        NotificationCenter.default.post(name: Self.hotKeyDidChangeNotification, object: action)
+    }
 }
 
 extension ImageFormat {
@@ -78,4 +128,5 @@ extension ImageFormat {
         case .jpeg: return "JPEG（质量 0.85）"
         }
     }
+
 }

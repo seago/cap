@@ -79,6 +79,8 @@
 		AA1000000000000000000013 /* PinnedImageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000003 /* PinnedImageWindow.swift */; };
 		AA1000000000000000000014 /* PinnedImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000004 /* PinnedImageController.swift */; };
 		AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000005 /* PinnedImageModelTests.swift */; };
+		AB0000000000000000000011 /* ShortcutRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000001 /* ShortcutRecorderView.swift */; };
+		AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000002 /* HotKeySettingsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -167,6 +169,8 @@
 		AA1000000000000000000003 /* PinnedImageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageWindow.swift; sourceTree = "<group>"; };
 		AA1000000000000000000004 /* PinnedImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageController.swift; sourceTree = "<group>"; };
 		AA1000000000000000000005 /* PinnedImageModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedImageModelTests.swift; sourceTree = "<group>"; };
+		AB0000000000000000000001 /* ShortcutRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderView.swift; sourceTree = "<group>"; };
+		AB0000000000000000000002 /* HotKeySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeySettingsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,6 +373,7 @@
 				9E0000000000000000000003 /* ScrollCaptureControllerTests.swift */,
 				9F0000000000000000000002 /* OCRTests.swift */,
 				AA1000000000000000000005 /* PinnedImageModelTests.swift */,
+				AB0000000000000000000002 /* HotKeySettingsTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -379,6 +384,7 @@
 			children = (
 				8C0000000000000000000003 /* SettingsStore.swift */,
 				8C0000000000000000000004 /* LaunchAtLogin.swift */,
+				AB0000000000000000000001 /* ShortcutRecorderView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -548,6 +554,7 @@
 				8C0000000000000000000012 /* MenuBarPopoverView.swift in Sources */,
 				8C0000000000000000000013 /* SettingsStore.swift in Sources */,
 				8C0000000000000000000014 /* LaunchAtLogin.swift in Sources */,
+				AB0000000000000000000011 /* ShortcutRecorderView.swift in Sources */,
 				9D0000000000000000000011 /* ScrollStitcher.swift in Sources */,
 				9E0000000000000000000011 /* ScrollCaptureController.swift in Sources */,
 				9E0000000000000000000012 /* ScrollCaptureOverlay.swift in Sources */,
@@ -587,6 +594,7 @@
 				9E0000000000000000000013 /* ScrollCaptureControllerTests.swift in Sources */,
 				9F0000000000000000000012 /* OCRTests.swift in Sources */,
 				AA1000000000000000000015 /* PinnedImageModelTests.swift in Sources */,
+				AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

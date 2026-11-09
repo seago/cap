@@ -8,6 +8,14 @@ struct PopoverThumbnail: Identifiable, Equatable {
     let isAnnotated: Bool
 }
 
+/// 设置区里的一行快捷键。
+struct HotKeyShortcutRow: Identifiable, Equatable {
+    let action: HotKeyAction
+    let mapping: HotKeyMapping
+
+    var id: String { action.rawValue }
+}
+
 /// popover 的状态与动作。由 `MenuBarController` 注入真实依赖。
 @MainActor
 final class MenuBarPopoverModel: ObservableObject {
@@ -19,6 +27,7 @@ final class MenuBarPopoverModel: ObservableObject {
     @Published var launchAtLoginNeedsApproval = false
     @Published var showsSettings = false
     @Published var errorMessage: String?
+    @Published var shortcutRows: [HotKeyShortcutRow] = []
 
     var onCopy: ((UUID) -> Void)?
     var onRevealInFinder: ((UUID) -> Void)?
@@ -29,6 +38,7 @@ final class MenuBarPopoverModel: ObservableObject {
     var onOpenPermissionSettings: (() -> Void)?
     var onChooseDirectory: (() -> Void)?
     var onChangeFormat: ((ImageFormat) -> Void)?
+    var onRecordHotKey: ((HotKeyAction, HotKeyMapping?) -> Void)?
     var onToggleLaunchAtLogin: ((Bool) -> Void)?
     var onQuit: (() -> Void)?
     var onRefresh: (() -> Void)?
@@ -138,6 +148,19 @@ struct MenuBarPopoverView: View {
 
     private var settingsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Text("快捷键")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+            ForEach(model.shortcutRows) { row in
+                HStack {
+                    Text(row.action.title)
+                        .font(.system(size: 11))
+                    Spacer()
+                    ShortcutRecorder(mapping: row.mapping) { newMapping in
+                        model.onRecordHotKey?(row.action, newMapping)
+                    }
+                }
+            }
             HStack {
                 Text("保存到")
                     .font(.system(size: 11))

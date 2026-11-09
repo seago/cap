@@ -10,6 +10,8 @@ final class MenuBarController: NSObject {
     var onOpenHistory: (() -> Void)?
     /// 开始滚动长截图（AppDelegate 注入）。
     var onScrollCapture: (() -> Void)?
+    /// 修改快捷键（AppDelegate 注入，返回是否注册成功）。
+    var onHotKeyChange: ((HotKeyAction, HotKeyMapping) -> Bool)?
 
     init(
         historyStore: HistoryStore,
@@ -39,6 +41,9 @@ final class MenuBarController: NSObject {
         }
         popoverController.onScrollCapture = { [weak self] in
             self?.onScrollCapture?()
+        }
+        popoverController.onHotKeyChange = { [weak self] action, mapping in
+            self?.onHotKeyChange?(action, mapping) ?? false
         }
         popoverController.onQuit = {
             NSApp.terminate(nil)

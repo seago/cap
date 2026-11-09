@@ -4,9 +4,7 @@ import CoreGraphics
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
-    private var hotKeyCenter: HotKeyCenter?
-    private var scrollHotKeyCenter: HotKeyCenter?
-    private var pinHotKeyCenter: HotKeyCenter?
+    private var hotKeyCenters: [HotKeyAction: HotKeyCenter] = [:]
     private let pinnedImageController = PinnedImageController()
     private var onboardingController: OnboardingWindowController?
 
@@ -37,6 +35,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menuBarController.onScrollCapture = { [weak self] in
             self?.beginScrollSelection()
         }
+        menuBarController.onHotKeyChange = { [weak self] action, mapping in
+            self?.applyHotKey(mapping, for: action) ?? false
+        }
         self.menuBarController = menuBarController
 
         // DESIGN §6.2：首次启动默认开启登录自启；用户之后的选择优先。
@@ -51,33 +52,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             settings.markDefaultLaunchAtLoginApplied()
         }
 
-        let hotKeyCenter = HotKeyCenter()
-        hotKeyCenter.onTrigger = { [weak self] in
-            guard let self else { return }
-            self.beginSelection()
-        }
-        if !hotKeyCenter.register() {
-            Log.app.error("Failed to register ⌘⇧2")
-        }
-        self.hotKeyCenter = hotKeyCenter
-
-        let scrollHotKeyCenter = HotKeyCenter(identifier: 2)
-        scrollHotKeyCenter.onTrigger = { [weak self] in
-            self?.beginScrollSelection()
-        }
-        if !scrollHotKeyCenter.register(.commandShift7) {
-            Log.app.error("Failed to register ⌘⇧7")
-        }
-        self.scrollHotKeyCenter = scrollHotKeyCenter
-
-        let pinHotKeyCenter = HotKeyCenter(identifier: 3)
-        pinHotKeyCenter.onTrigger = { [weak self] in
-            self?.pinnedImageController.toggleClickThroughAll()
-        }
-        if !pinHotKeyCenter.register(.optionCommandP) {
-            Log.app.error("Failed to register ⌥⌘P")
-        }
-        self.pinHotKeyCenter = pinHotKeyCenter
+        setUpHotKeys()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(shortcutRecordingBegan),
+            name: .shortcutRecordingBegan,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(shortcutRecordingEnded),
+            name: .shortcutRecordingEnded,
+            object: nil
+        )
 
         let onboardingController = OnboardingWindowController()
         onboardingController.showIfNeeded()
@@ -90,8 +77,72 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         pinnedImageController.closeAll()
         scrollOverlay?.dismiss()
         selectionOverlay?.dismiss()
-        hotKeyCenter?.unregister()
+        hotKeyCenters.values.forEach { $0.unregister() }
         Log.app.info("Cap terminating")
+    }
+
+    // MARK: - 全局快捷键
+
+    /// 创建所有热键中心（只做一次），并按当前设置注册。
+    private func setUpHotKeys() {
+        for action in HotKeyAction.allCases where hotKeyCenters[action] == nil {
+            let center = HotKeyCenter(identifier: action.identifier)
+            center.onTrigger = { [weak self] in
+                self?.handleHotKeyTrigger(action)
+            }
+            hotKeyCenters[action] = center
+        }
+        applyAllHotKeyMappings()
+    }
+
+    /// 按设置重新注册所有热键；被占用时回退默认值。
+    private func applyAllHotKeyMappings() {
+        for action in HotKeyAction.allCases {
+            guard let center = hotKeyCenters[action] else { continue }
+            let mapping = settings.hotKey(for: action)
+            if center.register(mapping) { continue }
+            Log.app.error("Failed to register \(action.rawValue, privacy: .public) hotkey \(mapping.displayString, privacy: .public)")
+            settings.resetHotKey(for: action)
+            if !center.register(action.defaultMapping) {
+                Log.app.error("Failed to register default hotkey for \(action.rawValue, privacy: .public)")
+            }
+        }
+    }
+
+    /// 录制快捷键期间临时注销全局热键，避免按到已有组合时触发原功能。
+    @objc private func shortcutRecordingBegan() {
+        for center in hotKeyCenters.values {
+            center.unregister()
+        }
+        Log.app.notice("Hotkeys suspended for shortcut recording")
+    }
+
+    @objc private func shortcutRecordingEnded() {
+        applyAllHotKeyMappings()
+        Log.app.notice("Hotkeys restored after shortcut recording")
+    }
+
+    private func handleHotKeyTrigger(_ action: HotKeyAction) {
+        switch action {
+        case .capture:
+            beginSelection()
+        case .scrollCapture:
+            beginScrollSelection()
+        case .pinClickThrough:
+            pinnedImageController.toggleClickThroughAll()
+        }
+    }
+
+    /// 应用新的快捷键设置：注册成功才持久化，失败保留原设置。
+    private func applyHotKey(_ mapping: HotKeyMapping, for action: HotKeyAction) -> Bool {
+        guard let center = hotKeyCenters[action] else { return false }
+        guard center.update(mapping: mapping) else {
+            Log.app.error("Failed to rebind \(action.rawValue, privacy: .public) hotkey to \(mapping.displayString, privacy: .public)")
+            return false
+        }
+        settings.setHotKey(mapping, for: action)
+        Log.app.notice("Hotkey \(action.rawValue, privacy: .public) -> \(mapping.displayString, privacy: .public)")
+        return true
     }
 
     /// ⌘⇧2：打开所有屏幕的选区覆盖层。
