@@ -85,7 +85,7 @@ git push origin v0.1.0
 - **CI builds are ad-hoc signed (not notarized)**: right-click → Open on first launch; if macOS says the app is damaged run
   `xattr -dr com.apple.quarantine /Applications/Cap.app`.
   Double-click distribution to other Macs requires the Apple Developer Program (Developer ID + notarization).
-- Private-repo Actions minutes are limited and macOS runners count 10×; if Actions is disabled the workflow will not run —
+- CI runs on a `macos-26` runner (close to the local Xcode version); private-repo Actions minutes are limited and macOS runners count 10×; if Actions is disabled the workflow will not run —
   enable it under Settings → Actions → General and re-run.
 
 ## Project layout

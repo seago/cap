@@ -21,23 +21,38 @@ concurrency:
 jobs:
   verify:
     name: Test
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Show toolchain
         run: xcodebuild -version
       - name: Run unit tests
+        shell: bash
         run: |
-          xcodebuild -project Cap.xcodeproj -scheme Cap \
-            -destination 'platform=macOS' \
-            -derivedDataPath build/ci-tests \
-            CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual \
-            test
+          set -o pipefail
+          mkdir -p build
+          if ! xcodebuild -project Cap.xcodeproj -scheme Cap \
+              -destination 'platform=macOS' \
+              -derivedDataPath build/ci-tests \
+              CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual \
+              test 2>&1 | tee build/ci-test.log; then
+            echo "::group::xcodebuild diagnostics"
+            grep -nE "error:|fatal error:" build/ci-test.log | head -80 || true
+            echo "::endgroup::"
+            exit 1
+          fi
+
+      - name: Upload test log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-test-log
+          path: build/ci-test.log
 
   release:
     name: Build & publish
     needs: verify
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
 
@@ -61,9 +76,24 @@ jobs:
         run: xcodebuild -version
 
       - name: Build & package (ad-hoc signed)
+        shell: bash
         env:
           CODE_SIGN_IDENTITY: "-"
-        run: Scripts/make-release.sh "${{ steps.v.outputs.version }}"
+        run: |
+          set -o pipefail
+          if ! Scripts/make-release.sh "${{ steps.v.outputs.version }}" 2>&1 | tee build/release.log; then
+            echo "::group::release build diagnostics"
+            grep -nE "error:|fatal error:" build/release.log | head -80 || true
+            echo "::endgroup::"
+            exit 1
+          fi
+
+      - name: Upload release log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-build-log
+          path: build/release.log
 
       - name: Publish GitHub release
         env:

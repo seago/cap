@@ -131,7 +131,7 @@
 ### 发布 / CI（GitHub Actions）
 
 - `.github/workflows/release.yml`：push `v*` tag 或手动 Run workflow → 先跑单测，再 `Scripts/make-release.sh <版本>`（ad-hoc 签名），最后 `gh release create`。
-- macOS runner 用 `macos-15`（默认 Xcode）；本机是 Xcode 27.2，CI 用系统最新稳定 Xcode 即可（工程 compatibilityVersion 是 Xcode 14）。
+- macOS runner 用 `macos-26`（默认 Xcode 26.x，Swift 6.3+）；本机是 Xcode 27.2 / Swift 6.4，最初的 `macos-15`（Xcode 16.x）在编译 CapTests 时报错，升级 runner 对齐工具链。CI 测试/构建失败时 workflow 会 grep 出 `error:` 行并上传完整日志 artifact。
 - 私有仓库：Release 仅 collaborator 可见；Actions 用量 macOS runner 按 10 倍分钟计费。
 - CI 里没有本机自签身份 `Cap Local Signing`，用 `CODE_SIGN_IDENTITY=-`（ad-hoc）；用户下载后需右键打开/去 quarantine。
 - 发布产物同时出 **dmg**（`hdiutil create -format UDZO`，内含 Cap.app + `/Applications` 软链）和 **zip**（`ditto -c -k --keepParent`），两者都附 SHA256；dmg 是给人拖拽安装，zip 给脚本/更新用。

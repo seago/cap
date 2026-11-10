@@ -85,7 +85,7 @@ git push origin v0.1.0
 - **CI 产物是 ad-hoc 签名（未公证）**：首次打开需右键 → 打开；若提示「已损坏」执行
   `xattr -dr com.apple.quarantine /Applications/Cap.app`。
   想要双击直接打开 / 分发给别人，需要 Apple Developer Program（Developer ID + 公证）。
-- 私有仓库的 Actions 消耗每月免费额度（macOS runner 按 10 倍计费）；Actions 被关掉时工作流不会跑，可在
+- CI 使用 `macos-26` runner（与本地 Xcode 版本接近）；私有仓库的 Actions 消耗每月免费额度（macOS runner 按 10 倍计费）；Actions 被关掉时工作流不会跑，可在
   仓库 Settings → Actions → General 启用后重新运行。
 
 ## 项目结构
