@@ -81,6 +81,7 @@ jobs:
           CODE_SIGN_IDENTITY: "-"
         run: |
           set -o pipefail
+          mkdir -p build
           if ! Scripts/make-release.sh "${{ steps.v.outputs.version }}" 2>&1 | tee build/release.log; then
             echo "::group::release build diagnostics"
             grep -nE "error:|fatal error:" build/release.log | head -80 || true
