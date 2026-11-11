@@ -112,6 +112,10 @@ Accepted: **v1.1 整体验收通过（2026-11-10）** —— 滚动截图 / OCR 
   - Manual: 英文界面截图已验证；zh-Hant 与系统语言切换的 GUI 验收因锁屏暂时 Deferred（解锁后补测）
 - [x] #35 项目文档双语：README.en.md、DESIGN.en.md 全文 + 中英互链；GLOSSARY/NOTES 补本地化术语与流程
 
+## M6 · 用户反馈修复
+
+- [x] #36 贴图钉屏：切换窗口/切 Space/全屏后不再消失（`hidesOnDeactivate = false`）；右上角增加常驻关闭按钮；新增 2 项窗口行为测试（193 项全绿）
+
 ## 文档
 
 - [x] README：功能、快捷键表、权限、项目结构、故障排查、支持的 Mac

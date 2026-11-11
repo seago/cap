@@ -22,6 +22,7 @@ final class PinnedImageWindow: NSPanel {
         let capturable = ProcessInfo.processInfo.environment["CAP_EDITOR_CAPTURABLE"] == "1"
         sharingType = capturable ? .readOnly : .none
         isReleasedWhenClosed = false
+        hidesOnDeactivate = false
     }
 
     override var canBecomeKey: Bool { true }

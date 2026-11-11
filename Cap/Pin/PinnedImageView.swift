@@ -14,6 +14,21 @@ final class PinnedImageView: NSView {
     var onToggleClickThrough: (() -> Void)?
     var onCopy: (() -> Void)?
 
+    /// 供控制器在 Space 切换后重建窗口时快照使用。
+    var pinnedImage: CGImage { image }
+    var currentScale: CGFloat { model.scale }
+
+    private lazy var closeButton: NSButton = {
+        let button = NSButton(title: "×", target: self, action: #selector(closeClicked))
+        button.bezelStyle = .circular
+        button.controlSize = .small
+        button.font = .systemFont(ofSize: 12, weight: .semibold)
+        button.toolTip = String(localized: "关闭")
+        button.setAccessibilityLabel(String(localized: "关闭"))
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     init(image: CGImage, model: PinnedImageModel) {
         self.image = image
         self.model = model
@@ -22,6 +37,15 @@ final class PinnedImageView: NSView {
         layer?.cornerRadius = 3
         layer?.masksToBounds = true
         setAccessibilityRole(.image)
+
+        // 常驻关闭按钮，避免用户找不到关闭方式（Esc / 右键菜单仍可用）。
+        addSubview(closeButton)
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
+            closeButton.widthAnchor.constraint(equalToConstant: 20),
+            closeButton.heightAnchor.constraint(equalToConstant: 20),
+        ])
     }
 
     @available(*, unavailable)
