@@ -11,6 +11,7 @@
 		AA0000000000000000000031 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000021 /* AppDelegate.swift */; };
 		AA0000000000000000000032 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000022 /* MenuBarController.swift */; };
 		AA0000000000000000000033 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000023 /* Logging.swift */; };
+		F00000000000000000000011 /* UserHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* UserHome.swift */; };
 		AA0000000000000000000034 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AppInfo.swift */; };
 		AA0000000000000000000035 /* AppInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* AppInfoTests.swift */; };
 		AA0000000000000000000036 /* HotKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000027 /* HotKeyCenter.swift */; };
@@ -106,6 +107,7 @@
 		AA0000000000000000000021 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA0000000000000000000022 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		AA0000000000000000000023 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		F00000000000000000000001 /* UserHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHome.swift; sourceTree = "<group>"; };
 		AA0000000000000000000024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA0000000000000000000025 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		AA0000000000000000000026 /* AppInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoTests.swift; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 			children = (
 				AA0000000000000000000023 /* Logging.swift */,
 				AA0000000000000000000025 /* AppInfo.swift */,
+				F00000000000000000000001 /* UserHome.swift */,
 				3C0000000000000000000001 /* FileNaming.swift */,
 			);
 			path = Support;
@@ -549,6 +552,7 @@
 				AA0000000000000000000031 /* AppDelegate.swift in Sources */,
 				AA0000000000000000000032 /* MenuBarController.swift in Sources */,
 				AA0000000000000000000033 /* Logging.swift in Sources */,
+				F00000000000000000000011 /* UserHome.swift in Sources */,
 				AA0000000000000000000034 /* AppInfo.swift in Sources */,
 				AA0000000000000000000036 /* HotKeyCenter.swift in Sources */,
 				AA0000000000000000000038 /* ScreenRecordingPermission.swift in Sources */,

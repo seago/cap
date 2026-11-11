@@ -13,9 +13,8 @@ final class SettingsStore {
     /// 快捷键设置变化（popover 需要刷新、AppDelegate 需要重绑）。
     static let hotKeyDidChangeNotification = Notification.Name("CapHotKeyDidChange")
 
-    static let defaultDirectory: URL = FileManager.default
-        .homeDirectoryForCurrentUser
-        .appendingPathComponent("Pictures/Screenshots", isDirectory: true)
+    static let defaultDirectory: URL = UserHome.picturesDirectory
+        .appendingPathComponent("Screenshots", isDirectory: true)
 
     private let defaults: UserDefaults
 

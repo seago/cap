@@ -41,11 +41,9 @@ enum FileExportError: LocalizedError, Equatable {
 /// - 文件名来自 `FileNaming`（本地时间，重名追加 ` 2`、` 3`）
 /// - `Data.write(options: .atomic)` = 临时文件 + rename，避免留下半张图
 struct FileExporter {
-    /// `~/Pictures/Screenshots/`
+    /// `~/Pictures/Screenshots/`（沙盒下也解析到真实用户目录）
     static var defaultDirectory: URL {
-        FileManager.default
-            .urls(for: .picturesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Screenshots", isDirectory: true)
+        UserHome.picturesDirectory.appendingPathComponent("Screenshots", isDirectory: true)
     }
 
     let directory: URL
