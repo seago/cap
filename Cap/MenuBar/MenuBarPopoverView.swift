@@ -201,7 +201,13 @@ struct MenuBarPopoverView: View {
             ))
             .textFieldStyle(.roundedBorder)
             .font(.system(size: 11))
-            Text(model.uploadConfigured ? "上传成功后链接自动复制到剪贴板" : "未配置时历史窗口的上传入口隐藏")
+            Text(
+                model.uploadConfigured
+                    ? String(localized: "上传成功后链接自动复制到剪贴板")
+                    : (model.uploadEndpoint.isEmpty
+                        ? String(localized: "未配置时历史窗口的上传入口隐藏")
+                        : String(localized: "端点需为 https（本机/局域网 IP 可用 http）"))
+            )
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
             HStack {

@@ -16,7 +16,7 @@ final class EditorPanelWindow: NSWindow {
         level = .floating
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         // 截图时排除自己；测试时可用 CAP_EDITOR_CAPTURABLE=1 让窗口进入 screencapture。
-        let capturable = ProcessInfo.processInfo.environment["CAP_EDITOR_CAPTURABLE"] == "1"
+        let capturable = TestHooks.editorCapturable
         sharingType = capturable ? .readOnly : .none
         isMovable = false
         isReleasedWhenClosed = false

@@ -36,13 +36,15 @@ com.apple.security.assets.pictures.read-write     = true // 默认 ~/Pictures/Sc
 | 上传（network.client） | ✅ | 本机 mock：`127.0.0.1:8766`、局域网 IP `192.168.1.157:8767` 的 HTTP 直连均成功 |
 | 上传域名 HTTP | ⚠️ 待定 | ATS 对域名 HTTP 会拦截；App Store 版建议要求 HTTPS（或加 ATS 例外并说明理由） |
 
-## 4. 上架前必须的改动
+## 4. 上架前必须的改动（账号无关部分已完成，2026-11-12）
 
-1. **真实 home 目录**（本 spike 已实现 `Cap/Support/UserHome.swift`）：默认保存目录用 `getpwuid` 的真实 home，避免静默落到容器。
-2. **用户选择目录**：设置里保存 `security-scoped bookmark`（Data），读取时 `startAccessingSecurityScopedResource()`；否则 App 重启后无法写入用户选的任意目录。
-3. **ATS 策略**：上传端点默认要求 `https://`；仅对 `localhost/LAN IP` 放行 HTTP（或提供显式警告）。App Review 会看网络行为说明。
-4. **测试钩子**：`CAP_EDITOR_CAPTURABLE` 用 `#if DEBUG` 包起来，Release 不保留。
-5. **签名 / 分发**：Apple Developer Program（$99/年）→ App Store Connect 建 App（bundle id 可继续 `dev.bruce.cap`）→ Distribution 证书 + provisioning（Xcode 自动管理）→ Upload to App Store Connect / TestFlight；`get-task-allow` 由 distribution profile 自动去掉。
+1. ✅ **真实 home 目录**：`Cap/Support/UserHome.swift`（`getpwuid`），默认保存目录不再落到容器。
+2. ✅ **用户选择目录**：`SettingsStore` 保存 `security-scoped bookmark`，读取时 `startAccessingSecurityScopedResource()`。沙盒实测：选择 `/tmp/cap-sandbox-saves` 后保存成功；**重启 App 后仍可写入**（bookmark 612 bytes，`saveFolderBookmark` 已落盘）。
+3. ✅ **ATS 策略**：`UploadSettingsStore.isAllowedEndpoint` —— https 全放行；http 仅 localhost / 回环 / IP 字面量；域名 http 直接判无效并在设置区提示。单测覆盖 4 组。
+4. ✅ **测试钩子**：新增 `TestHooks.editorCapturable`（`#if DEBUG`），Release/App Store 构建不再受 `CAP_EDITOR_CAPTURABLE` 影响。
+5. ✅ **隐私清单**：`Cap/Resources/PrivacyInfo.xcprivacy`（UserDefaults CA92.1、FileTimestamp C617.1、无跟踪、无收集数据）；`ITSAppUsesNonExemptEncryption = NO`。
+6. ✅ **上架材料**：`.scratch/cap-v1/appstore-metadata.md`（名称/描述/关键词/App 隐私/审核备注/截图清单）、`docs/privacy-policy.md`（中英隐私政策草稿）、`.scratch/cap-v1/developer-account-guide.md`（账号注册指南）。
+7. ⏳ **签名 / 分发**：需要 Apple Developer Program（$99/年）→ App Store Connect → Distribution 证书 + provisioning → TestFlight；`get-task-allow` 由 distribution profile 自动去掉。
 
 ## 5. 上架流程清单
 

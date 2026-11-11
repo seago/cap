@@ -17,7 +17,7 @@ final class EditorToolbarWindow: NSPanel {
         backgroundColor = .clear
         hasShadow = true
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        let capturable = ProcessInfo.processInfo.environment["CAP_EDITOR_CAPTURABLE"] == "1"
+        let capturable = TestHooks.editorCapturable
         sharingType = capturable ? .readOnly : .none
         isMovable = false
         isReleasedWhenClosed = false

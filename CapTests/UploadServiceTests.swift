@@ -200,3 +200,31 @@ private func makeUploadDefaults() -> UserDefaults {
     store.reset()
     #expect(!store.isConfigured)
 }
+
+// MARK: - Endpoint policy (App Transport Security)
+
+@Test func endpointPolicyAllowsHTTPSAndLocalHTTP() {
+    #expect(UploadSettingsStore.isAllowedEndpoint(URL(string: "https://example.com/upload")!))
+    #expect(UploadSettingsStore.isAllowedEndpoint(URL(string: "http://localhost:8765/upload")!))
+    #expect(UploadSettingsStore.isAllowedEndpoint(URL(string: "http://127.0.0.1:8765/upload")!))
+    #expect(UploadSettingsStore.isAllowedEndpoint(URL(string: "http://192.168.1.10:8767/upload")!))
+}
+
+@Test func endpointPolicyRejectsRemoteHTTPAndOtherSchemes() {
+    #expect(!UploadSettingsStore.isAllowedEndpoint(URL(string: "http://example.com/upload")!))
+    #expect(!UploadSettingsStore.isAllowedEndpoint(URL(string: "ftp://example.com/upload")!))
+    #expect(!UploadSettingsStore.isAllowedEndpoint(URL(string: "file:///tmp/x")!))
+}
+
+@MainActor
+@Test func uploadConfigurationRejectsRemoteHTTPButAcceptsHTTPS() {
+    let store = UploadSettingsStore(defaults: makeUploadDefaults())
+    store.endpoint = "http://example.com/upload"
+    #expect(store.configuration == nil)
+
+    store.endpoint = "https://example.com/upload"
+    #expect(store.configuration != nil)
+
+    store.endpoint = "http://127.0.0.1:8765/upload"
+    #expect(store.configuration != nil)
+}

@@ -290,6 +290,7 @@
       }
     },
     "上传端点 URL 无效": {
+      "extractionState": "stale",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -301,6 +302,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "上傳端點 URL 無效"
+          }
+        }
+      }
+    },
+    "上传端点无效：需要 https，或本机/局域网 IP 的 http": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid upload endpoint: use https, or http with a localhost/LAN IP"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上傳端點無效：需要 https，或本機/區域網路 IP 的 http"
           }
         }
       }
@@ -1837,6 +1854,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "端點"
+          }
+        }
+      }
+    },
+    "端点需为 https（本机/局域网 IP 可用 http）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endpoint must use https (http is allowed for localhost/LAN IPs)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端點需為 https（本機/區域網路 IP 可用 http）"
           }
         }
       }

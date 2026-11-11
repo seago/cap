@@ -36,7 +36,7 @@ enum UploadError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .notConfigured: return String(localized: "未配置上传端点")
-        case .invalidEndpoint: return String(localized: "上传端点 URL 无效")
+        case .invalidEndpoint: return String(localized: "上传端点无效：需要 https，或本机/局域网 IP 的 http")
         case .invalidImage: return String(localized: "图片数据无效")
         case .timedOut: return String(localized: "上传超时")
         case .transport(let message): return String(localized: "网络错误：\(message)")

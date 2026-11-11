@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 
 /// 上传相关设置的 UserDefaults 封装；与 `SettingsStore` 分开，便于注入测试。
@@ -42,14 +43,41 @@ final class UploadSettingsStore {
         set { defaults.set(newValue, forKey: Key.responseURLKey); postChange() }
     }
 
+    /// App Transport Security 策略（App Store 版要求）：
+    /// - `https` 任意主机允许；
+    /// - `http` 仅允许本机 / 局域网 IP（ATS 对域名 http 会直接拦截）。
+    nonisolated static func isAllowedEndpoint(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased(), let host = url.host, !host.isEmpty else {
+            return false
+        }
+        switch scheme {
+        case "https":
+            return true
+        case "http":
+            return isLoopbackHost(host) || isIPAddress(host)
+        default:
+            return false
+        }
+    }
+
+    nonisolated private static func isLoopbackHost(_ host: String) -> Bool {
+        ["localhost", "127.0.0.1", "::1"].contains(host.lowercased())
+    }
+
+    nonisolated private static func isIPAddress(_ host: String) -> Bool {
+        var ipv4 = in_addr()
+        if inet_pton(AF_INET, host, &ipv4) == 1 { return true }
+        var ipv6 = in6_addr()
+        return inet_pton(AF_INET6, host, &ipv6) == 1
+    }
+
     /// 端点是否已配置且语法有效。
     var configuration: UploadConfiguration? {
         let trimmed = endpoint
         guard !trimmed.isEmpty,
               let url = URL(string: trimmed),
-              let scheme = url.scheme?.lowercased(),
-              scheme == "http" || scheme == "https",
-              url.host != nil else {
+              url.host != nil,
+              Self.isAllowedEndpoint(url) else {
             return nil
         }
         let auth = authorization.trimmingCharacters(in: .whitespacesAndNewlines)

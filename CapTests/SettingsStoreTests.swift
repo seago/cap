@@ -123,3 +123,40 @@ final class FakeLaunchAtLogin: LaunchAtLoginControlling {
     store.markDefaultLaunchAtLoginApplied()
     #expect(store.shouldApplyDefaultLaunchAtLogin == false)
 }
+
+// MARK: - 沙盒（App Store 版）相关
+
+@MainActor
+@Test func fileInsteadOfDirectoryFallsBackToDefault() throws {
+    let defaults = makeDefaults()
+    let store = SettingsStore(defaults: defaults)
+    let fileURL = FileManager.default.temporaryDirectory
+        .appendingPathComponent("cap-file-\(UUID().uuidString)")
+    try Data("x".utf8).write(to: fileURL)
+    defer { try? FileManager.default.removeItem(at: fileURL) }
+
+    store.saveDirectory = fileURL
+    #expect(store.saveDirectory == SettingsStore.defaultDirectory)
+}
+
+@MainActor
+@Test func saveDirectoryStoresResolvableBookmark() throws {
+    let defaults = makeDefaults()
+    let store = SettingsStore(defaults: defaults)
+    let directory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("cap-bookmark-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    store.saveDirectory = directory
+    // 非沙盒环境通常只能拿到普通 bookmark；沙盒下是 security-scoped bookmark。
+    let bookmark = try #require(defaults.data(forKey: SettingsStore.Key.saveDirectoryBookmark))
+    var stale = false
+    let resolved = try URL(
+        resolvingBookmarkData: bookmark,
+        options: [.withoutUI],
+        relativeTo: nil,
+        bookmarkDataIsStale: &stale
+    )
+    #expect(resolved.standardizedFileURL == directory.standardizedFileURL)
+}

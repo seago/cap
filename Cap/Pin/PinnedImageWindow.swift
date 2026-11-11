@@ -19,7 +19,7 @@ final class PinnedImageWindow: NSPanel {
         hasShadow = true
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         // 钉屏不应出现在截图里；测试时可用 CAP_EDITOR_CAPTURABLE=1 放进截图。
-        let capturable = ProcessInfo.processInfo.environment["CAP_EDITOR_CAPTURABLE"] == "1"
+        let capturable = TestHooks.editorCapturable
         sharingType = capturable ? .readOnly : .none
         isReleasedWhenClosed = false
     }

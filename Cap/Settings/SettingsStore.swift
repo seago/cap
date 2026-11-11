@@ -5,6 +5,7 @@ import Foundation
 final class SettingsStore {
     enum Key {
         static let saveDirectory = "saveFolderPath"
+        static let saveDirectoryBookmark = "saveFolderBookmark"
         static let imageFormat = "imageFormat"
         static let jpegQuality = "jpegQuality"
         static let launchAtLoginDefaultApplied = "launchAtLoginDefaultApplied"
@@ -22,22 +23,90 @@ final class SettingsStore {
         self.defaults = defaults
     }
 
+    /// 沙盒下已解析过安全作用域的目录（避免重复 startAccessing）。
+    private var activeSecurityScopes: Set<String> = []
+
     /// 保存目录；目录为空、路径不存在或不是目录时回退默认目录。
+    ///
+    /// App Store 版（沙盒）必须通过 security-scoped bookmark 持久化用户选择的目录，
+    /// 否则重启后无法写入；非沙盒环境退回普通路径即可。
     var saveDirectory: URL {
         get {
+            if let bookmark = defaults.data(forKey: Key.saveDirectoryBookmark),
+               let url = resolveBookmark(bookmark),
+               isDirectory(url) {
+                return url
+            }
             guard let path = defaults.string(forKey: Key.saveDirectory), !path.isEmpty else {
                 return Self.defaultDirectory
             }
-            var isDirectory: ObjCBool = false
-            guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
-                  isDirectory.boolValue else {
+            let url = URL(fileURLWithPath: path, isDirectory: true)
+            guard isDirectory(url) else {
                 return Self.defaultDirectory
             }
-            return URL(fileURLWithPath: path, isDirectory: true)
+            return url
         }
         set {
             defaults.set(newValue.path, forKey: Key.saveDirectory)
+            if let bookmark = makeBookmark(for: newValue) {
+                defaults.set(bookmark, forKey: Key.saveDirectoryBookmark)
+            } else {
+                defaults.removeObject(forKey: Key.saveDirectoryBookmark)
+            }
         }
+    }
+
+    private func isDirectory(_ url: URL) -> Bool {
+        var isDirectory: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
+    }
+
+    /// 优先创建 security-scoped bookmark（沙盒必需）；非沙盒/不支持的路径退回普通 bookmark。
+    private func makeBookmark(for url: URL) -> Data? {
+        if let data = try? url.bookmarkData(
+            options: [.withSecurityScope],
+            includingResourceValuesForKeys: nil,
+            relativeTo: nil
+        ) {
+            return data
+        }
+        return try? url.bookmarkData(
+            options: [],
+            includingResourceValuesForKeys: nil,
+            relativeTo: nil
+        )
+    }
+
+    private func resolveBookmark(_ data: Data) -> URL? {
+        var stale = false
+        let url: URL?
+        if let scoped = try? URL(
+            resolvingBookmarkData: data,
+            options: [.withSecurityScope, .withoutUI],
+            relativeTo: nil,
+            bookmarkDataIsStale: &stale
+        ) {
+            url = scoped
+        } else if let plain = try? URL(
+            resolvingBookmarkData: data,
+            options: [.withoutUI],
+            relativeTo: nil,
+            bookmarkDataIsStale: &stale
+        ) {
+            url = plain
+        } else {
+            return nil
+        }
+        guard let url else { return nil }
+        if !activeSecurityScopes.contains(url.path) {
+            if url.startAccessingSecurityScopedResource() {
+                activeSecurityScopes.insert(url.path)
+            }
+        }
+        if stale, let refreshed = makeBookmark(for: url) {
+            defaults.set(refreshed, forKey: Key.saveDirectoryBookmark)
+        }
+        return url
     }
 
     /// DESIGN §6.2 默认登录自启：首次启动时自动注册一次，之后尊重用户选择。

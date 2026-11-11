@@ -12,6 +12,9 @@
 		AA0000000000000000000032 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000022 /* MenuBarController.swift */; };
 		AA0000000000000000000033 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000023 /* Logging.swift */; };
 		F00000000000000000000011 /* UserHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* UserHome.swift */; };
+		F10000000000000000000011 /* TestHooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* TestHooks.swift */; };
+		F10000000000000000000012 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* PrivacyInfo.xcprivacy */; };
+		F20000000000000000000011 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* SettingsStoreTests.swift */; };
 		AA0000000000000000000034 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000025 /* AppInfo.swift */; };
 		AA0000000000000000000035 /* AppInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000026 /* AppInfoTests.swift */; };
 		AA0000000000000000000036 /* HotKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000027 /* HotKeyCenter.swift */; };
@@ -108,6 +111,9 @@
 		AA0000000000000000000022 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		AA0000000000000000000023 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		F00000000000000000000001 /* UserHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHome.swift; sourceTree = "<group>"; };
+		F10000000000000000000001 /* TestHooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHooks.swift; sourceTree = "<group>"; };
+		F10000000000000000000002 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F20000000000000000000001 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		AA0000000000000000000024 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA0000000000000000000025 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		AA0000000000000000000026 /* AppInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoTests.swift; sourceTree = "<group>"; };
@@ -348,6 +354,7 @@
 				AA0000000000000000000023 /* Logging.swift */,
 				AA0000000000000000000025 /* AppInfo.swift */,
 				F00000000000000000000001 /* UserHome.swift */,
+				F10000000000000000000001 /* TestHooks.swift */,
 				3C0000000000000000000001 /* FileNaming.swift */,
 			);
 			path = Support;
@@ -359,6 +366,7 @@
 				AA0000000000000000000024 /* Info.plist */,
 				8C0000000000000000000006 /* AppIcon.icns */,
 				AA3000000000000000000001 /* Localizable.xcstrings */,
+				F10000000000000000000002 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -393,6 +401,7 @@
 				AB0000000000000000000002 /* HotKeySettingsTests.swift */,
 				AA4000000000000000000001 /* LocalizationTests.swift */,
 				EF0000000000000000000003 /* UploadServiceTests.swift */,
+				F20000000000000000000001 /* SettingsStoreTests.swift */,
 			);
 			path = CapTests;
 			sourceTree = "<group>";
@@ -531,6 +540,7 @@
 			files = (
 				8C0000000000000000000016 /* AppIcon.icns in Resources */,
 				AA3000000000000000000011 /* Localizable.xcstrings in Resources */,
+				F10000000000000000000012 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,6 +563,7 @@
 				AA0000000000000000000032 /* MenuBarController.swift in Sources */,
 				AA0000000000000000000033 /* Logging.swift in Sources */,
 				F00000000000000000000011 /* UserHome.swift in Sources */,
+				F10000000000000000000011 /* TestHooks.swift in Sources */,
 				AA0000000000000000000034 /* AppInfo.swift in Sources */,
 				AA0000000000000000000036 /* HotKeyCenter.swift in Sources */,
 				AA0000000000000000000038 /* ScreenRecordingPermission.swift in Sources */,
@@ -633,6 +644,7 @@
 				AB0000000000000000000012 /* HotKeySettingsTests.swift in Sources */,
 				AA4000000000000000000011 /* LocalizationTests.swift in Sources */,
 				EF0000000000000000000013 /* UploadServiceTests.swift in Sources */,
+				F20000000000000000000011 /* SettingsStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
