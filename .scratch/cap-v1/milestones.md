@@ -101,6 +101,9 @@ Accepted: **v1.1 整体验收通过（2026-11-10）** —— 滚动截图 / OCR 
 - 安装：`/Applications/Cap.app`（Universal, 0.1.0）
 - 最新提交：`5bf9a44 docs(upload)`；功能提交 `67e8407 feat(upload)`
 - 测试：191 项全绿；验收报告 `.scratch/cap-v1/acceptance-v1.1.md`
+- **v0.1.0 已发布**：GitHub Actions（`macos-26` runner）自动完成 test → Universal 构建 → Release，附件含 dmg + zip + SHA256
+  - Release: <https://github.com/seago/cap/releases/tag/v0.1.0>
+  - 发布流程：`git tag -a v0.1.1 -m ... && git push origin v0.1.1`（workflow 幂等，可重复运行）
 
 ## M5 · 多语言与文档（2026-11-10）
 

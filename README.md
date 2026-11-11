@@ -2,6 +2,8 @@
 
 macOS 菜单栏常驻的截图工具。[English](README.en.md) · 设计稿见 `DESIGN.md`（[English](DESIGN.en.md)），实施记录见 `.scratch/cap-v1/`。
 
+**下载**：[最新 Release](https://github.com/seago/cap/releases)（dmg 拖拽安装 / zip 解压安装；私有仓库需登录 GitHub）。
+
 ## 构建与测试
 
 ```bash
