@@ -30,3 +30,7 @@ Type: bugfix
 - [x] [manual] 钉图 → 切换 Space（Ctrl+→ / Ctrl+1 回来）：仍在 ✅
 - [x] [manual] 钉图 → Chrome 正常窗口 / 全屏（Ctrl+Cmd+F）进出：钉屏始终可见 ✅
 - [x] [manual] 点击右上角 `×` 关闭钉屏 ✅；Esc / 右键菜单仍可关闭 ✅
+
+## 发布
+
+- 已随 **v0.1.1** 发布（tag `v0.1.1`）：GitHub Actions 自动构建 dmg + zip + SHA256，Release notes 由 `CHANGELOG.md` 的 0.1.1 段落生成。

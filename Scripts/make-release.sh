@@ -64,8 +64,16 @@ hdiutil create -quiet -volname "Cap ${VERSION}" -srcfolder "$STAGING" -ov -forma
 
 shasum -a 256 "$ZIP" "$DMG" | tee "$SHA_FILE"
 
+# 从 CHANGELOG.md 提取当前版本的更新说明（如有）。
+CHANGELOG_SECTION=$(awk -v v="${VERSION}" '
+  $0 ~ "^## " v "([^0-9]|$)" { capture=1; next }
+  capture && /^## / { exit }
+  capture { print }
+' CHANGELOG.md 2>/dev/null || true)
+CHANGELOG_SECTION=$(printf '%s\n' "$CHANGELOG_SECTION" | sed '/./,$!d')
+
 # release notes 用 quoted heredoc，避免安装说明里的反引号被 shell 执行；
-# 版本号用 __VERSION__ 占位后替换，SHA 单独插入。
+# 版本号用 __VERSION__ 占位后替换；SHA 与 CHANGELOG 段落单独插入。
 {
   cat <<'HEAD'
 # Cap __VERSION__
@@ -74,6 +82,14 @@ macOS 菜单栏截图工具（Universal：Apple Silicon + Intel，最低 macOS 1
 
 构建产物为 ad-hoc 或本机自签证书签名（未公证）；首次打开需按下方「安装」操作。
 
+HEAD
+  if [[ -n "$CHANGELOG_SECTION" ]]; then
+    echo "## 更新"
+    echo
+    echo "$CHANGELOG_SECTION"
+    echo
+  fi
+  cat <<'MID'
 ## 功能
 
 - ⌘⇧2 截图 → 就地标注 → Enter 复制 / ⌘S 保存
@@ -97,7 +113,7 @@ xattr -dr com.apple.quarantine /Applications/Cap.app
 ## 校验
 
 ```
-HEAD
+MID
   cat "$SHA_FILE"
   cat <<'TAIL'
 ```

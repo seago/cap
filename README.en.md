@@ -2,7 +2,7 @@
 
 A menu-bar screenshot tool for macOS. [中文版](README.md) · Design: [`DESIGN.md`](DESIGN.md) · Implementation log: [`.scratch/cap-v1/`](.scratch/cap-v1/)
 
-**Download**: [latest release](https://github.com/seago/cap/releases) (dmg to drag-install / zip to unzip; the repo is private, GitHub login required).
+**Download**: [latest release](https://github.com/seago/cap/releases) · Changelog: [CHANGELOG.md](CHANGELOG.md) (dmg to drag-install / zip to unzip; the repo is private, GitHub login required).
 
 ## Build & test
 

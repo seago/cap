@@ -115,6 +115,8 @@ Accepted: **v1.1 整体验收通过（2026-11-10）** —— 滚动截图 / OCR 
 ## M6 · 用户反馈修复
 
 - [x] #36 贴图钉屏：切换窗口/切 Space/全屏后不再消失（`hidesOnDeactivate = false`）；右上角增加常驻关闭按钮；新增 2 项窗口行为测试（193 项全绿）
+- [x] **v0.1.1 已发布**：版本号 0.1.1 / build 2，CHANGELOG 自动带进 Release notes；GitHub Actions 自动出 dmg + zip + SHA256
+  - Release: <https://github.com/seago/cap/releases/tag/v0.1.1>
 
 ## 文档
 
